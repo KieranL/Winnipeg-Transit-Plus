@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Winnpeg Transit+</string>
+    <string name="stop_number_hint">Enter a stop number</string>
+    <string name="button_send">Go</string>
+    <string name="action_settings">Settings</string>
+    <string name="enter_valid_stop_number">Please enter a valid stop number.</string>
+    <string name="network_error">Network Error</string>
+    <string name="route_number_hint">Enter a route number</string>
+    <string name="favourites">Favourites</string>
+    <string name="title_activity_favourites">Favourites</string>
+
+</resources>

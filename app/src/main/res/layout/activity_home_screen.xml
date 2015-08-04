@@ -1,0 +1,55 @@
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ff000000"
+    android:orientation="horizontal">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/stop_number_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_toLeftOf="@+id/button"
+            android:hint="@string/stop_number_hint"
+            android:inputType="number"
+            android:textColor="#ffffffff"
+            android:textColorHint="#ff2c2c2c" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/route_number_field"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="#ff2c2c2c"
+            android:onClick="getStopTimes"
+            android:text="@string/button_send"
+            android:textColor="#ffffffff" />
+
+        <EditText
+            android:id="@+id/route_number_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/stop_number_field"
+            android:layout_toLeftOf="@+id/button"
+            android:layout_toStartOf="@+id/button"
+            android:hint="@string/route_number_hint"
+            android:inputType="text"
+            android:textColor="#ffffffff"
+            android:textColorHint="#ff2c2c2c" />
+
+    </RelativeLayout>
+
+
+</TableLayout>
