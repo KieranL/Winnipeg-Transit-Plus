@@ -1,6 +1,5 @@
 package winnipegbusbackend;
 
-import java.sql.Time;
 import java.util.Date;
 
 public class StopTime {
@@ -39,6 +38,10 @@ public class StopTime {
 
     public String getHours() {
         return String.valueOf(hours);
+    }
+
+    public String toString() {
+        return getHours() + ":" + getMinutes();
     }
 
 }

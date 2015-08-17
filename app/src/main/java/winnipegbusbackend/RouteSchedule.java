@@ -4,51 +4,52 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RouteSchedule {
-    private int routeNumber;
-    private String routeName;
     private Node routeNode;
-    private List<ScheduledStop> stops = new ArrayList<ScheduledStop>();
-    private BusUtilities utilities = new BusUtilities();
+    private int stopNumber;
+    private BusUtilities utilities;
+    private RouteInfo routeInfo;
 
-    public RouteSchedule(Node node) {
+    public RouteSchedule(Node node, int stopNumber) {
         routeNode = node;
+        this.stopNumber = stopNumber;
 
-        //loadRouteName();
+        utilities = new BusUtilities();
+        routeInfo = new RouteInfo();
+
+        loadRouteName();
         loadRouteNumber();
         loadScheduledStops();
     }
 
     private void loadRouteNumber() {
-        routeNumber = Integer.parseInt(utilities.getValue(NodeTags.ROUTE_NUMBER.tag, (Element) routeNode));
+        routeInfo.setRouteNumber(Integer.parseInt(utilities.getValue(StopTimesNodeTags.ROUTE_NUMBER.tag, (Element) routeNode)));
     }
 
     private void loadRouteName() {
-        routeName = utilities.getValue(NodeTags.ROUTE_NAME.tag, (Element) routeNode);
-
+        routeInfo.setRouteName(utilities.getValue(StopTimesNodeTags.ROUTE_NAME.tag, (Element) routeNode));
     }
 
     private void loadScheduledStops() {
-        NodeList scheduledStops = ((Element) routeNode).getElementsByTagName(NodeTags.SCHEDULED_STOPS.tag);
+        NodeList scheduledStops = ((Element) routeNode).getElementsByTagName(StopTimesNodeTags.SCHEDULED_STOPS.tag);
 
         for (int s = 0; s < scheduledStops.getLength(); s++) {
             Node stop = scheduledStops.item(s);
-            stops.add(new ScheduledStop(stop, routeNumber));
+            routeInfo.getStops().add(new ScheduledStop(stop, routeInfo.getRouteNumber(), stopNumber));
         }
     }
 
     public String getRouteName() {
-        return routeName;
+        return routeInfo.getRouteName();
     }
 
     public int getRouteNumber() {
-        return routeNumber;
+        return routeInfo.getRouteNumber();
     }
 
     public List<ScheduledStop> getScheduledStops() {
-        return stops;
+        return routeInfo.getStops();
     }
 }

@@ -3,7 +3,6 @@ package winnipegbusbackend;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
@@ -15,12 +14,13 @@ public class Stop {
     private Document XMLDocument;
     private String stopName;
     private int stopNumber;
-    private List<RouteSchedule> routeList = new ArrayList<RouteSchedule>();
-    private List<Integer> routeNumbers = new ArrayList<Integer>();
+    private List<RouteSchedule> routeList = new ArrayList<>();
+    private List<Integer> routeNumbers = new ArrayList<>();
     private BusUtilities utilities = new BusUtilities();
 
-    public Stop(Document doc) {
+    public Stop(Document doc, int stopNumber) {
         XMLDocument = doc;
+        this.stopNumber = stopNumber;
         loadStopName();
         loadRoutes();
     }
@@ -33,31 +33,20 @@ public class Stop {
     }
 
     private void loadStopNumber() {
-        stopNumber = Integer.parseInt(utilities.getValue(NodeTags.STOP_NUMBER.tag, (Element) XMLDocument.getElementsByTagName(NodeTags.STOP.tag).item(0)));
+        stopNumber = Integer.parseInt(utilities.getValue(StopTimesNodeTags.STOP_NUMBER.tag, (Element) XMLDocument.getElementsByTagName(StopTimesNodeTags.STOP.tag).item(0)));
     }
 
     private void loadRoutes() {
-        NodeList routes = XMLDocument.getElementsByTagName(NodeTags.ROUTES.tag);
+        NodeList routes = XMLDocument.getElementsByTagName(StopTimesNodeTags.ROUTES.tag);
 
-        for (int r = 0; r < routes.getLength(); r++) {
-            try {
-                Node route = routes.item(r);
-                routeList.add(new RouteSchedule(route));
-            } catch (Exception e) {
-
-            }
-        }
+        for (int r = 0; r < routes.getLength(); r++)
+                routeList.add(new RouteSchedule(routes.item(r), stopNumber));
 
         loadRouteNumbers();
     }
 
-    private void refreshRoutes() {
-        routeList.clear();
-        loadRoutes();
-    }
-
     public void loadStopName() {
-        stopName = utilities.getValue(NodeTags.STOP_NAME.tag, (Element) XMLDocument.getElementsByTagName(NodeTags.STOP.tag).item(0));
+        stopName = utilities.getValue(StopTimesNodeTags.STOP_NAME.tag, (Element) XMLDocument.getElementsByTagName(StopTimesNodeTags.STOP.tag).item(0));
     }
 
     public String getName() {
@@ -72,8 +61,12 @@ public class Stop {
         return routeNumbers;
     }
 
+    public int getStopNumber() {
+        return stopNumber;
+    }
+
     public List<ScheduledStop> getScheduledStops() {
-        List<ScheduledStop> scheduledStops = new ArrayList<ScheduledStop>();
+        List<ScheduledStop> scheduledStops = new ArrayList<>();
 
         for (RouteSchedule r : routeList)
             for (ScheduledStop s : r.getScheduledStops())
@@ -93,5 +86,16 @@ public class Stop {
         });
 
         return scheduledStops;
+    }
+
+    public List<ScheduledStopInfo> getScheduledStopInfosSorted() {
+        List<ScheduledStop> stops = getScheduledStopsSorted();
+        List<ScheduledStopInfo> stopInfos = new ArrayList<>();
+
+        for(ScheduledStop stopInfo : stops) {
+            stopInfos.add(stopInfo.getScheduledStopInfo());
+        }
+
+        return stopInfos;
     }
 }

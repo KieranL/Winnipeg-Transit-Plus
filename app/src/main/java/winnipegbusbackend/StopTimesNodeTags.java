@@ -1,6 +1,6 @@
 package winnipegbusbackend;
 
-public enum NodeTags {
+public enum StopTimesNodeTags {
     BIKE_RACK("bike-rack"),
     EASY_ACCESS("easy-access"),
     ARRIVAL("arrival"),
@@ -18,7 +18,7 @@ public enum NodeTags {
 
     public String tag;
 
-    NodeTags(String tag) {
+    StopTimesNodeTags(String tag) {
         this.tag = tag;
     }
 

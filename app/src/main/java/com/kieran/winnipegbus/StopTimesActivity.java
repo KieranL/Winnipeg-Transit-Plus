@@ -1,6 +1,8 @@
 package com.kieran.winnipegbus;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,56 +10,72 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import winnipegbusbackend.BusUtilities;
-import winnipegbusbackend.ScheduledStop;
+import winnipegbusbackend.FavouriteStop;
+import winnipegbusbackend.FavouriteStopsList;
+import winnipegbusbackend.ScheduledStopInfo;
 import winnipegbusbackend.Stop;
 
 
 public class StopTimesActivity extends AppCompatActivity {
 
     private BusUtilities utilities = new BusUtilities();
-    private TextView routeNumber;
-    private TextView routeName;
-    private TextView timeStatus;
-    private TextView departureTime;
     private String urlPath;
     private int stopNumber;
-    private static Menu menu;
+    private String stopName;
+    private Menu menu;
+    private Stop stop;
     boolean loading;
+    List<ScheduledStopInfo> stops = new ArrayList<>();
+    static ListView listView;
+    StopTimeAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stop_times);
+        FavouriteStopsList.loadFavourites();
 
-        findTextViews();
+        listView = (ListView) findViewById(R.id.stop_times_listview);
+
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Toast.makeText(getApplicationContext(), "Click", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        adapter = new StopTimeAdapter(this, R.layout.listview_stop_times_row, stops);
+
+        listView.setAdapter(adapter);
+        listView.addHeaderView(getLayoutInflater().inflate(R.layout.listview_stop_times_header, null));
         getTimes();
     }
 
-    private void findTextViews() {
-        routeNumber = (TextView) findViewById(R.id.route_number_text);
-        routeName = (TextView) findViewById(R.id.route_name_text);
-        timeStatus = (TextView) findViewById(R.id.time_status_text);
-        departureTime = (TextView) findViewById(R.id.departure_time_text);
-    }
 
     private void getTimes() {
         loading = true;
 
-
         Intent intent = getIntent();
         stopNumber = intent.getIntExtra(HomeScreenActivity.STOP_NUMBER, 0);
-        setTitle(Integer.toString(stopNumber));
+        setTitle("Stop " + Integer.toString(stopNumber));
         int[] routeNumbers;
+
         try {
             String[] routeNumberString = intent.getStringExtra(HomeScreenActivity.ROUTE_NUMBER).split(" ");
             routeNumbers = new int[routeNumberString.length];
@@ -68,39 +86,15 @@ public class StopTimesActivity extends AppCompatActivity {
             routeNumbers = new int[]{0};
         }
 
-        try {
+
             urlPath = utilities.generateURL("stops/" + stopNumber + "/schedule?", routeNumbers);
 
             loadTimes();
-        } catch (Exception e) {
-            routeName.setText(this.getResources().getString(R.string.enter_valid_stop_number));
-            setTitle(this.getResources().getString(R.string.app_name));
-        }
+
     }
 
     private void loadTimes() {
-        clearTextViews();
         new LoadStopTimes().execute(urlPath);
-
-    }
-
-    private void finishLoading() {
-            MenuItem m = menu.findItem(R.id.refresh_button);
-            if(m.getActionView()!=null)
-            {
-                // Remove the animation.
-                m.getActionView().clearAnimation();
-                m.setActionView(null);
-            }
-
-        loading = false;
-    }
-
-    private void clearTextViews() {
-        routeNumber.setText("");
-        routeName.setText("");
-        timeStatus.setText("");
-        departureTime.setText("");
     }
 
     @Override
@@ -110,7 +104,7 @@ public class StopTimesActivity extends AppCompatActivity {
 
         refresh(menu.findItem(R.id.refresh_button));
 
-        if(FavouritesActivity.favouritesList.contains(stopNumber))
+        if(FavouriteStopsList.contains(stopNumber))
             menu.findItem(R.id.add_to_favourites_button).setIcon(R.drawable.ic_favorite_stops);
         return true;
     }
@@ -122,42 +116,41 @@ public class StopTimesActivity extends AppCompatActivity {
         rotation.setRepeatCount(Animation.INFINITE);
         iv.startAnimation(rotation);
         item.setActionView(iv);
-
-
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.refresh_button) {
-            refresh(item);
-            loadTimes();
-            return true;
-        } else if (id == R.id.add_to_favourites_button) {
-            if(FavouritesActivity.favouritesList.contains(stopNumber)) {
-                FavouritesActivity.removeFromFavourites(stopNumber);
-                item.setIcon(R.drawable.ic_add_to_favourites);
-            }else{
-                FavouritesActivity.addToFavourites(stopNumber);
-                item.setIcon(R.drawable.ic_favorite_stops);
-            }
-            return true;
+
+        switch (id) {
+            case R.id.refresh_button:
+                refresh(item);
+                loadTimes();
+                return true;
+            case R.id.add_to_favourites_button:
+                if(FavouriteStopsList.contains(stopNumber) && !loading) {
+
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                    alertDialog.setMessage("Delete this Favourite?");
+
+                    alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogInterface, int which) {
+                            FavouriteStopsList.removeFromFavourites(stopNumber);
+                            item.setIcon(R.drawable.ic_add_to_favourites);
+                        }
+                    });
+
+                    alertDialog.setNegativeButton("No", null);
+                    alertDialog.create().show();
+                }else if (!loading){
+                    FavouriteStopsList.addToFavourites(new FavouriteStop(stopName, stopNumber));
+                    item.setIcon(R.drawable.ic_favorite_stops);
+                }
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private String stringArrayToStringLines(String[] lines) {
-        String combinedString = "";
-
-        for (int i = 0; i < lines.length; i++) {
-            combinedString += lines[i];
-
-            if (i < lines.length - 1)
-                combinedString += "\n";
-        }
-
-        return combinedString;
-    }
 
     private class LoadStopTimes extends AsyncTask<String, Void, Document> {
         @Override
@@ -167,47 +160,29 @@ public class StopTimesActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Document result) {
-            String[] routeNumbers;
-            String[] routeNames;
-            String[] timeStatuses;
-            String[] departureTimes;
 
             if (result != null) {
-                Stop stop = new Stop(result);
-                setTitle(stop.getName());
-                List<ScheduledStop> stops = stop.getScheduledStopsSorted();
+                stop = new Stop(result, stopNumber);
+                stopName = stop.getName();
+                stops.clear();
+                stops.addAll(stop.getScheduledStopInfosSorted());
 
-                routeNumbers = new String[stops.size()];
-                routeNames = new String[stops.size()];
-                timeStatuses = new String[stops.size()];
-                departureTimes = new String[stops.size()];
-
-                for (int i = 0; i < stops.size(); i++) {
-                    routeNumbers[i] = Integer.toString(stops.get(i).getRouteNumber());
-                    routeNames[i] = stops.get(i).getRouteVariantName();
-                    timeStatuses[i] = stops.get(i).getTimeStatus();
-                    departureTimes[i] = stops.get(i).toString();
-                }
-
-                routeNumber.setText(stringArrayToStringLines(routeNumbers));
-                routeName.setText(stringArrayToStringLines(routeNames));
-                timeStatus.setText(stringArrayToStringLines(timeStatuses));
-                departureTime.setText(stringArrayToStringLines(departureTimes));
             } else {
-                routeName.setText(urlPath);
+                Toast.makeText(getApplicationContext(), R.string.network_error, Toast.LENGTH_LONG).show();
             }
             finishLoading();
         }
 
         private void finishLoading() {
             MenuItem m = menu.findItem(R.id.refresh_button);
-            if(m.getActionView()!=null)
-            {
-                // Remove the animation.
+            if(m.getActionView() != null) {
                 m.getActionView().clearAnimation();
                 m.setActionView(null);
             }
 
+            ((TextView)findViewById(R.id.listview_stop_times_header_text)).setText(stopName);
+
+            adapter.notifyDataSetChanged();
             loading = false;
         }
 

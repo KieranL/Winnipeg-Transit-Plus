@@ -1,57 +1,15 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ff000000"
-    android:padding="8dp"
-    android:transitionGroup="false">
+    tools:context="com.kieran.winnipegbus.FavouritesActivity"
+    android:padding="6dp">
 
-
-    <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/route_number_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:width="40dp"
-                android:textColor="#ffffffff"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/route_name_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:width="205dp"
-                android:textColor="#ffffffff"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/time_status_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:width="35dp"
-                android:gravity="right"
-                android:textColor="#ffffffff"
-                android:textSize="16sp" />/>
-
-            <TextView
-                android:id="@+id/departure_time_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:width="60dp"
-                android:gravity="right"
-                android:textColor="#ffffffff"
-                android:textSize="16sp" />
-
-        </LinearLayout>
-    </ScrollView>
-
+    <ListView
+        android:id="@+id/stop_times_listview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
+        android:divider="@null"/>
 
 </FrameLayout>

@@ -13,32 +13,30 @@ import android.widget.EditText;
 
 
 public class HomeScreenActivity extends AppCompatActivity {
+    public static String filesDir;
     public final static String STOP_NUMBER = "stop_number";
     public final static String ROUTE_NUMBER = "route_number";
     Button button;
     EditText stopNumberField;
     EditText routeNumberField;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_screen);
 
+        filesDir = getFilesDir().getPath();
+        setContentView(R.layout.activity_home_screen);
         button = (Button) findViewById(R.id.button);
+        button.setEnabled(false);
         stopNumberField = (EditText) findViewById(R.id.stop_number_field);
         routeNumberField = (EditText) findViewById(R.id.route_number_field);
 
         TextWatcher watcher = new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {  }
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -47,19 +45,15 @@ public class HomeScreenActivity extends AppCompatActivity {
         };
 
         stopNumberField.addTextChangedListener(watcher);
-
-
-        button.setClickable(false);
-
     }
 
     private void updateGoButtonStatus() {
-        button.setClickable(stopNumberField.getText().toString().length() == 5);
+        button.setEnabled(stopNumberField.getText().length() == 5);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_my, menu);
+        getMenuInflater().inflate(R.menu.menu_home, menu);
         return true;
     }
 
@@ -68,7 +62,8 @@ public class HomeScreenActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_settings:
+            case R.id.settings:
+                openSettings();
                 return true;
             case R.id.favourites:
                 openFavourites();
@@ -76,6 +71,11 @@ public class HomeScreenActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openSettings() {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 
     public void getStopTimes(View view) {

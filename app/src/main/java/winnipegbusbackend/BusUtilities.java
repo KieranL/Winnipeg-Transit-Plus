@@ -17,9 +17,10 @@ public class BusUtilities {
     private final static String API_KEY = "FTy2QN8ts293ZlhYP1t";
     private final static String API_URL = "http://api.winnipegtransit.com/v2/";
     private final static String USAGE = "usage=short&api-key=";
+    private final static String DATE_FORMAT = "yyyy-MM-dd-HH:mm:ss";
 
     public StopTime convertToDate(String s) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
 
         try {
             return new StopTime(format.parse(s.replaceFirst("T", "-")));
