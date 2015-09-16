@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ListView
+    android:id="@+id/stops_listView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:nestedScrollingEnabled="false"
+    android:divider="@null"
+    android:dividerHeight="5dp"
+    android:layout_alignParentTop="true"
+    android:layout_above="@+id/favouritesAdView"
+    xmlns:android="http://schemas.android.com/apk/res/android" />
