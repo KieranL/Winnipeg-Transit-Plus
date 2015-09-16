@@ -1,4 +1,4 @@
-package winnipegbusbackend;
+package com.kieran.winnipegbusbackend;
 
 public enum StopTimesNodeTags {
     BIKE_RACK("bike-rack"),
@@ -12,6 +12,7 @@ public enum StopTimesNodeTags {
     ROUTE_NAME("name"),
     ROUTES("route-schedule"),
     ROUTE_NUMBER("key"),
+    ROUTE_COVERAGE("coverage"),
     STOP_NAME("name"),
     STOP_NUMBER("number"),
     STOP("stop");

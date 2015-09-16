@@ -2,13 +2,13 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/favourites_row_background"
     android:padding="5dp">
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:textSize="18sp"
         android:id="@+id/favourites_stop_name"
         android:gravity="left"
@@ -16,9 +16,20 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <GridView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/favourites_stop_name"
+        android:layout_alignRight="@+id/favourites_stop_number"
+        android:columnWidth="8dp"
+        android:horizontalSpacing="2dp"
+        android:numColumns="1"
+        android:clickable="false"
+        android:id="@+id/gridview_stops_row_route_numbers"/>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:textSize="20sp"
         android:id="@+id/favourites_stop_number"
         android:layout_marginTop="23dp"
@@ -26,7 +37,6 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:gravity="right" />
-
 
 </RelativeLayout>
 

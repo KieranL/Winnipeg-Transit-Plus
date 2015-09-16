@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.List;
+import com.kieran.winnipegbusbackend.ScheduledStopInfo;
 
-import winnipegbusbackend.ScheduledStopInfo;
+import java.util.List;
 
 public class StopTimeAdapter extends ArrayAdapter<ScheduledStopInfo>{
     Context context;

@@ -5,13 +5,12 @@
     <item
         android:id="@+id/refresh_button"
         android:icon="@drawable/ic_refresh"
-        android:layout_width="wrap_content"
-        android:title="Refresh"
+        android:title="@string/refresh_stop_times_button"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/add_to_favourites_button"
         android:icon="@drawable/ic_add_to_favourites"
-        android:title="Add to Favourites"
+        android:title="@string/add_to_favourites_button"
         app:showAsAction="ifRoom" />
 
 </menu>

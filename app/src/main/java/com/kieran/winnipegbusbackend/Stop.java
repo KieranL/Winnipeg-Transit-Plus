@@ -1,4 +1,4 @@
-package winnipegbusbackend;
+package com.kieran.winnipegbusbackend;
 
 
 import org.w3c.dom.Document;
@@ -22,7 +22,6 @@ public class Stop {
         XMLDocument = doc;
         this.stopNumber = stopNumber;
         loadStopName();
-        loadRoutes();
     }
 
     private void loadRouteNumbers() {
@@ -36,13 +35,18 @@ public class Stop {
         stopNumber = Integer.parseInt(utilities.getValue(StopTimesNodeTags.STOP_NUMBER.tag, (Element) XMLDocument.getElementsByTagName(StopTimesNodeTags.STOP.tag).item(0)));
     }
 
-    private void loadRoutes() {
+    public void loadRoutes() {
         NodeList routes = XMLDocument.getElementsByTagName(StopTimesNodeTags.ROUTES.tag);
 
         for (int r = 0; r < routes.getLength(); r++)
                 routeList.add(new RouteSchedule(routes.item(r), stopNumber));
 
         loadRouteNumbers();
+    }
+
+    public void loadScheduledStops() {
+        for(RouteSchedule routeSchedule : routeList)
+            routeSchedule.loadScheduledStops();
     }
 
     public void loadStopName() {

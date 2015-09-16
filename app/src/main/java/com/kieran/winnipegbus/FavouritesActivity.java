@@ -10,47 +10,80 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.kieran.winnipegbusbackend.FavouriteStop;
+import com.kieran.winnipegbusbackend.FavouriteStopsList;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import winnipegbusbackend.FavouriteStop;
-import winnipegbusbackend.FavouriteStopsList;
-
 public class FavouritesActivity extends AppCompatActivity {
-    private FavouriteStopAdapter adapter;
+    private StopListAdapter adapter;
     private List<FavouriteStop> favouriteStops;
     private int sortTypeId;
+    private AdView adView;
 
     @Override
     public void onRestart() {
         super.onRestart();
-
+        initializeAdsIfEnabled();
+        initialize();
         favouriteStops.clear();
         getFavouritesList();
         adapter.notifyDataSetChanged();
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initialize();
+    }
+
     private void initialize() {
-        setContentView(R.layout.activity_favourites);
+        setContentView(R.layout.activity_stops_list);
+        adView = (AdView) findViewById(R.id.favouritesAdView);
+        initializeAdsIfEnabled();
+
         FavouriteStopsList.loadFavourites();
         favouriteStops = new ArrayList<>();
 
-        ListView listView = (ListView) findViewById(R.id.favourites_listview);
+        ListView listView = (ListView) findViewById(R.id.stops_listView);
 
         getFavouritesList();
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int stopNumber = Integer.parseInt((((TextView) view.findViewById(R.id.favourites_stop_number)).getText().toString()));
-                openStopTimes(stopNumber);
+                FavouriteStop stop = (FavouriteStop)parent.getItemAtPosition(position);
+                openStopTimes(stop.getStopNumber());
             }
         });
 
-        adapter = new FavouriteStopAdapter(this, R.layout.listview_favourite_stop_row, favouriteStops);
+        adapter = new StopListAdapter(this, R.layout.listview_stops_row, favouriteStops);
         listView.setAdapter(adapter);
+    }
+
+    private void initializeAdsIfEnabled() {
+        if (!areAdsDisabled()) {
+            adView.setVisibility(View.VISIBLE);
+            createAd();
+        } else {
+            adView.setVisibility(View.GONE);
+        }
+    }
+
+    private boolean areAdsDisabled() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return prefs.getBoolean("pref_ads_disabled", false);
+    }
+
+    private void createAd() {
+        AdView mAdView = (AdView) findViewById(R.id.favouritesAdView);
+        AdRequest.Builder adRequest = new AdRequest.Builder();
+        adRequest.addTestDevice(getString(R.string.test_device_id_gs5));
+        mAdView.loadAd(adRequest.build());
     }
 
     private void getSortPreference() {
@@ -61,12 +94,6 @@ public class FavouritesActivity extends AppCompatActivity {
     private void getFavouritesList() {
         getSortPreference();
         favouriteStops.addAll(FavouriteStopsList.getFavouriteStopsSorted(sortTypeId));
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        initialize();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package winnipegbusbackend;
+package com.kieran.winnipegbusbackend;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -21,7 +21,11 @@ public class RouteSchedule {
 
         loadRouteName();
         loadRouteNumber();
-        loadScheduledStops();
+        loadCoverageType();
+    }
+
+    private void loadCoverageType() {
+        routeInfo.setCoverageType(utilities.getCoverageTypeId(utilities.getValue(StopTimesNodeTags.ROUTE_COVERAGE.tag, (Element) routeNode)));
     }
 
     private void loadRouteNumber() {
@@ -32,12 +36,12 @@ public class RouteSchedule {
         routeInfo.setRouteName(utilities.getValue(StopTimesNodeTags.ROUTE_NAME.tag, (Element) routeNode));
     }
 
-    private void loadScheduledStops() {
+    public void loadScheduledStops() {
         NodeList scheduledStops = ((Element) routeNode).getElementsByTagName(StopTimesNodeTags.SCHEDULED_STOPS.tag);
 
         for (int s = 0; s < scheduledStops.getLength(); s++) {
             Node stop = scheduledStops.item(s);
-            routeInfo.getStops().add(new ScheduledStop(stop, routeInfo.getRouteNumber(), stopNumber));
+            routeInfo.getStops().add(new ScheduledStop(stop, routeInfo.getRouteNumber(), stopNumber, routeInfo.getRouteName()));
         }
     }
 

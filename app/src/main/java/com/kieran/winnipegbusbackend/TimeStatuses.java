@@ -1,4 +1,4 @@
-package winnipegbusbackend;
+package com.kieran.winnipegbusbackend;
 
 public enum TimeStatuses {
     Ok("Ok"),

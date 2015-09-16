@@ -1,6 +1,6 @@
-package winnipegbusbackend;
+package com.kieran.winnipegbusbackend;
 
-public enum FavouritesListSortTypeId {
+public enum FavouritesListSortTypeIds {
     SAVED_INDEX(0),
     STOP_NUBMER_ASC(1),
     STOP_NUBMER_DESC(2),
@@ -9,7 +9,7 @@ public enum FavouritesListSortTypeId {
 
     public int value;
 
-    FavouritesListSortTypeId(int sortTypeId) {
+    FavouritesListSortTypeIds(int sortTypeId) {
         this.value = sortTypeId;
     }
 }

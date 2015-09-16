@@ -1,4 +1,4 @@
-package winnipegbusbackend;
+package com.kieran.winnipegbusbackend;
 
 public class ScheduledStopInfo {
     private String routeVariantName;
@@ -12,10 +12,6 @@ public class ScheduledStopInfo {
     private boolean hasEasyAccess;
     private boolean hasArrivalTime;
     private String timeStatus;
-
-    public ScheduledStopInfo() {
-
-    }
 
     public String getRouteVariantName() {
         return routeVariantName;

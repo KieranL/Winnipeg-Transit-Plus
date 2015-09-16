@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
-    android:layout_width="fill_parent"
-    android:textSize="20sp"
-    android:layout_height="wrap_content"
-    android:paddingBottom="8dp"
-    android:id="@+id/listview_stop_times_header_text"
-    xmlns:android="http://schemas.android.com/apk/res/android" />
+<RelativeLayout
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:textSize="20sp"
+        android:layout_height="wrap_content"
+        android:paddingBottom="8dp"
+        android:id="@+id/listview_stop_times_header_text"/>
+
+</RelativeLayout>
+

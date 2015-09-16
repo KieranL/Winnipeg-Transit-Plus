@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
@@ -16,7 +16,7 @@
         android:id="@+id/route_name_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:width="205dp"
+        android:layout_toRightOf="@+id/route_number_text"
         android:height="24dp"
         android:textSize="16sp" />
 
@@ -24,18 +24,20 @@
         android:id="@+id/time_status_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/departure_time_text"
         android:width="35dp"
         android:gravity="right"
         android:height="24dp"
-        android:textSize="16sp" />/>
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/departure_time_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:width="60dp"
         android:gravity="right"
         android:height="24dp"
         android:textSize="16sp" />
 
-</LinearLayout>
+</RelativeLayout>

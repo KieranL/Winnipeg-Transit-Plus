@@ -1,4 +1,4 @@
-package winnipegbusbackend;
+package com.kieran.winnipegbusbackend;
 
 import android.util.Xml;
 
@@ -19,6 +19,7 @@ import java.util.List;
 public class FavouriteStopsList {
     static String FILES_DIR = HomeScreenActivity.filesDir + "/favourites.xml";
     public static List<FavouriteStop> favouritesList = new ArrayList<>();
+    public static boolean isLoadNeeded = true;
 
     public static void addToFavourites(FavouriteStop favouriteStop) {
         if(!contains(favouriteStop)) {
@@ -56,23 +57,27 @@ public class FavouriteStopsList {
     }
 
    public static void loadFavourites() {
-        BusUtilities utilities = new BusUtilities();
+       if(isLoadNeeded) {
+           BusUtilities utilities = new BusUtilities();
 
-        try {
-            Document XMLDocument = utilities.getXML(new FileInputStream(FILES_DIR));
-            NodeList stopNumbers = XMLDocument.getElementsByTagName(FavouritesNodeTags.STOP_NUMBER.tag);
-            NodeList stopNames = XMLDocument.getElementsByTagName(FavouritesNodeTags.STOP_NAME.tag);
-            NodeList timesUsed = XMLDocument.getElementsByTagName(FavouritesNodeTags.TIMES_USED.tag);
+           try {
+               Document XMLDocument = (Document)utilities.getXML(new FileInputStream(FILES_DIR)).getResult();
+               NodeList stopNumbers = XMLDocument.getElementsByTagName(FavouritesNodeTags.STOP_NUMBER.tag);
+               NodeList stopNames = XMLDocument.getElementsByTagName(FavouritesNodeTags.STOP_NAME.tag);
+               NodeList timesUsed = XMLDocument.getElementsByTagName(FavouritesNodeTags.TIMES_USED.tag);
 
-            for (int r = 0; r < stopNumbers.getLength(); r++)
-                addToFavourites(new FavouriteStop(stopNames.item(r).getFirstChild().getNodeValue(), Integer.parseInt(stopNumbers.item(r).getFirstChild().getNodeValue()), Integer.parseInt(timesUsed.item(r).getFirstChild().getNodeValue())));
+               for (int r = 0; r < stopNumbers.getLength(); r++)
+                   addToFavourites(new FavouriteStop(stopNames.item(r).getFirstChild().getNodeValue(), Integer.parseInt(stopNumbers.item(r).getFirstChild().getNodeValue()), Integer.parseInt(timesUsed.item(r).getFirstChild().getNodeValue())));
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+           } catch (Exception e) {
+               e.printStackTrace();
+           }
+           isLoadNeeded = false;
+       }
     }
 
     public static boolean saveFavouriteStops() {
+        isLoadNeeded = true;
         try {
             FileOutputStream fos;
             fos = new FileOutputStream(FILES_DIR);
@@ -109,7 +114,7 @@ public class FavouriteStopsList {
     }
 
     public static List<FavouriteStop> getFavouriteStopsSorted(final int sortTypeId) {
-        List<FavouriteStop> favouritesList = FavouriteStopsList.favouritesList;
+        loadFavourites();
         List<FavouriteStop> sortedFavouritesList = new ArrayList<>();
 
         for (FavouriteStop f : favouritesList)
@@ -118,15 +123,15 @@ public class FavouriteStopsList {
         Collections.sort(sortedFavouritesList, new Comparator<FavouriteStop>() {
             @Override
             public int compare(FavouriteStop stop1, FavouriteStop stop2) {
-                if(sortTypeId == FavouritesListSortTypeId.SAVED_INDEX.value)
+                if(sortTypeId == FavouritesListSortTypeIds.SAVED_INDEX.value)
                     return 0;
-                else if(sortTypeId == FavouritesListSortTypeId.STOP_NUBMER_ASC.value)
+                else if(sortTypeId == FavouritesListSortTypeIds.STOP_NUBMER_ASC.value)
                     return stop1.getStopNumber() - stop2.getStopNumber();
-                else if(sortTypeId == FavouritesListSortTypeId.STOP_NUBMER_DESC.value)
+                else if(sortTypeId == FavouritesListSortTypeIds.STOP_NUBMER_DESC.value)
                     return -(stop1.getStopNumber() - stop2.getStopNumber());
-                else if(sortTypeId == FavouritesListSortTypeId.FREQUENCY_ASC.value)
+                else if(sortTypeId == FavouritesListSortTypeIds.FREQUENCY_ASC.value)
                     return (stop1.getTimesUsed() - stop2.getTimesUsed());
-                else if(sortTypeId == FavouritesListSortTypeId.FREQUENCY_DESC.value)
+                else if(sortTypeId == FavouritesListSortTypeIds.FREQUENCY_DESC.value)
                     return -(stop1.getTimesUsed() - stop2.getTimesUsed());
                 return 0;
             }

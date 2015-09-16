@@ -6,18 +6,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.TextView;
+
+import com.kieran.winnipegbusbackend.FavouriteStop;
 
 import java.util.List;
 
-import winnipegbusbackend.FavouriteStop;
-
-public class FavouriteStopAdapter extends ArrayAdapter<FavouriteStop> {
+public class StopListAdapter extends ArrayAdapter<FavouriteStop> {
     Context context;
     int layoutResourceId;
     List<FavouriteStop> favouriteStops;
 
-    public FavouriteStopAdapter(Context context, int layoutResourceId, List<FavouriteStop> favouriteStops) {
+    public StopListAdapter(Context context, int layoutResourceId, List<FavouriteStop> favouriteStops) {
         super(context, layoutResourceId, favouriteStops);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
@@ -35,6 +36,8 @@ public class FavouriteStopAdapter extends ArrayAdapter<FavouriteStop> {
 
             holder = new StopHolder();
             holder.stopNumber = (TextView)row.findViewById(R.id.favourites_stop_number);
+            //holder.routeNumbers = (GridView)row.findViewById(R.id.gridview_stops_row_route_numbers);
+           // holder.routeNumbers.setAdapter(new GridviewAdapter(context));
             holder.stopName = (TextView)row.findViewById(R.id.favourites_stop_name);
 
             row.setTag(holder);
@@ -46,12 +49,12 @@ public class FavouriteStopAdapter extends ArrayAdapter<FavouriteStop> {
         holder.stopNumber.setText(Integer.toString(favouriteStop.getStopNumber()));
         holder.stopName.setText(favouriteStop.getStopName());
 
-
         return row;
     }
 
     static class StopHolder {
         TextView stopNumber;
         TextView stopName;
+        GridView routeNumbers;
     }
 }

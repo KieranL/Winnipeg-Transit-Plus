@@ -1,4 +1,4 @@
-package winnipegbusbackend;
+package com.kieran.winnipegbusbackend;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -7,14 +7,16 @@ public class ScheduledStop {
 
     private Node stopNode;
     private ScheduledStopInfo scheduledStopInfo;
+    private String routeName;
 
     private BusUtilities utilities = new BusUtilities();
 
-    public ScheduledStop(Node stopNode, int routeNumber, int stopNumber) {
+    public ScheduledStop(Node stopNode, int routeNumber, int stopNumber, String routeName) {
         scheduledStopInfo = new ScheduledStopInfo();
         scheduledStopInfo.setRouteNumber(routeNumber);
         scheduledStopInfo.setStopNumber(stopNumber);
         this.stopNode = stopNode;
+        this.routeName = routeName;
 
         loadVariantName();
         loadTimes();
@@ -46,7 +48,8 @@ public class ScheduledStop {
     }
 
     private void loadVariantName() {
-        scheduledStopInfo.setRouteVariantName(utilities.getValue(StopTimesNodeTags.VARIANT_NAME.tag, (Element) stopNode));
+        String name = utilities.getValue(StopTimesNodeTags.VARIANT_NAME.tag, (Element) stopNode);
+        scheduledStopInfo.setRouteVariantName((name != null) ? name : routeName);
     }
 
     public void loadBusInfo() {
