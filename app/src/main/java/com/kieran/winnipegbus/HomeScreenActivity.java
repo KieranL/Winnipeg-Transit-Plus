@@ -37,7 +37,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         button = (Button) findViewById(R.id.button);
 
         searchField = (EditText) findViewById(R.id.search_field);
-        routeNumberField = (EditText) findViewById(R.id.route_number_field);
+        routeNumberField = (EditText) findViewById(R.id.route_filter_field);
 
         updateGoButtonStatus();
         searchField.addTextChangedListener(watcher);
@@ -55,7 +55,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         button = (Button) findViewById(R.id.button);
 
         searchField = (EditText) findViewById(R.id.search_field);
-        routeNumberField = (EditText) findViewById(R.id.route_number_field);
+        routeNumberField = (EditText) findViewById(R.id.route_filter_field);
 
         watcher = new TextWatcher() {
             @Override
@@ -99,7 +99,7 @@ public class HomeScreenActivity extends AppCompatActivity {
 
     private void updateGoButtonStatus() {
         String routeNumbers = routeNumberField.getText().toString();
-        boolean isRouteFilterValid = (routeNumbers.length() > 0 && new BusUtilities().getIntegerArrayFromString(routeNumbers) != null) || routeNumbers.length() == 0;
+        boolean isRouteFilterValid = (routeNumbers.length() > 0 && BusUtilities.getIntegerArrayFromString(routeNumbers) != null) || routeNumbers.length() == 0;
         button.setEnabled(isRouteFilterValid && searchField.getText().length() > 0);
     }
 
@@ -134,10 +134,10 @@ public class HomeScreenActivity extends AppCompatActivity {
 
         try{
             intent = new Intent(this, StopTimesActivity.class);
-            int stopNumber = Integer.parseInt(searchField.getText().toString());
+            int number = Integer.parseInt(searchField.getText().toString().trim());
 
-            if(stopNumber >= 10000) {
-                intent.putExtra(STOP_NUMBER, stopNumber);
+            if(number >= 10000) {
+                intent.putExtra(STOP_NUMBER, number);
                 intent.putExtra(ROUTE_NUMBER, routeNumberFilters);
                 startActivity(intent);
             }else {

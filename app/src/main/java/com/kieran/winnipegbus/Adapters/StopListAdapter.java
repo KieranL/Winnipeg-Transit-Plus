@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus;
+package com.kieran.winnipegbus.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbusbackend.FavouriteStop;
 
 import java.util.List;

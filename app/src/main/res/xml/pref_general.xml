@@ -5,4 +5,19 @@
         android:defaultValue="false"
         android:widgetLayout="@layout/checkbox"/>
 
+    <CheckBoxPreference
+        android:key="pref_use_24hr_time"
+        android:title="@string/pref_title_clock_setting"
+        android:defaultValue="false"
+        android:widgetLayout="@layout/checkbox"/>
+
+
+    <ListPreference
+        android:key="pref_schedule_load_interval"
+        android:title="@string/pref_title_schedule_load_interval"
+        android:entries="@array/pref_bus_schedule_result_intervals"
+        android:entryValues="@array/pref_bus_schedule_result_intervals_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
 </PreferenceScreen>

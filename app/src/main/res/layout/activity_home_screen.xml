@@ -16,7 +16,7 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/route_number_field"
+        android:layout_alignBottom="@+id/route_filter_field"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
@@ -24,7 +24,7 @@
         android:text="@string/button_send" />
 
     <EditText
-        android:id="@+id/route_number_field"
+        android:id="@+id/route_filter_field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"

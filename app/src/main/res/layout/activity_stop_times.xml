@@ -12,6 +12,7 @@
         android:nestedScrollingEnabled="false"
         android:divider="@null"
         android:layout_alignParentTop="true"
+        android:clickable="false"
         android:layout_above="@+id/stopTimesAdView"/>
 
     <com.google.android.gms.ads.AdView

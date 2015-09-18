@@ -2,42 +2,38 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingBottom="dp"
     android:orientation="horizontal">
 
     <TextView
         android:id="@+id/route_number_text"
-        android:layout_width="wrap_content"
+        android:layout_width="40dp"
         android:layout_height="wrap_content"
-        android:width="40dp"
-        android:height="24dp"
-        android:textSize="16sp" />
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/route_name_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/route_number_text"
-        android:height="24dp"
-        android:textSize="16sp" />
+        android:layout_toLeftOf="@+id/time_status_text"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/time_status_text"
-        android:layout_width="wrap_content"
+        android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/departure_time_text"
-        android:width="35dp"
         android:gravity="right"
-        android:height="24dp"
-        android:textSize="16sp" />
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/departure_time_text"
-        android:layout_width="wrap_content"
+        android:layout_width="64dp"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:width="60dp"
         android:gravity="right"
-        android:height="24dp"
-        android:textSize="16sp" />
+        android:textSize="18sp"
+        android:layout_marginRight="8dp"/>
 
 </RelativeLayout>

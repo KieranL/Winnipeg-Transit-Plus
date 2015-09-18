@@ -13,6 +13,7 @@ import android.widget.ListView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.kieran.winnipegbus.Adapters.StopListAdapter;
 import com.kieran.winnipegbusbackend.FavouriteStop;
 import com.kieran.winnipegbusbackend.FavouriteStopsList;
 
@@ -29,7 +30,6 @@ public class FavouritesActivity extends AppCompatActivity {
     public void onRestart() {
         super.onRestart();
         initializeAdsIfEnabled();
-        initialize();
         favouriteStops.clear();
         getFavouritesList();
         adapter.notifyDataSetChanged();
@@ -46,20 +46,13 @@ public class FavouritesActivity extends AppCompatActivity {
         adView = (AdView) findViewById(R.id.favouritesAdView);
         initializeAdsIfEnabled();
 
-        FavouriteStopsList.loadFavourites();
         favouriteStops = new ArrayList<>();
 
         ListView listView = (ListView) findViewById(R.id.stops_listView);
 
         getFavouritesList();
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                FavouriteStop stop = (FavouriteStop)parent.getItemAtPosition(position);
-                openStopTimes(stop.getStopNumber());
-            }
-        });
+        createListViewListener(listView);
 
         adapter = new StopListAdapter(this, R.layout.listview_stops_row, favouriteStops);
         listView.setAdapter(adapter);
@@ -72,6 +65,16 @@ public class FavouritesActivity extends AppCompatActivity {
         } else {
             adView.setVisibility(View.GONE);
         }
+    }
+
+    private void createListViewListener(ListView listView) {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                FavouriteStop stop = (FavouriteStop)parent.getItemAtPosition(position);
+                openStopTimes(stop.getStopNumber());
+            }
+        });
     }
 
     private boolean areAdsDisabled() {
@@ -92,6 +95,7 @@ public class FavouritesActivity extends AppCompatActivity {
     }
 
     private void getFavouritesList() {
+        FavouriteStopsList.loadFavourites();
         getSortPreference();
         favouriteStops.addAll(FavouriteStopsList.getFavouriteStopsSorted(sortTypeId));
     }

@@ -3,6 +3,8 @@ package com.kieran.winnipegbusbackend;
 import android.util.Xml;
 
 import com.kieran.winnipegbus.HomeScreenActivity;
+import com.kieran.winnipegbus.enums.FavouritesListSortTypeIds;
+import com.kieran.winnipegbus.enums.FavouritesNodeTags;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -58,10 +60,8 @@ public class FavouriteStopsList {
 
    public static void loadFavourites() {
        if(isLoadNeeded) {
-           BusUtilities utilities = new BusUtilities();
-
            try {
-               Document XMLDocument = (Document)utilities.getXML(new FileInputStream(FILES_DIR)).getResult();
+               Document XMLDocument = (Document)BusUtilities.getXML(new FileInputStream(FILES_DIR)).getResult();
                NodeList stopNumbers = XMLDocument.getElementsByTagName(FavouritesNodeTags.STOP_NUMBER.tag);
                NodeList stopNames = XMLDocument.getElementsByTagName(FavouritesNodeTags.STOP_NAME.tag);
                NodeList timesUsed = XMLDocument.getElementsByTagName(FavouritesNodeTags.TIMES_USED.tag);

@@ -1,6 +1,8 @@
 package com.kieran.winnipegbusbackend;
 
 
+import com.kieran.winnipegbus.enums.StopTimesNodeTags;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -16,7 +18,6 @@ public class Stop {
     private int stopNumber;
     private List<RouteSchedule> routeList = new ArrayList<>();
     private List<Integer> routeNumbers = new ArrayList<>();
-    private BusUtilities utilities = new BusUtilities();
 
     public Stop(Document doc, int stopNumber) {
         XMLDocument = doc;
@@ -32,7 +33,7 @@ public class Stop {
     }
 
     private void loadStopNumber() {
-        stopNumber = Integer.parseInt(utilities.getValue(StopTimesNodeTags.STOP_NUMBER.tag, (Element) XMLDocument.getElementsByTagName(StopTimesNodeTags.STOP.tag).item(0)));
+        stopNumber = Integer.parseInt(BusUtilities.getValue(StopTimesNodeTags.STOP_NUMBER.tag, (Element) XMLDocument.getElementsByTagName(StopTimesNodeTags.STOP.tag).item(0)));
     }
 
     public void loadRoutes() {
@@ -50,7 +51,7 @@ public class Stop {
     }
 
     public void loadStopName() {
-        stopName = utilities.getValue(StopTimesNodeTags.STOP_NAME.tag, (Element) XMLDocument.getElementsByTagName(StopTimesNodeTags.STOP.tag).item(0));
+        stopName = BusUtilities.getValue(StopTimesNodeTags.STOP_NAME.tag, (Element) XMLDocument.getElementsByTagName(StopTimesNodeTags.STOP.tag).item(0));
     }
 
     public String getName() {
@@ -85,7 +86,7 @@ public class Stop {
         Collections.sort(scheduledStops, new Comparator<ScheduledStop>() {
             @Override
             public int compare(ScheduledStop stop1, ScheduledStop stop2) {
-                return stop1.getEstimatedDepartureTime().date.compareTo(stop2.getEstimatedDepartureTime().date);
+                return stop1.getEstimatedDepartureTime().getDate().compareTo(stop2.getEstimatedDepartureTime().getDate());
             }
         });
 

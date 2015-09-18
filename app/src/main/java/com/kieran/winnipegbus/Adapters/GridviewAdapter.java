@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus;
+package com.kieran.winnipegbus.Adapters;
 
 import android.content.Context;
 import android.graphics.Color;

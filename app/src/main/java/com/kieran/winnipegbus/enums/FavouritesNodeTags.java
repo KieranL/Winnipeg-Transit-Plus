@@ -1,4 +1,4 @@
-package com.kieran.winnipegbusbackend;
+package com.kieran.winnipegbus.enums;
 
 public enum FavouritesNodeTags {
     FAVOURITE_STOPS("favouriteStops"),

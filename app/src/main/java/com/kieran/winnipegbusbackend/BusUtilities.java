@@ -1,6 +1,8 @@
 package com.kieran.winnipegbusbackend;
 
 import com.kieran.winnipegbus.SearchQuery;
+import com.kieran.winnipegbus.enums.CoverageTypes;
+import com.kieran.winnipegbus.enums.SearchQueryTypeIds;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -20,8 +22,10 @@ public class BusUtilities {
     private final static String API_URL = "http://api.winnipegtransit.com/v2/";
     private final static String USAGE = "usage=short&api-key=";
     private final static String DATE_FORMAT = "yyyy-MM-dd-HH:mm:ss";
+    private final static String ROUTE_PARAMETER = "route=";
+    private final static String END_TIME_PARAMETER = "end=";
 
-    public StopTime convertToDate(String s) {
+    public static StopTime convertToDate(String s) {
         SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
 
         try {
@@ -32,7 +36,7 @@ public class BusUtilities {
         }
     }
 
-    public String getValue(String tag, Element element) {
+    public static String getValue(String tag, Element element) {
         try {
             Node node = element.getElementsByTagName(tag).item(0).getFirstChild();
             return node.getNodeValue();
@@ -41,7 +45,7 @@ public class BusUtilities {
         }
     }
 
-    public LoadResult getXML(String path) {
+    public static LoadResult getXML(String path) {
         try {
             return getXML(new URL(path).openStream());
         } catch (IOException e) {
@@ -49,7 +53,7 @@ public class BusUtilities {
         }
     }
 
-    public LoadResult getXML(InputStream inputStream)  {
+    public static LoadResult getXML(InputStream inputStream)  {
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
@@ -62,7 +66,7 @@ public class BusUtilities {
         }
     }
 
-    public String generateStopNumberURL(int s, int[] routeNumbers) {
+    public static String generateStopNumberURL(int s, int[] routeNumbers, StopTime endTime) {
         String routeFilter = "";
 
         if (routeNumbers != null) {
@@ -72,21 +76,21 @@ public class BusUtilities {
                 if (i < routeNumbers.length - 1)
                     routes += ",";
             }
-            routeFilter = ("route=" + routes + "&");
+            routeFilter = (ROUTE_PARAMETER + routes + "&");
         }
-        return API_URL + "stops/" + s + "/schedule?"+ routeFilter + USAGE + API_KEY;
+        return API_URL + "stops/" + s + "/schedule?" + END_TIME_PARAMETER + endTime + "&"+ routeFilter + USAGE + API_KEY;
     }
 
-    public SearchQuery generateSearchQuery(String search) {
+    public static SearchQuery generateSearchQuery(String search) {
         try{
             int routeNumber = Integer.parseInt(search);
-            return new SearchQuery(search, API_URL + "stops?route=" + routeNumber + "&api-key=" + API_KEY, SearchQueryTypeIds.ROUTE_NUMBER.searchQueryTypeId);
+            return new SearchQuery(search, API_URL + "stops?" + ROUTE_PARAMETER + routeNumber + "&api-key=" + API_KEY, SearchQueryTypeIds.ROUTE_NUMBER.searchQueryTypeId);
         }catch (Exception e) {
             return new SearchQuery(search, API_URL + "stops:" + createURLFriendlyString(search) + "?api-key=" + API_KEY, SearchQueryTypeIds.GENERAL.searchQueryTypeId);
         }
     }
 
-    private String createURLFriendlyString(String s) {
+    private static String createURLFriendlyString(String s) {
         String[] words = s.split(" ");
         String urlFriendlyString = words[0];
 
@@ -96,7 +100,7 @@ public class BusUtilities {
         return urlFriendlyString;
     }
 
-    public int[] getIntegerArrayFromString(String s) {
+    public static int[] getIntegerArrayFromString(String s) {
         int[] routeNumbers;
 
         try {
@@ -112,7 +116,7 @@ public class BusUtilities {
         return routeNumbers;
     }
 
-    public int getCoverageTypeId(String coverageType) {
+    public static int getCoverageTypeId(String coverageType) {
         if(coverageType.equals(CoverageTypes.EXPRESS.typeName))
             return CoverageTypes.EXPRESS.typeId;
         else if(coverageType.equals(CoverageTypes.RAPID_TRANSIT.typeName))

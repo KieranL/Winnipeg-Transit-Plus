@@ -11,11 +11,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.kieran.winnipegbus.Adapters.StopListAdapter;
+import com.kieran.winnipegbus.enums.SearchQueryTypeIds;
+import com.kieran.winnipegbus.enums.StopTimesNodeTags;
 import com.kieran.winnipegbusbackend.BusUtilities;
 import com.kieran.winnipegbusbackend.FavouriteStop;
 import com.kieran.winnipegbusbackend.LoadResult;
-import com.kieran.winnipegbusbackend.SearchQueryTypeIds;
-import com.kieran.winnipegbusbackend.StopTimesNodeTags;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -27,7 +28,6 @@ import java.util.List;
 
 
 public class SearchResultsActivity extends AppCompatActivity {
-    private BusUtilities utilities = new BusUtilities();
     private List<FavouriteStop> searchResultsList = new ArrayList<>();
     private StopListAdapter adapter;
     private SearchQuery searchQuery;
@@ -52,7 +52,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         String s = getIntent().getStringExtra(HomeScreenActivity.SEARCH_QUERY).trim();
 
-        searchQuery = utilities.generateSearchQuery(s);
+        searchQuery = BusUtilities.generateSearchQuery(s);
 
         updateTitle();
 
@@ -98,7 +98,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     private class LoadSearchResults extends AsyncTask<String, Void, LoadResult> {
         @Override
         protected LoadResult doInBackground(String... urls) {
-                return utilities.getXML(urls[0]);
+                return BusUtilities.getXML(urls[0]);
         }
 
         @Override
@@ -108,7 +108,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                 if(stops.getLength() > 0) {
                     for (int s = 0; s < stops.getLength(); s++) {
                         Node stop = stops.item(s);
-                        searchResultsList.add(new FavouriteStop(utilities.getValue(StopTimesNodeTags.STOP_NAME.tag, (Element) stop), Integer.parseInt(utilities.getValue(StopTimesNodeTags.STOP_NUMBER.tag, (Element) stop))));
+                        searchResultsList.add(new FavouriteStop(BusUtilities.getValue(StopTimesNodeTags.STOP_NAME.tag, (Element) stop), Integer.parseInt(BusUtilities.getValue(StopTimesNodeTags.STOP_NUMBER.tag, (Element) stop))));
                     }
 
                     adapter.notifyDataSetChanged();

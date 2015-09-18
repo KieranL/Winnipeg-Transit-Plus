@@ -1,9 +1,11 @@
 <resources>
     <string name="title_activity_settings">Settings</string>
 
-    <string name="pref_title_favourite_stops">Favourite Stops</string>
-    <string name="pref_title_favourite_stops_sort">Sort type</string>
-
     <string name="pref_header_general">General</string>
     <string name="pref_title_disable_ads">Disable Ads</string>
+    <string name="pref_title_schedule_load_interval">Bus Schedule Results Interval</string>
+
+    <string name="pref_title_favourite_stops">Favourite Stops</string>
+    <string name="pref_title_favourite_stops_sort">Sort type</string>
+    <string name="pref_title_clock_setting">Use 24 Hour Time</string>
 </resources>

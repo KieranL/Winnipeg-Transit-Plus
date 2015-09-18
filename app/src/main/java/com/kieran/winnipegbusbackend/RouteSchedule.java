@@ -1,5 +1,7 @@
 package com.kieran.winnipegbusbackend;
 
+import com.kieran.winnipegbus.enums.StopTimesNodeTags;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -9,31 +11,28 @@ import java.util.List;
 public class RouteSchedule {
     private Node routeNode;
     private int stopNumber;
-    private BusUtilities utilities;
     private RouteInfo routeInfo;
 
     public RouteSchedule(Node node, int stopNumber) {
         routeNode = node;
         this.stopNumber = stopNumber;
 
-        utilities = new BusUtilities();
         routeInfo = new RouteInfo();
 
         loadRouteName();
         loadRouteNumber();
-        loadCoverageType();
     }
 
     private void loadCoverageType() {
-        routeInfo.setCoverageType(utilities.getCoverageTypeId(utilities.getValue(StopTimesNodeTags.ROUTE_COVERAGE.tag, (Element) routeNode)));
+        routeInfo.setCoverageType(BusUtilities.getCoverageTypeId(BusUtilities.getValue(StopTimesNodeTags.ROUTE_COVERAGE.tag, (Element) routeNode)));
     }
 
     private void loadRouteNumber() {
-        routeInfo.setRouteNumber(Integer.parseInt(utilities.getValue(StopTimesNodeTags.ROUTE_NUMBER.tag, (Element) routeNode)));
+        routeInfo.setRouteNumber(Integer.parseInt(BusUtilities.getValue(StopTimesNodeTags.ROUTE_NUMBER.tag, (Element) routeNode)));
     }
 
     private void loadRouteName() {
-        routeInfo.setRouteName(utilities.getValue(StopTimesNodeTags.ROUTE_NAME.tag, (Element) routeNode));
+        routeInfo.setRouteName(BusUtilities.getValue(StopTimesNodeTags.ROUTE_NAME.tag, (Element) routeNode));
     }
 
     public void loadScheduledStops() {
