@@ -2,12 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="dp"
+    android:paddingBottom="4dp"
     android:orientation="horizontal">
 
     <TextView
         android:id="@+id/route_number_text"
-        android:layout_width="40dp"
+        android:layout_width="40sp"
         android:layout_height="wrap_content"
         android:textSize="18sp" />
 
@@ -21,7 +21,7 @@
 
     <TextView
         android:id="@+id/time_status_text"
-        android:layout_width="40dp"
+        android:layout_width="40sp"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/departure_time_text"
         android:gravity="right"
@@ -29,7 +29,7 @@
 
     <TextView
         android:id="@+id/departure_time_text"
-        android:layout_width="64dp"
+        android:layout_width="64sp"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:gravity="right"

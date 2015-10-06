@@ -11,23 +11,25 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.kieran.winnipegbus.R;
-import com.kieran.winnipegbusbackend.ScheduledStopInfo;
+import com.kieran.winnipegbusbackend.ScheduledStop;
 import com.kieran.winnipegbusbackend.StopTime;
 
 import java.util.Date;
 import java.util.List;
 
-public class StopTimeAdapter extends ArrayAdapter<ScheduledStopInfo>{
+public class StopTimeAdapter extends ArrayAdapter<ScheduledStop>{
     Context context;
     int layoutResourceId;
     boolean use24hrTime;
-    List<ScheduledStopInfo> scheduledStopInfos;
+    LayoutInflater inflater;
+    List<ScheduledStop> scheduledStops;
 
-    public StopTimeAdapter(Context context, int layoutResourceId, List<ScheduledStopInfo> scheduledStopInfos) {
-        super(context, layoutResourceId, scheduledStopInfos);
+    public StopTimeAdapter(Context context, int layoutResourceId, List<ScheduledStop> scheduledStops) {
+        super(context, layoutResourceId, scheduledStops);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
-        this.scheduledStopInfos = scheduledStopInfos;
+        this.scheduledStops = scheduledStops;
+        inflater = ((Activity)context).getLayoutInflater();
 
         getTimeSetting();
     }
@@ -38,12 +40,10 @@ public class StopTimeAdapter extends ArrayAdapter<ScheduledStopInfo>{
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View row = convertView;
+    public View getView(int position, View row, ViewGroup parent) {
         StopTimeHolder holder;
 
         if(row == null) {
-            LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
 
             holder = new StopTimeHolder();
@@ -57,11 +57,11 @@ public class StopTimeAdapter extends ArrayAdapter<ScheduledStopInfo>{
             holder = (StopTimeHolder)row.getTag();
         }
 
-        ScheduledStopInfo scheduledStopInfo = scheduledStopInfos.get(position);
-        holder.routeNumber.setText(Integer.toString(scheduledStopInfo.getRouteNumber()));
-        holder.routeVariantName.setText(scheduledStopInfo.getRouteVariantName());
-        holder.timeStatus.setText(scheduledStopInfo.getTimeStatus());
-        holder.departureTime.setText(scheduledStopInfo.getEstimatedDepartureTime().toFormattedString(new StopTime(new Date()), use24hrTime));
+        ScheduledStop scheduledStop = scheduledStops.get(position);
+        holder.routeNumber.setText(Integer.toString(scheduledStop.getRouteNumber()));
+        holder.routeVariantName.setText(scheduledStop.getRouteVariantName());
+        holder.timeStatus.setText(scheduledStop.getTimeStatus());
+        holder.departureTime.setText(scheduledStop.getEstimatedDepartureTime().toFormattedString(new StopTime(new Date()), use24hrTime));
 
         return row;
     }

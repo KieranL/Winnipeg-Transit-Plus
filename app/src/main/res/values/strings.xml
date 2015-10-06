@@ -11,13 +11,17 @@
     <string name="add_widget">Add Widget</string>
     <string name="configure">Enter a stop number</string>
     <string name="banner_ad_home_unit_id">ca-app-pub-1189975520647633/7696260309</string>
-    <string name="banner_ad_favourites_unit_id">ca-app-pub-1189975520647633/9812121904</string>
+    <string name="banner_ad_stops_list_unit_id">ca-app-pub-1189975520647633/9812121904</string>
     <string name="banner_ad_stop_times_unit_id">ca-app-pub-1189975520647633/1321335907</string>
     <string name="test_device_id_gs5">F1E47669A01E4AA87B9B9AAD04E84D0C</string>
     <string name="refresh_stop_times_button">Refresh</string>
     <string name="add_to_favourites_button">Add to Favourites</string>
     <string name="title_activity_search_results">Search Results</string>
     <string name="no_results_found">No results found.</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="filter_button">Filter</string>
+    <string name="filter_dialog_title">Select routes to filter</string>
+    <string name="wait_for_load">Please wait for data to load</string>
 
 
 </resources>

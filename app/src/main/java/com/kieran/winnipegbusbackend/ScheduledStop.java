@@ -1,6 +1,6 @@
 package com.kieran.winnipegbusbackend;
 
-import com.kieran.winnipegbus.enums.StopTimesNodeTags;
+import com.kieran.winnipegbusbackend.enums.StopTimesNodeTags;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -8,86 +8,101 @@ import org.w3c.dom.Node;
 public class ScheduledStop {
 
     private Node stopNode;
-    private ScheduledStopInfo scheduledStopInfo;
+    private String routeVariantName;
+    private StopTime estimatedArrivalTime;
+    private StopTime estimatedDepartureTime;
+    private StopTime scheduledArrivalTime;
+    private StopTime scheduledDepartureTime;
+    private int routeNumber;
+    private boolean hasBikeRack;
+    private boolean hasEasyAccess;
+    private boolean hasArrivalTime;
 
-    public ScheduledStop(Node stopNode, int routeNumber, int stopNumber, String routeName) {
-        scheduledStopInfo = new ScheduledStopInfo();
-        scheduledStopInfo.setRouteNumber(routeNumber);
-        scheduledStopInfo.setStopNumber(stopNumber);
+    public ScheduledStop(Node stopNode, int routeNumber, String routeName) {
+        this.routeNumber = routeNumber;
         this.stopNode = stopNode;
-        scheduledStopInfo.setRouteVariantName(routeName);
+        this.routeVariantName = routeName;
 
         loadVariantName();
         loadDepartureTimes();
-        scheduledStopInfo.setTimeStatus(getTimeStatus());
+    }
+
+    public void loadAdditionalInfo() {
+        loadArrivalTimes();
+        loadBusInfo();
     }
 
     public void loadArrivalTimes() {
         Node arrivalStopNode = ((Element) stopNode).getElementsByTagName(StopTimesNodeTags.ARRIVAL.tag).item(0);
         try {
-            scheduledStopInfo.setEstimatedArrivalTime(BusUtilities.convertToDate(BusUtilities.getValue(StopTimesNodeTags.ESTIMATED.tag, (Element) arrivalStopNode)));
-            scheduledStopInfo.setScheduledArrivalTime(BusUtilities.convertToDate(BusUtilities.getValue(StopTimesNodeTags.SCHEDULED.tag, (Element) arrivalStopNode)));
-            scheduledStopInfo.setHasArrivalTime(true);
+            estimatedArrivalTime = BusUtilities.convertToDate(BusUtilities.getValue(StopTimesNodeTags.ESTIMATED.tag, arrivalStopNode));
+            scheduledArrivalTime = BusUtilities.convertToDate(BusUtilities.getValue(StopTimesNodeTags.SCHEDULED.tag, arrivalStopNode));
+            hasArrivalTime = true;
         } catch (Exception e) {
-            scheduledStopInfo.setHasArrivalTime(false);
+            hasArrivalTime = false;
         }
     }
 
     private void loadDepartureTimes() {
         Node departureStopNode = ((Element) stopNode).getElementsByTagName(StopTimesNodeTags.DEPARTURE.tag).item(0);
 
-        scheduledStopInfo.setEstimatedDepartureTime(BusUtilities.convertToDate(BusUtilities.getValue(StopTimesNodeTags.ESTIMATED.tag, (Element) departureStopNode)));
-        scheduledStopInfo.setScheduledDepartureTime(BusUtilities.convertToDate(BusUtilities.getValue(StopTimesNodeTags.SCHEDULED.tag, (Element) departureStopNode)));
+        estimatedDepartureTime = BusUtilities.convertToDate(BusUtilities.getValue(StopTimesNodeTags.ESTIMATED.tag, departureStopNode));
+        scheduledDepartureTime = BusUtilities.convertToDate(BusUtilities.getValue(StopTimesNodeTags.SCHEDULED.tag, departureStopNode));
     }
 
     private void loadVariantName() {
-        String name = BusUtilities.getValue(StopTimesNodeTags.VARIANT_NAME.tag, (Element) stopNode);
+        String name = BusUtilities.getValue(StopTimesNodeTags.VARIANT_NAME.tag, stopNode);
         if(name != null)
-            scheduledStopInfo.setRouteVariantName(name);
+            routeVariantName = name;
     }
 
     public void loadBusInfo() {
-        scheduledStopInfo.setHasEasyAccess(Boolean.parseBoolean(BusUtilities.getValue(StopTimesNodeTags.EASY_ACCESS.tag, (Element) stopNode)));
-        scheduledStopInfo.setHasBikeRack(Boolean.parseBoolean(BusUtilities.getValue(StopTimesNodeTags.BIKE_RACK.tag, (Element) stopNode)));
-    }
-
-    public String getRouteVariantName() {
-        return scheduledStopInfo.getRouteVariantName();
-    }
-
-    public StopTime getScheduledArrivalTime() {
-        return scheduledStopInfo.getScheduledArrivalTime();
-    }
-
-    public StopTime getScheduledDepartureTime() {
-        return scheduledStopInfo.getScheduledDepartureTime();
-    }
-
-    public StopTime getEstimatedArrivalTime() {
-        return scheduledStopInfo.getEstimatedArrivalTime();
-    }
-
-    public StopTime getEstimatedDepartureTime() {
-        return scheduledStopInfo.getEstimatedDepartureTime();
-    }
-
-    public int getRouteNumber() {
-        return scheduledStopInfo.getRouteNumber();
+        hasEasyAccess = Boolean.parseBoolean(BusUtilities.getValue(StopTimesNodeTags.EASY_ACCESS.tag, stopNode));
+        hasBikeRack = Boolean.parseBoolean(BusUtilities.getValue(StopTimesNodeTags.BIKE_RACK.tag, stopNode));
     }
 
     public int getTimeBehindInMinutes() {
-        return StopTime.timeBehindMinutes(scheduledStopInfo.getEstimatedDepartureTime(), scheduledStopInfo.getScheduledDepartureTime());
+        return StopTime.timeBehindMinutes(estimatedDepartureTime, scheduledDepartureTime);
     }
 
     public String getTimeStatus() {
-        return StopTime.getTimeStatus(scheduledStopInfo.getEstimatedDepartureTime(), scheduledStopInfo.getScheduledDepartureTime());
+        return StopTime.getTimeStatus(estimatedDepartureTime, scheduledDepartureTime);
+    }
+
+
+    public String getRouteVariantName() {
+        return routeVariantName;
+    }
+
+    public StopTime getEstimatedArrivalTime() {
+        return estimatedArrivalTime;
+    }
+
+    public StopTime getEstimatedDepartureTime() {
+        return estimatedDepartureTime;
+    }
+
+    public StopTime getScheduledArrivalTime() {
+        return scheduledArrivalTime;
+    }
+
+    public StopTime getScheduledDepartureTime() {
+        return scheduledDepartureTime;
+    }
+
+    public int getRouteNumber() {
+        return routeNumber;
+    }
+
+    public boolean hasBikeRack() {
+        return hasBikeRack;
+    }
+
+    public boolean hasEasyAccess() {
+        return hasEasyAccess;
     }
 
     public boolean hasArrivalTime() {
-        return scheduledStopInfo.hasArrivalTime();
-    }
-
-    public ScheduledStopInfo getScheduledStopInfo() {
-        return scheduledStopInfo;
+        return hasArrivalTime;
     }
 }

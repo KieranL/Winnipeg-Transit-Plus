@@ -3,8 +3,8 @@ package com.kieran.winnipegbusbackend;
 import android.util.Xml;
 
 import com.kieran.winnipegbus.HomeScreenActivity;
-import com.kieran.winnipegbus.enums.FavouritesListSortTypeIds;
-import com.kieran.winnipegbus.enums.FavouritesNodeTags;
+import com.kieran.winnipegbusbackend.enums.FavouritesListSortTypeIds;
+import com.kieran.winnipegbusbackend.enums.FavouritesNodeTags;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -22,6 +22,7 @@ public class FavouriteStopsList {
     static String FILES_DIR = HomeScreenActivity.filesDir + "/favourites.xml";
     public static List<FavouriteStop> favouritesList = new ArrayList<>();
     public static boolean isLoadNeeded = true;
+    private final static String XMLFeature = "http://xmlpull.org/v1/doc/features.html#indent-output";
 
     public static void addToFavourites(FavouriteStop favouriteStop) {
         if(!contains(favouriteStop)) {
@@ -58,7 +59,7 @@ public class FavouriteStopsList {
         return null;
     }
 
-   public static void loadFavourites() {
+   public static boolean loadFavourites() {
        if(isLoadNeeded) {
            try {
                Document XMLDocument = (Document)BusUtilities.getXML(new FileInputStream(FILES_DIR)).getResult();
@@ -69,11 +70,12 @@ public class FavouriteStopsList {
                for (int r = 0; r < stopNumbers.getLength(); r++)
                    addToFavourites(new FavouriteStop(stopNames.item(r).getFirstChild().getNodeValue(), Integer.parseInt(stopNumbers.item(r).getFirstChild().getNodeValue()), Integer.parseInt(timesUsed.item(r).getFirstChild().getNodeValue())));
 
+               isLoadNeeded = false;
            } catch (Exception e) {
-               e.printStackTrace();
+               isLoadNeeded = true;
            }
-           isLoadNeeded = false;
        }
+        return isLoadNeeded;
     }
 
     public static boolean saveFavouriteStops() {
@@ -85,7 +87,7 @@ public class FavouriteStopsList {
             serializer.setOutput(fos, "UTF-8");
             serializer.startTag("", FavouritesNodeTags.FAVOURITE_STOPS.tag);
 
-            serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
+            serializer.setFeature(XMLFeature, true);
 
             for (int i = 0; i < favouritesList.size(); i++) {
                 serializer.startTag("", FavouritesNodeTags.FAVOURITE_STOP.tag);
@@ -125,9 +127,9 @@ public class FavouriteStopsList {
             public int compare(FavouriteStop stop1, FavouriteStop stop2) {
                 if(sortTypeId == FavouritesListSortTypeIds.SAVED_INDEX.value)
                     return 0;
-                else if(sortTypeId == FavouritesListSortTypeIds.STOP_NUBMER_ASC.value)
+                else if(sortTypeId == FavouritesListSortTypeIds.STOP_NUMBER_ASC.value)
                     return stop1.getStopNumber() - stop2.getStopNumber();
-                else if(sortTypeId == FavouritesListSortTypeIds.STOP_NUBMER_DESC.value)
+                else if(sortTypeId == FavouritesListSortTypeIds.STOP_NUMBER_DESC.value)
                     return -(stop1.getStopNumber() - stop2.getStopNumber());
                 else if(sortTypeId == FavouritesListSortTypeIds.FREQUENCY_ASC.value)
                     return (stop1.getTimesUsed() - stop2.getTimesUsed());
@@ -138,5 +140,9 @@ public class FavouriteStopsList {
         });
 
         return sortedFavouritesList;
+    }
+
+    public static int length() {
+        return favouritesList.size();
     }
 }

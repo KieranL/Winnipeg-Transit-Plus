@@ -1,10 +1,9 @@
 package com.kieran.winnipegbusbackend;
 
 
-import com.kieran.winnipegbus.enums.StopTimesNodeTags;
+import com.kieran.winnipegbusbackend.enums.StopTimesNodeTags;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
@@ -17,41 +16,24 @@ public class Stop {
     private String stopName;
     private int stopNumber;
     private List<RouteSchedule> routeList = new ArrayList<>();
-    private List<Integer> routeNumbers = new ArrayList<>();
 
-    public Stop(Document doc, int stopNumber) {
-        XMLDocument = doc;
+    public Stop(Document document, int stopNumber) {
+        XMLDocument = document;
         this.stopNumber = stopNumber;
         loadStopName();
     }
 
-    private void loadRouteNumbers() {
-        for (RouteSchedule r : routeList)
-            routeNumbers.add(r.getRouteNumber());
-
-        Collections.sort(routeNumbers);
-    }
-
-    private void loadStopNumber() {
-        stopNumber = Integer.parseInt(BusUtilities.getValue(StopTimesNodeTags.STOP_NUMBER.tag, (Element) XMLDocument.getElementsByTagName(StopTimesNodeTags.STOP.tag).item(0)));
-    }
-
-    public void loadRoutes() {
+    public Stop loadRoutes() {
         NodeList routes = XMLDocument.getElementsByTagName(StopTimesNodeTags.ROUTES.tag);
 
         for (int r = 0; r < routes.getLength(); r++)
                 routeList.add(new RouteSchedule(routes.item(r), stopNumber));
 
-        loadRouteNumbers();
-    }
-
-    public void loadScheduledStops() {
-        for(RouteSchedule routeSchedule : routeList)
-            routeSchedule.loadScheduledStops();
+        return this;
     }
 
     public void loadStopName() {
-        stopName = BusUtilities.getValue(StopTimesNodeTags.STOP_NAME.tag, (Element) XMLDocument.getElementsByTagName(StopTimesNodeTags.STOP.tag).item(0));
+        stopName = BusUtilities.getValue(StopTimesNodeTags.STOP_NAME.tag,  XMLDocument.getElementsByTagName(StopTimesNodeTags.STOP.tag).item(0));
     }
 
     public String getName() {
@@ -60,10 +42,6 @@ public class Stop {
 
     public List<RouteSchedule> getRouteList() {
         return routeList;
-    }
-
-    public List<Integer> getRouteNumbers() {
-        return routeNumbers;
     }
 
     public int getStopNumber() {
@@ -86,21 +64,16 @@ public class Stop {
         Collections.sort(scheduledStops, new Comparator<ScheduledStop>() {
             @Override
             public int compare(ScheduledStop stop1, ScheduledStop stop2) {
-                return stop1.getEstimatedDepartureTime().getDate().compareTo(stop2.getEstimatedDepartureTime().getDate());
+                return stop1.getEstimatedDepartureTime().compareTo(stop2.getEstimatedDepartureTime());
             }
         });
 
         return scheduledStops;
     }
 
-    public List<ScheduledStopInfo> getScheduledStopInfosSorted() {
-        List<ScheduledStop> stops = getScheduledStopsSorted();
-        List<ScheduledStopInfo> stopInfos = new ArrayList<>();
-
-        for(ScheduledStop stopInfo : stops) {
-            stopInfos.add(stopInfo.getScheduledStopInfo());
-        }
-
-        return stopInfos;
+    public void refresh(Document document) {
+        routeList.clear();
+        XMLDocument = document;
+        loadRoutes();
     }
 }

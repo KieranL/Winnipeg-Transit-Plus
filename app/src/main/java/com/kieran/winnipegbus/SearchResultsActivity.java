@@ -11,15 +11,16 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdView;
 import com.kieran.winnipegbus.Adapters.StopListAdapter;
-import com.kieran.winnipegbus.enums.SearchQueryTypeIds;
-import com.kieran.winnipegbus.enums.StopTimesNodeTags;
 import com.kieran.winnipegbusbackend.BusUtilities;
 import com.kieran.winnipegbusbackend.FavouriteStop;
 import com.kieran.winnipegbusbackend.LoadResult;
+import com.kieran.winnipegbusbackend.SearchQuery;
+import com.kieran.winnipegbusbackend.enums.SearchQueryTypeIds;
+import com.kieran.winnipegbusbackend.enums.StopTimesNodeTags;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -31,6 +32,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     private List<FavouriteStop> searchResultsList = new ArrayList<>();
     private StopListAdapter adapter;
     private SearchQuery searchQuery;
+    private AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_stops_list);
 
         ListView listView = (ListView) findViewById(R.id.stops_listView);
+        adView = (AdView) findViewById(R.id.stopsListAdView);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -55,8 +58,26 @@ public class SearchResultsActivity extends AppCompatActivity {
         searchQuery = BusUtilities.generateSearchQuery(s);
 
         updateTitle();
-
+        adView = ActivityUtilities.initializeAdsIfEnabled(this, adView);
         new LoadSearchResults().execute(searchQuery.getQueryUrl());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        adView.pause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        adView.resume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        adView = ActivityUtilities.destroyAdView(adView);
     }
 
     @Override
@@ -72,28 +93,26 @@ public class SearchResultsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.settings) {
-            openSettings();
-            return true;
+        switch (item.getItemId()) {
+            case R.id.settings:
+                ActivityUtilities.openSettings(this);
+                return true;
+            case R.id.favourites:
+                ActivityUtilities.openFavourites(this);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void openSettings() {
-        Intent intent = new Intent(this, SettingsActivity.class);
-        startActivity(intent);
     }
 
     private void openStopTimes(int stopNumber) {
         Intent intent = new Intent(this, StopTimesActivity.class);
 
         intent.putExtra(HomeScreenActivity.STOP_NUMBER, stopNumber);
-        intent.putExtra(HomeScreenActivity.ROUTE_NUMBER, new int[]{});
         startActivity(intent);
     }
+
+
 
     private class LoadSearchResults extends AsyncTask<String, Void, LoadResult> {
         @Override
@@ -108,7 +127,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                 if(stops.getLength() > 0) {
                     for (int s = 0; s < stops.getLength(); s++) {
                         Node stop = stops.item(s);
-                        searchResultsList.add(new FavouriteStop(BusUtilities.getValue(StopTimesNodeTags.STOP_NAME.tag, (Element) stop), Integer.parseInt(BusUtilities.getValue(StopTimesNodeTags.STOP_NUMBER.tag, (Element) stop))));
+                        searchResultsList.add(new FavouriteStop(BusUtilities.getValue(StopTimesNodeTags.STOP_NAME.tag, stop), Integer.parseInt(BusUtilities.getValue(StopTimesNodeTags.STOP_NUMBER.tag, stop))));
                     }
 
                     adapter.notifyDataSetChanged();

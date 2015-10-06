@@ -1,8 +1,7 @@
 package com.kieran.winnipegbusbackend;
 
-import com.kieran.winnipegbus.SearchQuery;
-import com.kieran.winnipegbus.enums.CoverageTypes;
-import com.kieran.winnipegbus.enums.SearchQueryTypeIds;
+import com.kieran.winnipegbusbackend.enums.CoverageTypes;
+import com.kieran.winnipegbusbackend.enums.SearchQueryTypeIds;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -13,6 +12,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,24 +21,23 @@ public class BusUtilities {
     private final static String API_KEY = "FTy2QN8ts293ZlhYP1t";
     private final static String API_URL = "http://api.winnipegtransit.com/v2/";
     private final static String USAGE = "usage=short&api-key=";
-    private final static String DATE_FORMAT = "yyyy-MM-dd-HH:mm:ss";
+    private final static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
     private final static String ROUTE_PARAMETER = "route=";
     private final static String END_TIME_PARAMETER = "end=";
 
     public static StopTime convertToDate(String s) {
-        SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
 
         try {
-            return new StopTime(format.parse(s.replaceFirst("T", "-")));
+            return new StopTime(dateFormat.parse(s));
         } catch (ParseException e) {
-            e.printStackTrace();
             return null;
         }
     }
 
-    public static String getValue(String tag, Element element) {
+    public static String getValue(String tag, Node originalNode) {
         try {
-            Node node = element.getElementsByTagName(tag).item(0).getFirstChild();
+            Node node = ((Element)originalNode).getElementsByTagName(tag).item(0).getFirstChild();
             return node.getNodeValue();
         }catch (Exception e) {
             return null;
@@ -58,27 +57,26 @@ public class BusUtilities {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document XMLDocument = db.parse(inputStream);
-            XMLDocument.getDocumentElement().normalize();
-            XMLDocument.normalizeDocument();
+
             return new LoadResult(XMLDocument, null);
         } catch (Exception e) {
             return new LoadResult(null, e);
         }
     }
 
-    public static String generateStopNumberURL(int s, int[] routeNumbers, StopTime endTime) {
+    public static String generateStopNumberURL(int s, List<Integer> routeNumbers, StopTime endTime) {
         String routeFilter = "";
 
         if (routeNumbers != null) {
             String routes = "";
-            for (int i = 0; i < routeNumbers.length; i++) {
-                routes += Integer.toString(routeNumbers[i]);
-                if (i < routeNumbers.length - 1)
+            for (int i = 0; i < routeNumbers.size(); i++) {
+                routes += Integer.toString(routeNumbers.get(i));
+                if (i < routeNumbers.size() - 1)
                     routes += ",";
             }
             routeFilter = (ROUTE_PARAMETER + routes + "&");
         }
-        return API_URL + "stops/" + s + "/schedule?" + END_TIME_PARAMETER + endTime + "&"+ routeFilter + USAGE + API_KEY;
+        return API_URL + "stops/" + s + "/schedule?" + END_TIME_PARAMETER + endTime.to24hrTimeString() + "&"+ routeFilter + USAGE + API_KEY;
     }
 
     public static SearchQuery generateSearchQuery(String search) {
@@ -98,22 +96,6 @@ public class BusUtilities {
             urlFriendlyString+= "+" + words[i];
 
         return urlFriendlyString;
-    }
-
-    public static int[] getIntegerArrayFromString(String s) {
-        int[] routeNumbers;
-
-        try {
-            String[] routeNumberString = s.split(" ");
-            routeNumbers = new int[routeNumberString.length];
-
-            for (int i = 0; i < routeNumberString.length; i++)
-                routeNumbers[i] = Integer.parseInt(routeNumberString[i]);
-        } catch (Exception e) {
-            return null;
-        }
-
-        return routeNumbers;
     }
 
     public static int getCoverageTypeId(String coverageType) {

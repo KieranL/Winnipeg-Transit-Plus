@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus;
+package com.kieran.winnipegbusbackend;
 
 public class SearchQuery {
     private String query;

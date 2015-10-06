@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus.enums;
+package com.kieran.winnipegbusbackend.enums;
 
 public enum CoverageTypes {
     REGULAR(1, "regular"),

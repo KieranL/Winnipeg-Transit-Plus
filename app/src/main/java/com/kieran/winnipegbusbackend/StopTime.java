@@ -1,28 +1,18 @@
 package com.kieran.winnipegbusbackend;
 
-import com.kieran.winnipegbus.enums.TimeStatuses;
+import com.kieran.winnipegbusbackend.enums.TimeStatuses;
 
 import java.util.Date;
 
-public class StopTime {
-    private Date date;
-    private int hours;
-    private int minutes;
-    private int seconds;
+public class StopTime implements Comparable {
+    private byte hours;
+    private byte minutes;
     private long milliseconds;
 
     public StopTime(Date date) {
-        this.date = date;
-        hours = date.getHours();
-        minutes = date.getMinutes();
-        seconds = date.getSeconds();
+        hours = (byte)date.getHours();
+        minutes = (byte)date.getMinutes();
         milliseconds = date.getTime();
-    }
-
-    public StopTime(int hours, int minutes, int seconds) {
-        this.hours = hours;
-        this.minutes = minutes;
-        this.seconds = seconds;
     }
 
     public static int timeBehindMinutes(StopTime estimated, StopTime scheduled) {
@@ -40,11 +30,11 @@ public class StopTime {
             return TimeStatuses.Late.status;
     }
 
-    public void setHours(int hours) {
+    public void setHours(byte hours) {
         this.hours = hours;
     }
 
-    public void increaseHour(int increase) {
+    public void increaseHour(byte increase) {
         hours += increase;
     }
 
@@ -58,6 +48,10 @@ public class StopTime {
 
     public String toString() {
         return getHours() + ":" + getMinutes();
+    }
+
+    public long getMilliseconds() {
+        return milliseconds;
     }
 
     public String to12hrTimeString() {
@@ -75,10 +69,6 @@ public class StopTime {
         return timeString;
     }
 
-    public Date getDate() {
-        return date;
-    }
-
     public String toFormattedString(StopTime currentTime, boolean use24hrTime) {
         int remainingTime = timeBehindMinutes(this, currentTime);
 
@@ -87,13 +77,19 @@ public class StopTime {
         else if(remainingTime <= 15)
             return remainingTime + " min";
         else
+
         if(use24hrTime)
             return this.to24hrTimeString();
         else
             return this.to12hrTimeString();
     }
 
-    private String to24hrTimeString() {
+    public String to24hrTimeString() {
         return ((hours < 10) ? "0" + getHours() : getHours()) + ":" + getMinutes();
+    }
+
+    @Override
+    public int compareTo(Object another) {
+        return (int)(milliseconds - ((StopTime)another).getMilliseconds());
     }
 }

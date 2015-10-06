@@ -1,6 +1,7 @@
 package com.kieran.winnipegbus;
 
-import android.content.Intent;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -9,9 +10,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.kieran.winnipegbus.Adapters.StopListAdapter;
 import com.kieran.winnipegbusbackend.FavouriteStop;
@@ -29,8 +30,16 @@ public class FavouritesActivity extends AppCompatActivity {
     @Override
     public void onRestart() {
         super.onRestart();
-        initializeAdsIfEnabled();
+        adView = ActivityUtilities.initializeAdsIfEnabled(this, adView);
+        reloadList();
+    }
+
+    private void reloadList() {
         favouriteStops.clear();
+
+        if(FavouriteStopsList.length() == 0)
+            FavouriteStopsList.isLoadNeeded = true;
+
         getFavouritesList();
         adapter.notifyDataSetChanged();
     }
@@ -38,36 +47,36 @@ public class FavouritesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initialize();
-    }
 
-    private void initialize() {
         setContentView(R.layout.activity_stops_list);
-        adView = (AdView) findViewById(R.id.favouritesAdView);
-        initializeAdsIfEnabled();
+        adView = (AdView) findViewById(R.id.stopsListAdView);
 
         favouriteStops = new ArrayList<>();
 
         ListView listView = (ListView) findViewById(R.id.stops_listView);
 
+        adView = ActivityUtilities.initializeAdsIfEnabled(this, adView);
         getFavouritesList();
 
-        createListViewListener(listView);
+        createListViewListeners(listView);
 
         adapter = new StopListAdapter(this, R.layout.listview_stops_row, favouriteStops);
         listView.setAdapter(adapter);
     }
 
-    private void initializeAdsIfEnabled() {
-        if (!areAdsDisabled()) {
-            adView.setVisibility(View.VISIBLE);
-            createAd();
-        } else {
-            adView.setVisibility(View.GONE);
-        }
+    @Override
+    public void onPause() {
+        super.onPause();
+        adView.pause();
     }
 
-    private void createListViewListener(ListView listView) {
+    @Override
+    public void onResume() {
+        super.onResume();
+        adView.resume();
+    }
+
+    private void createListViewListeners(ListView listView) {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -75,18 +84,25 @@ public class FavouritesActivity extends AppCompatActivity {
                 openStopTimes(stop.getStopNumber());
             }
         });
-    }
 
-    private boolean areAdsDisabled() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        return prefs.getBoolean("pref_ads_disabled", false);
-    }
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                alertDialog.setMessage("Delete this Favourite?");
+                alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int which) {
+                        FavouriteStopsList.removeFromFavourites(adapter.getItem(position).getStopNumber());
+                        reloadList();
+                    }
+                });
 
-    private void createAd() {
-        AdView mAdView = (AdView) findViewById(R.id.favouritesAdView);
-        AdRequest.Builder adRequest = new AdRequest.Builder();
-        adRequest.addTestDevice(getString(R.string.test_device_id_gs5));
-        mAdView.loadAd(adRequest.build());
+                alertDialog.setNegativeButton("No", null);
+                alertDialog.create().show();
+
+                return true;
+            }
+        });
     }
 
     private void getSortPreference() {
@@ -107,11 +123,17 @@ public class FavouritesActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        adView = ActivityUtilities.destroyAdView(adView);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         if (id == R.id.settings) {
-            openSettings();
+            ActivityUtilities.openSettings(this);
             return true;
         }
 
@@ -119,21 +141,11 @@ public class FavouritesActivity extends AppCompatActivity {
     }
 
     private void openStopTimes(int stopNumber) {
-        Intent intent = new Intent(this, StopTimesActivity.class);
-
         try{
             FavouriteStopsList.getFavouriteStopByStopNumber(stopNumber).use();
             FavouriteStopsList.saveFavouriteStops();
         } catch (Exception e) {}
 
-
-        intent.putExtra(HomeScreenActivity.STOP_NUMBER, stopNumber);
-        intent.putExtra(HomeScreenActivity.ROUTE_NUMBER, new int[]{});
-        startActivity(intent);
-    }
-
-    private void openSettings() {
-        Intent intent = new Intent(this, SettingsActivity.class);
-        startActivity(intent);
+        ActivityUtilities.openStopTimes(this, stopNumber);
     }
 }

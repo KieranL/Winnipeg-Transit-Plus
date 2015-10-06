@@ -1,9 +1,9 @@
-package com.kieran.winnipegbus.enums;
+package com.kieran.winnipegbusbackend.enums;
 
 public enum FavouritesListSortTypeIds {
     SAVED_INDEX(0),
-    STOP_NUBMER_ASC(1),
-    STOP_NUBMER_DESC(2),
+    STOP_NUMBER_ASC(1),
+    STOP_NUMBER_DESC(2),
     FREQUENCY_ASC(3),
     FREQUENCY_DESC(4);
 

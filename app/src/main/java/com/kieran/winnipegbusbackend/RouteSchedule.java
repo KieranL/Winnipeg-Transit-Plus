@@ -1,38 +1,52 @@
 package com.kieran.winnipegbusbackend;
 
-import com.kieran.winnipegbus.enums.StopTimesNodeTags;
+import android.support.annotation.NonNull;
+
+import com.kieran.winnipegbusbackend.enums.StopTimesNodeTags;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class RouteSchedule {
+public class RouteSchedule implements Comparable{
     private Node routeNode;
     private int stopNumber;
-    private RouteInfo routeInfo;
+
+
+    private int routeNumber;
+    private String routeName;
+    private int coverageType;
+
+    private List<ScheduledStop> stops;
 
     public RouteSchedule(Node node, int stopNumber) {
         routeNode = node;
         this.stopNumber = stopNumber;
-
-        routeInfo = new RouteInfo();
+        stops = new ArrayList<>();
 
         loadRouteName();
         loadRouteNumber();
+        loadScheduledStops();
     }
 
-    private void loadCoverageType() {
-        routeInfo.setCoverageType(BusUtilities.getCoverageTypeId(BusUtilities.getValue(StopTimesNodeTags.ROUTE_COVERAGE.tag, (Element) routeNode)));
+    public RouteSchedule(RouteSchedule routeSchedule) {
+        routeNumber = routeSchedule.getRouteNumber();
+        routeName = routeSchedule.getRouteName();
+    }
+
+    public void loadCoverageType() {
+       coverageType = BusUtilities.getCoverageTypeId(BusUtilities.getValue(StopTimesNodeTags.ROUTE_COVERAGE.tag, routeNode));
     }
 
     private void loadRouteNumber() {
-        routeInfo.setRouteNumber(Integer.parseInt(BusUtilities.getValue(StopTimesNodeTags.ROUTE_NUMBER.tag, (Element) routeNode)));
+        routeNumber = Integer.parseInt(BusUtilities.getValue(StopTimesNodeTags.ROUTE_NUMBER.tag, routeNode));
     }
 
     private void loadRouteName() {
-        routeInfo.setRouteName(BusUtilities.getValue(StopTimesNodeTags.ROUTE_NAME.tag, (Element) routeNode));
+        routeName = BusUtilities.getValue(StopTimesNodeTags.ROUTE_NAME.tag, routeNode);
     }
 
     public void loadScheduledStops() {
@@ -40,19 +54,32 @@ public class RouteSchedule {
 
         for (int s = 0; s < scheduledStops.getLength(); s++) {
             Node stop = scheduledStops.item(s);
-            routeInfo.getStops().add(new ScheduledStop(stop, routeInfo.getRouteNumber(), stopNumber, routeInfo.getRouteName()));
+            stops.add(new ScheduledStop(stop, routeNumber, routeName));
         }
     }
 
-    public String getRouteName() {
-        return routeInfo.getRouteName();
+    public List<ScheduledStop> getScheduledStops() {
+        return stops;
     }
 
     public int getRouteNumber() {
-        return routeInfo.getRouteNumber();
+        return routeNumber;
     }
 
-    public List<ScheduledStop> getScheduledStops() {
-        return routeInfo.getStops();
+    public String getRouteName() {
+        return routeName;
+    }
+
+    public int getCoverageType() {
+        return coverageType;
+    }
+
+    public String toString(){
+        return routeNumber + " " + ((routeName != null) ? routeName : "");
+    }
+
+    @Override
+    public int compareTo(@NonNull Object another) {
+        return routeNumber - ((RouteSchedule)another).getRouteNumber();
     }
 }

@@ -25,7 +25,12 @@ public class SettingsActivity extends PreferenceActivity {
         addPreferencesFromResource(R.xml.pref_general);
 
         fakeHeader = new PreferenceCategory(this);
-        fakeHeader.setTitle(R.string.pref_title_favourite_stops);
+        fakeHeader.setTitle(R.string.pref_header_scheduled_stops);
+        getPreferenceScreen().addPreference(fakeHeader);
+        addPreferencesFromResource(R.xml.pref_scheduled_stops);
+
+        fakeHeader = new PreferenceCategory(this);
+        fakeHeader.setTitle(R.string.pref_header_favourite_stops);
         getPreferenceScreen().addPreference(fakeHeader);
         addPreferencesFromResource(R.xml.pref_favourite_stops);
 

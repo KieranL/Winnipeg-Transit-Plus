@@ -15,25 +15,11 @@
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/route_filter_field"
-        android:layout_alignParentEnd="true"
+        android:layout_height="64dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:onClick="submitSearch"
         android:text="@string/button_send" />
-
-    <EditText
-        android:id="@+id/route_filter_field"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/search_field"
-        android:layout_toLeftOf="@+id/button"
-        android:layout_toStartOf="@+id/button"
-        android:hint="@string/route_number_filter_hint"
-        android:inputType="text"/>
 
         <com.google.android.gms.ads.AdView
             xmlns:ads="http://schemas.android.com/apk/res-auto"
