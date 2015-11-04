@@ -6,19 +6,19 @@ android {
             storeFile file('C:/Users/kieran/Desktop/AppKey.jks')
         }
     }
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
     defaultConfig {
         applicationId "com.kieran.winnipegbus"
-        minSdkVersion 15
-        targetSdkVersion 22
-        versionCode 7
-        versionName "1.3.2"
+        minSdkVersion 11
+        targetSdkVersion 23
+        versionCode 9
+        versionName "1.5.0"
         signingConfig signingConfigs.config
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -28,7 +28,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.android.support:support-v4:22.2.0'
+    compile 'com.android.support:appcompat-v7:23.0.0'
+    compile 'com.android.support:support-v4:23.0.0'
     compile 'com.google.android.gms:play-services-ads:7.8.0'
 }

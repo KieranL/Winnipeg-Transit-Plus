@@ -15,9 +15,9 @@ import com.kieran.winnipegbusbackend.FavouriteStop;
 import java.util.List;
 
 public class StopListAdapter extends ArrayAdapter<FavouriteStop> {
-    Context context;
-    int layoutResourceId;
-    List<FavouriteStop> favouriteStops;
+    private Context context;
+    private int layoutResourceId;
+    private List<FavouriteStop> favouriteStops;
 
     public StopListAdapter(Context context, int layoutResourceId, List<FavouriteStop> favouriteStops) {
         super(context, layoutResourceId, favouriteStops);
@@ -37,9 +37,10 @@ public class StopListAdapter extends ArrayAdapter<FavouriteStop> {
 
             holder = new StopHolder();
             holder.stopNumber = (TextView)row.findViewById(R.id.favourites_stop_number);
-            //holder.routeNumbers = (GridView)row.findViewById(R.id.gridview_stops_row_route_numbers);
-           // holder.routeNumbers.setAdapter(new GridviewAdapter(context));
             holder.stopName = (TextView)row.findViewById(R.id.favourites_stop_name);
+           // holder.routeNumbers = (GridView)row.findViewById(R.id.gridview_stops_row_route_numbers);
+          //  holder.routeNumbers.setAdapter(new GridviewAdapter(context));
+           // holder.routeNumbers.setOnItemClickListener(null);
 
             row.setTag(holder);
         } else {

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="outline" format="reference" />
+    <attr name="checkBoxSelector" format="reference"/>
+    <attr name="stopTimesHeaderBackground" format="reference"/>
+    <attr name="addToFavouritesIcon" format="reference"/>
+    <attr name="favouriteStopIcon" format="reference"/>
+    <attr name="refreshIcon" format="reference"/>
+</resources>

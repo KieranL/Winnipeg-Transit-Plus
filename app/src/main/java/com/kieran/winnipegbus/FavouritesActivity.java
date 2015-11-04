@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,7 +20,7 @@ import com.kieran.winnipegbusbackend.FavouriteStopsList;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FavouritesActivity extends AppCompatActivity {
+public class FavouritesActivity extends BaseActivity {
     private StopListAdapter adapter;
     private List<FavouriteStop> favouriteStops;
     private int sortTypeId;
@@ -30,7 +29,7 @@ public class FavouritesActivity extends AppCompatActivity {
     @Override
     public void onRestart() {
         super.onRestart();
-        adView = ActivityUtilities.initializeAdsIfEnabled(this, adView);
+        ActivityUtilities.initializeAdsIfEnabled(this, adView);
         reloadList();
     }
 
@@ -45,7 +44,7 @@ public class FavouritesActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_stops_list);
@@ -55,7 +54,7 @@ public class FavouritesActivity extends AppCompatActivity {
 
         ListView listView = (ListView) findViewById(R.id.stops_listView);
 
-        adView = ActivityUtilities.initializeAdsIfEnabled(this, adView);
+        ActivityUtilities.initializeAdsIfEnabled(this, adView);
         getFavouritesList();
 
         createListViewListeners(listView);
@@ -74,6 +73,24 @@ public class FavouritesActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         adView.resume();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                onBackPressed();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        HomeScreenActivity.reCreate();
     }
 
     private void createListViewListeners(ListView listView) {
@@ -125,19 +142,7 @@ public class FavouritesActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        adView = ActivityUtilities.destroyAdView(adView);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.settings) {
-            ActivityUtilities.openSettings(this);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        ActivityUtilities.destroyAdView(adView);
     }
 
     private void openStopTimes(int stopNumber) {

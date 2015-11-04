@@ -2,14 +2,13 @@ package com.kieran.winnipegbus.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.kieran.winnipegbus.ActivityUtilities;
 import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbusbackend.ScheduledStop;
 import com.kieran.winnipegbusbackend.StopTime;
@@ -17,7 +16,7 @@ import com.kieran.winnipegbusbackend.StopTime;
 import java.util.Date;
 import java.util.List;
 
-public class StopTimeAdapter extends ArrayAdapter<ScheduledStop>{
+public class StopTimeAdapter extends ArrayAdapter<ScheduledStop> {
     Context context;
     int layoutResourceId;
     boolean use24hrTime;
@@ -31,13 +30,9 @@ public class StopTimeAdapter extends ArrayAdapter<ScheduledStop>{
         this.scheduledStops = scheduledStops;
         inflater = ((Activity)context).getLayoutInflater();
 
-        getTimeSetting();
+        loadTimeSetting();
     }
 
-    public void getTimeSetting() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        use24hrTime = prefs.getBoolean("pref_use_24hr_time", false);
-    }
 
     @Override
     public View getView(int position, View row, ViewGroup parent) {
@@ -59,11 +54,16 @@ public class StopTimeAdapter extends ArrayAdapter<ScheduledStop>{
 
         ScheduledStop scheduledStop = scheduledStops.get(position);
         holder.routeNumber.setText(Integer.toString(scheduledStop.getRouteNumber()));
+        ActivityUtilities.setTextViewColour(context, holder.routeNumber, scheduledStop);
         holder.routeVariantName.setText(scheduledStop.getRouteVariantName());
         holder.timeStatus.setText(scheduledStop.getTimeStatus());
         holder.departureTime.setText(scheduledStop.getEstimatedDepartureTime().toFormattedString(new StopTime(new Date()), use24hrTime));
 
         return row;
+    }
+
+    public void loadTimeSetting() {
+        use24hrTime = ActivityUtilities.getTimeSetting(context);
     }
 
     private static class StopTimeHolder {

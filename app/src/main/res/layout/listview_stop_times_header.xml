@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_width="match_parent"
+    android:paddingTop="2dp"
+    android:paddingBottom="4dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
         android:layout_width="fill_parent"
-        android:textSize="20sp"
+        android:textSize="24sp"
         android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
-        android:id="@+id/listview_stop_times_header_text"/>
+        android:id="@+id/listView_stop_times_header_text"
+        android:background="?attr/stopTimesHeaderBackground"
+        android:paddingBottom="6dp"/>
+    <View
+        android:layout_below="@+id/listView_stop_times_header_text"
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/divider_background"/>
 
 </RelativeLayout>
 

@@ -3,9 +3,8 @@
     android:id="@+id/stops_listView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:nestedScrollingEnabled="false"
     android:divider="@null"
     android:dividerHeight="5dp"
     android:layout_alignParentTop="true"
     android:layout_above="@+id/stopsListAdView"
-    xmlns:android="http://schemas.android.com/apk/res/android" />
+    xmlns:android="http://schemas.android.com/apk/res/android"/>

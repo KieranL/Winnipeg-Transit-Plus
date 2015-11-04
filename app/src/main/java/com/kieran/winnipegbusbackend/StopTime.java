@@ -70,13 +70,14 @@ public class StopTime implements Comparable {
     }
 
     public String toFormattedString(StopTime currentTime, boolean use24hrTime) {
-        int remainingTime = timeBehindMinutes(this, currentTime);
+        if(currentTime != null) {
+            int remainingTime = timeBehindMinutes(this, currentTime);
 
-        if(remainingTime <= 1)
-            return "Due";
-        else if(remainingTime <= 15)
-            return remainingTime + " min";
-        else
+            if (remainingTime <= 1)
+                return "Due";
+            else if (remainingTime <= 15)
+                return remainingTime + " min";
+        }
 
         if(use24hrTime)
             return this.to24hrTimeString();

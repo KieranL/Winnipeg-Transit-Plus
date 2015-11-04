@@ -23,6 +23,16 @@ public class Stop {
         loadStopName();
     }
 
+    public Stop(Document document) {
+        XMLDocument = document;
+        loadStopNumber();
+        loadStopName();
+    }
+
+    private void loadStopNumber() {
+        stopNumber = Integer.parseInt(BusUtilities.getValue(StopTimesNodeTags.STOP_NUMBER.tag, XMLDocument.getElementsByTagName(StopTimesNodeTags.STOP.tag).item(0)));
+    }
+
     public Stop loadRoutes() {
         NodeList routes = XMLDocument.getElementsByTagName(StopTimesNodeTags.ROUTES.tag);
 
@@ -75,5 +85,16 @@ public class Stop {
         routeList.clear();
         XMLDocument = document;
         loadRoutes();
+    }
+
+    public ScheduledStop getScheduledStopByKey(ScheduledStopKey key) {
+        for (ScheduledStop scheduledStop : getScheduledStops())
+            if(scheduledStop.getKey().getBusKey() == key.getBusKey())
+                return scheduledStop;
+        return null;
+    }
+
+    public StopFeatures createStopFeatures() {
+        return new StopFeatures(stopNumber, stopName);
     }
 }

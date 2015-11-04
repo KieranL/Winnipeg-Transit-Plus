@@ -3,19 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.kieran.winnipegbus.FavouritesActivity"
-    android:padding="6dp">
+    android:padding="2dp">
 
     <ListView
         android:id="@+id/stop_times_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:nestedScrollingEnabled="false"
         android:divider="@null"
         android:layout_alignParentTop="true"
         android:clickable="false"
         android:layout_above="@+id/stopTimesAdView"/>
 
     <com.google.android.gms.ads.AdView
+        android:paddingTop="2dp"
         xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/stopTimesAdView"
         android:layout_width="match_parent"

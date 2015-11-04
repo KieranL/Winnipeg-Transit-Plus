@@ -86,7 +86,6 @@ public class FavouriteStopsList {
             XmlSerializer serializer = Xml.newSerializer();
             serializer.setOutput(fos, "UTF-8");
             serializer.startTag("", FavouritesNodeTags.FAVOURITE_STOPS.tag);
-
             serializer.setFeature(XMLFeature, true);
 
             for (int i = 0; i < favouritesList.size(); i++) {

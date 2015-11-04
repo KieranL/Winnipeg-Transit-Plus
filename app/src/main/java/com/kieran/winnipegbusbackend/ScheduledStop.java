@@ -5,7 +5,12 @@ import com.kieran.winnipegbusbackend.enums.StopTimesNodeTags;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class ScheduledStop {
+public class ScheduledStop  {
+
+    private final static String ARRIVAL_TAG = "arrival";
+    private final static String DEPARTURE_TAG = "departure";
+    private final static String ESTIMATED_TAG = "estimated";
+    private final static String SCHEDULED_TAG = "scheduled";
 
     private Node stopNode;
     private String routeVariantName;
@@ -17,11 +22,14 @@ public class ScheduledStop {
     private boolean hasBikeRack;
     private boolean hasEasyAccess;
     private boolean hasArrivalTime;
+    private ScheduledStopKey key;
+    private int coverageTypeId;
 
-    public ScheduledStop(Node stopNode, int routeNumber, String routeName) {
+    public ScheduledStop(Node stopNode, int routeNumber, String routeName, int coverageTypeId) {
         this.routeNumber = routeNumber;
         this.stopNode = stopNode;
         this.routeVariantName = routeName;
+        this.coverageTypeId = coverageTypeId;
 
         loadVariantName();
         loadDepartureTimes();
@@ -30,13 +38,18 @@ public class ScheduledStop {
     public void loadAdditionalInfo() {
         loadArrivalTimes();
         loadBusInfo();
+        loadKey();
+    }
+
+    private void loadKey() {
+        key = new ScheduledStopKey(BusUtilities.getValue(StopTimesNodeTags.SCHEDULED_STOP_KEY.tag, stopNode));
     }
 
     public void loadArrivalTimes() {
-        Node arrivalStopNode = ((Element) stopNode).getElementsByTagName(StopTimesNodeTags.ARRIVAL.tag).item(0);
+        Node arrivalStopNode = ((Element) stopNode).getElementsByTagName(ARRIVAL_TAG).item(0);
         try {
-            estimatedArrivalTime = BusUtilities.convertToDate(BusUtilities.getValue(StopTimesNodeTags.ESTIMATED.tag, arrivalStopNode));
-            scheduledArrivalTime = BusUtilities.convertToDate(BusUtilities.getValue(StopTimesNodeTags.SCHEDULED.tag, arrivalStopNode));
+            estimatedArrivalTime = BusUtilities.convertToDate(BusUtilities.getValue(ESTIMATED_TAG, arrivalStopNode));
+            scheduledArrivalTime = BusUtilities.convertToDate(BusUtilities.getValue(SCHEDULED_TAG, arrivalStopNode));
             hasArrivalTime = true;
         } catch (Exception e) {
             hasArrivalTime = false;
@@ -44,10 +57,10 @@ public class ScheduledStop {
     }
 
     private void loadDepartureTimes() {
-        Node departureStopNode = ((Element) stopNode).getElementsByTagName(StopTimesNodeTags.DEPARTURE.tag).item(0);
+        Node departureStopNode = ((Element) stopNode).getElementsByTagName(DEPARTURE_TAG).item(0);
 
-        estimatedDepartureTime = BusUtilities.convertToDate(BusUtilities.getValue(StopTimesNodeTags.ESTIMATED.tag, departureStopNode));
-        scheduledDepartureTime = BusUtilities.convertToDate(BusUtilities.getValue(StopTimesNodeTags.SCHEDULED.tag, departureStopNode));
+        estimatedDepartureTime = BusUtilities.convertToDate(BusUtilities.getValue(ESTIMATED_TAG, departureStopNode));
+        scheduledDepartureTime = BusUtilities.convertToDate(BusUtilities.getValue(SCHEDULED_TAG, departureStopNode));
     }
 
     private void loadVariantName() {
@@ -104,5 +117,15 @@ public class ScheduledStop {
 
     public boolean hasArrivalTime() {
         return hasArrivalTime;
+    }
+
+    public ScheduledStopKey getKey() {
+        if(key == null)
+            loadKey();
+        return key;
+    }
+
+    public int getCoverageTypeId() {
+        return coverageTypeId;
     }
 }

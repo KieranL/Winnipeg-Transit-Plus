@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -24,6 +25,8 @@ public class BusUtilities {
     private final static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
     private final static String ROUTE_PARAMETER = "route=";
     private final static String END_TIME_PARAMETER = "end=";
+    private static final String START_TIME_PARAMETER = "start=";
+    private static final String STOP_FEATURE_PARAMETER = "features";
 
     public static StopTime convertToDate(String s) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
@@ -64,8 +67,10 @@ public class BusUtilities {
         }
     }
 
-    public static String generateStopNumberURL(int s, List<Integer> routeNumbers, StopTime endTime) {
+    public static String generateStopNumberURL(int stopNumber, List<Integer> routeNumbers, StopTime startTime, StopTime endTime) {
         String routeFilter = "";
+        String startTimeFilter ="";
+        String endTimeFilter = "";
 
         if (routeNumbers != null) {
             String routes = "";
@@ -76,16 +81,42 @@ public class BusUtilities {
             }
             routeFilter = (ROUTE_PARAMETER + routes + "&");
         }
-        return API_URL + "stops/" + s + "/schedule?" + END_TIME_PARAMETER + endTime.to24hrTimeString() + "&"+ routeFilter + USAGE + API_KEY;
+
+        if(startTime != null) {
+            startTimeFilter += START_TIME_PARAMETER + startTime.to24hrTimeString();
+            startTimeFilter += "&";
+        }
+
+        if(endTime != null) {
+            endTimeFilter += END_TIME_PARAMETER + endTime.to24hrTimeString();
+            endTimeFilter += "&";
+        }
+
+        return API_URL + "stops/" + stopNumber + "/schedule?" + startTimeFilter + endTimeFilter + routeFilter + USAGE + API_KEY;
+    }
+
+    public static String generateStopNumberURL(int stopNumber, int routeNumber, StopTime startTime, StopTime endTime) {
+        List<Integer> routeFilter = new ArrayList<>();
+        routeFilter.add(routeNumber);
+
+        return generateStopNumberURL(stopNumber, routeFilter, startTime, endTime);
     }
 
     public static SearchQuery generateSearchQuery(String search) {
         try{
             int routeNumber = Integer.parseInt(search);
-            return new SearchQuery(search, API_URL + "stops?" + ROUTE_PARAMETER + routeNumber + "&api-key=" + API_KEY, SearchQueryTypeIds.ROUTE_NUMBER.searchQueryTypeId);
+            return generateSearchQuery(routeNumber);
         }catch (Exception e) {
             return new SearchQuery(search, API_URL + "stops:" + createURLFriendlyString(search) + "?api-key=" + API_KEY, SearchQueryTypeIds.GENERAL.searchQueryTypeId);
         }
+    }
+
+    public static SearchQuery generateSearchQuery(int routeNumber) {
+            return new SearchQuery(Integer.toString(routeNumber), API_URL + "stops?" + ROUTE_PARAMETER + routeNumber + "&api-key=" + API_KEY, SearchQueryTypeIds.ROUTE_NUMBER.searchQueryTypeId);
+    }
+
+    public static String generateStopFeaturesUrl(int stopNumber) {
+        return API_URL + "stops/" + Integer.toString(stopNumber) + "/" + STOP_FEATURE_PARAMETER + "?api-key=" + API_KEY;
     }
 
     private static String createURLFriendlyString(String s) {
@@ -101,6 +132,8 @@ public class BusUtilities {
     public static int getCoverageTypeId(String coverageType) {
         if(coverageType.equals(CoverageTypes.EXPRESS.typeName))
             return CoverageTypes.EXPRESS.typeId;
+        else if(coverageType.equals(CoverageTypes.SUPER_EXPRESS.typeName))
+            return CoverageTypes.SUPER_EXPRESS.typeId;
         else if(coverageType.equals(CoverageTypes.RAPID_TRANSIT.typeName))
             return CoverageTypes.RAPID_TRANSIT.typeId;
         else

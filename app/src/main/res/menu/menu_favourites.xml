@@ -4,7 +4,7 @@
     tools:context="com.kieran.winnipegbus.FavouritesActivity">
 
     <item
-        android:id="@+id/settings"
+        android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />

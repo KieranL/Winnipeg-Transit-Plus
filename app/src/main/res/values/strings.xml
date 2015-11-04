@@ -22,6 +22,16 @@
     <string name="filter_button">Filter</string>
     <string name="filter_dialog_title">Select routes to filter</string>
     <string name="wait_for_load">Please wait for data to load</string>
+    <string name="title_activity_scheduled_stop_info">"Bus Info"</string>
+    <string name="bus_info_arrival">Arrival</string>
+    <string name="bus_info_departure">Departure</string>
+    <string name="scheduled">Sched.</string>
+    <string name="estimated">Est.</string>
+    <string name="title_activity_stop_info">StopInfoActivity</string>
+    <string name="features_feature">Feature</string>
+    <string name="features_count">Count</string>
+    <string name="action_notification">Notification</string>
+    <string name="banner_ad_stop_features_id">ca-app-pub-1189975520647633/3682591503</string>
 
 
 </resources>

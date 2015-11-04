@@ -34,6 +34,7 @@ public class SettingsActivity extends PreferenceActivity {
         getPreferenceScreen().addPreference(fakeHeader);
         addPreferencesFromResource(R.xml.pref_favourite_stops);
 
+        bindPreferenceSummaryToValue(findPreference("pref_theme"));
         bindPreferenceSummaryToValue(findPreference("pref_favourites_sort_list"));
         bindPreferenceSummaryToValue(findPreference("pref_schedule_load_interval"));
     }

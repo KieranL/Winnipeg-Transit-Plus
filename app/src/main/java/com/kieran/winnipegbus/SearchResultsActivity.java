@@ -3,10 +3,11 @@ package com.kieran.winnipegbus;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -28,15 +29,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SearchResultsActivity extends AppCompatActivity {
+public class SearchResultsActivity extends BaseActivity {
     private List<FavouriteStop> searchResultsList = new ArrayList<>();
     private StopListAdapter adapter;
     private SearchQuery searchQuery;
     private AdView adView;
+    private boolean loading;
+    private AsyncTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loading = true;
         setContentView(R.layout.activity_stops_list);
 
         ListView listView = (ListView) findViewById(R.id.stops_listView);
@@ -58,8 +62,8 @@ public class SearchResultsActivity extends AppCompatActivity {
         searchQuery = BusUtilities.generateSearchQuery(s);
 
         updateTitle();
-        adView = ActivityUtilities.initializeAdsIfEnabled(this, adView);
-        new LoadSearchResults().execute(searchQuery.getQueryUrl());
+        ActivityUtilities.initializeAdsIfEnabled(this, adView);
+       task = new LoadSearchResults().execute(searchQuery.getQueryUrl());
     }
 
     @Override
@@ -77,13 +81,50 @@ public class SearchResultsActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        adView = ActivityUtilities.destroyAdView(adView);
+        task.cancel(true);
+        ActivityUtilities.destroyAdView(adView);
+        loading = false;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search_results, menu);
+        MenuItem item = menu.findItem(R.id.loadingIcon);
+        item.setVisible(true);
+
+        item.setActionView(R.layout.iv_refresh);
+        startLoadingAnimation(item);
+
         return true;
+    }
+
+    private void startLoadingAnimation(final MenuItem animatedView) {
+        final Animation rotation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh);
+
+        rotation.setAnimationListener(new Animation.AnimationListener(){
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                if(!loading) {
+                    animatedView.setEnabled(true);
+                    animatedView.getActionView().clearAnimation();
+                    animatedView.setVisible(false);
+                }
+            }
+        });
+
+        rotation.setRepeatCount(Animation.INFINITE);
+        animatedView.setEnabled(false);
+        animatedView.getActionView().startAnimation(rotation);
     }
 
     private void updateTitle() {
@@ -94,15 +135,22 @@ public class SearchResultsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.settings:
-                ActivityUtilities.openSettings(this);
-                return true;
             case R.id.favourites:
-                ActivityUtilities.openFavourites(this);
+                super.openFavourites();
+                return true;
+            case android.R.id.home:
+                finish();
+                HomeScreenActivity.reCreate();
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        HomeScreenActivity.reCreate();
     }
 
     private void openStopTimes(int stopNumber) {
@@ -112,8 +160,6 @@ public class SearchResultsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
-
     private class LoadSearchResults extends AsyncTask<String, Void, LoadResult> {
         @Override
         protected LoadResult doInBackground(String... urls) {
@@ -122,21 +168,26 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(LoadResult result) {
-            if (result.getResult() != null) {
-                NodeList stops = ((Document)result.getResult()).getElementsByTagName(StopTimesNodeTags.STOP.tag);
-                if(stops.getLength() > 0) {
-                    for (int s = 0; s < stops.getLength(); s++) {
-                        Node stop = stops.item(s);
-                        searchResultsList.add(new FavouriteStop(BusUtilities.getValue(StopTimesNodeTags.STOP_NAME.tag, stop), Integer.parseInt(BusUtilities.getValue(StopTimesNodeTags.STOP_NUMBER.tag, stop))));
-                    }
+            if(loading) {
+                if (result.getResult() != null) {
+                    NodeList stops = ((Document) result.getResult()).getElementsByTagName(StopTimesNodeTags.STOP.tag);
+                    if (stops.getLength() > 0) {
+                        for (int s = 0; s < stops.getLength(); s++) {
+                            Node stop = stops.item(s);
+                            searchResultsList.add(new FavouriteStop(BusUtilities.getValue(StopTimesNodeTags.STOP_NAME.tag, stop), Integer.parseInt(BusUtilities.getValue(StopTimesNodeTags.STOP_NUMBER.tag, stop))));
+                        }
 
-                    adapter.notifyDataSetChanged();
-                }else {
-                    Toast.makeText(getApplicationContext(), R.string.no_results_found, Toast.LENGTH_LONG).show();
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.no_results_found, Toast.LENGTH_LONG).show();
+                    }
+                } else if (result.getException() != null) {
+                    Toast.makeText(getApplicationContext(), R.string.network_error, Toast.LENGTH_LONG).show();
                 }
-            }else if(result.getException() != null) {
-                Toast.makeText(getApplicationContext(), R.string.network_error, Toast.LENGTH_LONG).show();
             }
+
+
+            loading = false;
         }
     }
 }

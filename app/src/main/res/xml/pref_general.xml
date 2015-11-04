@@ -4,5 +4,13 @@
         android:title="@string/pref_title_disable_ads"
         android:defaultValue="false"
         android:widgetLayout="@layout/checkbox"/>
+    <ListPreference
+        android:key="pref_theme"
+        android:title="@string/pref_theme_title"
+        android:defaultValue="0"
+        android:entries="@array/pref_theme"
+        android:entryValues="@array/pref_theme_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
 
 </PreferenceScreen>

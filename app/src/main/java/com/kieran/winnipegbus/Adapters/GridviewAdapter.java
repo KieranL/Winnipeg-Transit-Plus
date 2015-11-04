@@ -10,9 +10,20 @@ import android.widget.TextView;
 
 public class GridviewAdapter extends BaseAdapter {
     private Context context;
+    int i = 0;
 
     public GridviewAdapter(Context context) {
         this.context = context;
+    }
+
+    @Override
+    public boolean areAllItemsEnabled() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+        return false;
     }
 
     @Override
@@ -41,7 +52,7 @@ public class GridviewAdapter extends BaseAdapter {
         }
 
         textView.setBackgroundColor(Color.BLUE);
-        textView.setText("6");
+        textView.setText(Integer.toString(i++));
         return textView;
     }
 }

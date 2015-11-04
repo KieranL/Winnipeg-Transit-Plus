@@ -2,7 +2,6 @@ package com.kieran.winnipegbus;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -14,28 +13,36 @@ import android.widget.EditText;
 import com.google.android.gms.ads.AdView;
 
 
-public class HomeScreenActivity extends AppCompatActivity {
+public class HomeScreenActivity extends BaseActivity {
     public static final String SEARCH_QUERY = "search_query";
     public final static String STOP_NUMBER = "stop_number";
     public static String filesDir;
     private Button button;
     private EditText searchField;
     private AdView adView;
+    private static BaseActivity instance;
 
     @Override
     protected void onRestart() {
         super.onRestart();
 
         updateGoButtonStatus();
-        adView = ActivityUtilities.initializeAdsIfEnabled(this, adView);
+        ActivityUtilities.initializeAdsIfEnabled(this, adView);
     }
+
+    public static void reCreate() {
+        instance.recreate();
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
+        instance = this;
 
-        filesDir = getFilesDir().getPath();
+        if(filesDir == null)
+            filesDir = getFilesDir().getPath();
 
         adView = (AdView) findViewById(R.id.homeScreenAdView);
         button = (Button) findViewById(R.id.button);
@@ -58,7 +65,7 @@ public class HomeScreenActivity extends AppCompatActivity {
             }
         };
 
-        adView = ActivityUtilities.initializeAdsIfEnabled(this, adView);
+        ActivityUtilities.initializeAdsIfEnabled(this, adView);
         button.setEnabled(false);
         searchField.addTextChangedListener(watcher);
 
@@ -79,12 +86,10 @@ public class HomeScreenActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        adView = ActivityUtilities.destroyAdView(adView);
+        ActivityUtilities.destroyAdView(adView);
     }
 
     private void updateGoButtonStatus() {
-
-
         button.setEnabled(searchField.getText().length() > 0);
     }
 
@@ -97,11 +102,8 @@ public class HomeScreenActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.settings:
-                ActivityUtilities.openSettings(this);
-                return true;
             case R.id.favourites:
-                ActivityUtilities.openFavourites(this);
+                super.openFavourites();
                 return true;
         }
 

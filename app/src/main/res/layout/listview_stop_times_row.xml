@@ -2,16 +2,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="4dp"
+    android:paddingBottom="2dp"
+    android:paddingTop="2dp"
     android:orientation="horizontal">
 
     <TextView
         android:id="@+id/route_number_text"
-        android:layout_width="40sp"
+        android:layout_width="36sp"
         android:layout_height="wrap_content"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center_horizontal"/>
 
     <TextView
+        android:paddingLeft="4sp"
         android:id="@+id/route_name_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
