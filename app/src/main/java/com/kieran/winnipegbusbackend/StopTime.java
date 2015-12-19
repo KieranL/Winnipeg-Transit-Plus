@@ -1,5 +1,7 @@
 package com.kieran.winnipegbusbackend;
 
+import android.support.annotation.NonNull;
+
 import com.kieran.winnipegbusbackend.enums.TimeStatuses;
 
 import java.util.Date;
@@ -90,7 +92,7 @@ public class StopTime implements Comparable {
     }
 
     @Override
-    public int compareTo(Object another) {
+    public int compareTo(@NonNull Object another) {
         return (int)(milliseconds - ((StopTime)another).getMilliseconds());
     }
 }

@@ -4,12 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+import com.kieran.winnipegbus.Activities.HomeScreenActivity;
+import com.kieran.winnipegbus.Activities.StopTimesActivity;
 import com.kieran.winnipegbusbackend.ScheduledStop;
 import com.kieran.winnipegbusbackend.enums.CoverageTypes;
 
@@ -25,39 +24,10 @@ public class ActivityUtilities {
         context.startActivity(intent);
     }
 
-    public static boolean adsDisabled(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getBoolean("pref_ads_disabled", false);
-    }
-
-    public static void createAd(Context context, AdView adView) {
-        AdRequest.Builder adRequest = new AdRequest.Builder();
-        adRequest.addTestDevice(context.getString(R.string.test_device_id_gs5));
-        adView.loadAd(adRequest.build());
-    }
-
-    public static void initializeAdsIfEnabled(Context context, AdView adView) {
-        if (!adView.isLoading() && !adsDisabled(context)) {
-            adView.setVisibility(View.VISIBLE);
-            createAd(context, adView);
-        } else {
-            destroyAdView(adView);
-        }
-    }
-
-    public static void destroyAdView(AdView adView) {
-        if(adView != null) {
-            adView.setVisibility(View.GONE);
-            adView.destroy();
-        }
-    }
-
     public static boolean getTimeSetting(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean("pref_use_24hr_time", false);
     }
-
-
 
     public static void setTextViewColour(Context context, TextView textView, ScheduledStop scheduledStop) {
         int coverageTypeId = scheduledStop.getCoverageTypeId();

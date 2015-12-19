@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus;
+package com.kieran.winnipegbus.Activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -12,8 +12,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdView;
 import com.kieran.winnipegbus.Adapters.StopListAdapter;
+import com.kieran.winnipegbus.LoadXMLAsyncTask;
+import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbusbackend.BusUtilities;
 import com.kieran.winnipegbusbackend.FavouriteStop;
 import com.kieran.winnipegbusbackend.LoadResult;
@@ -33,18 +34,18 @@ public class SearchResultsActivity extends BaseActivity {
     private List<FavouriteStop> searchResultsList = new ArrayList<>();
     private StopListAdapter adapter;
     private SearchQuery searchQuery;
-    private AdView adView;
     private boolean loading;
     private AsyncTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        adViewResId = R.id.stopsListAdView;
         loading = true;
         setContentView(R.layout.activity_stops_list);
 
         ListView listView = (ListView) findViewById(R.id.stops_listView);
-        adView = (AdView) findViewById(R.id.stopsListAdView);
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -62,27 +63,14 @@ public class SearchResultsActivity extends BaseActivity {
         searchQuery = BusUtilities.generateSearchQuery(s);
 
         updateTitle();
-        ActivityUtilities.initializeAdsIfEnabled(this, adView);
-       task = new LoadSearchResults().execute(searchQuery.getQueryUrl());
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        adView.pause();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        adView.resume();
+        initializeAdsIfEnabled();
+        task = new LoadSearchResults().execute(searchQuery.getQueryUrl());
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         task.cancel(true);
-        ActivityUtilities.destroyAdView(adView);
         loading = false;
     }
 
@@ -138,19 +126,9 @@ public class SearchResultsActivity extends BaseActivity {
             case R.id.favourites:
                 super.openFavourites();
                 return true;
-            case android.R.id.home:
-                finish();
-                HomeScreenActivity.reCreate();
-                return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        HomeScreenActivity.reCreate();
     }
 
     private void openStopTimes(int stopNumber) {
@@ -160,12 +138,7 @@ public class SearchResultsActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    private class LoadSearchResults extends AsyncTask<String, Void, LoadResult> {
-        @Override
-        protected LoadResult doInBackground(String... urls) {
-                return BusUtilities.getXML(urls[0]);
-        }
-
+    private class LoadSearchResults extends LoadXMLAsyncTask {
         @Override
         protected void onPostExecute(LoadResult result) {
             if(loading) {

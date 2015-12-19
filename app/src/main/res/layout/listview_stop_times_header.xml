@@ -19,7 +19,7 @@
         android:layout_below="@+id/listView_stop_times_header_text"
         android:layout_width="fill_parent"
         android:layout_height="2dp"
-        android:background="@drawable/divider_background"/>
+        android:background="?attr/headerDivider"/>
 
 </RelativeLayout>
 

@@ -1,5 +1,7 @@
-package com.kieran.winnipegbus;
+package com.kieran.winnipegbus.Activities;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -7,13 +9,23 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 
+import com.kieran.winnipegbus.ActivityManager;
+import com.kieran.winnipegbus.R;
+
 public class SettingsActivity extends PreferenceActivity {
+    private static Context context;
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+        context = this;
 
         setupSimplePreferencesScreen();
+    }
+
+    public static int getThemeId() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return Integer.parseInt(prefs.getString(context.getString(R.string.pref_key_theme), "0"));
     }
 
     private void setupSimplePreferencesScreen() {
@@ -34,9 +46,9 @@ public class SettingsActivity extends PreferenceActivity {
         getPreferenceScreen().addPreference(fakeHeader);
         addPreferencesFromResource(R.xml.pref_favourite_stops);
 
-        bindPreferenceSummaryToValue(findPreference("pref_theme"));
-        bindPreferenceSummaryToValue(findPreference("pref_favourites_sort_list"));
-        bindPreferenceSummaryToValue(findPreference("pref_schedule_load_interval"));
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_key_theme)));
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_favourites_sort)));
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_schedule_load_interval)));
     }
 
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
@@ -52,13 +64,21 @@ public class SettingsActivity extends PreferenceActivity {
             } else {
                 preference.setSummary(stringValue);
             }
+
+            if(preference.getKey().equals("pref_theme")) {
+                int newThemeId  = Integer.parseInt((String)value);
+                if(newThemeId != getThemeId()) {
+                    ActivityManager.refreshThemes();
+                }
+
+            }
+
             return true;
         }
     };
 
     private static void bindPreferenceSummaryToValue(Preference preference) {
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
         sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
                 PreferenceManager
                         .getDefaultSharedPreferences(preference.getContext())

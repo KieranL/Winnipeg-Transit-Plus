@@ -4,22 +4,24 @@ android {
     signingConfigs {
         config {
             storeFile file('C:/Users/kieran/Desktop/AppKey.jks')
+            keyAlias 'AppKey'
         }
     }
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
     defaultConfig {
         applicationId "com.kieran.winnipegbus"
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 23
-        versionCode 9
-        versionName "1.5.0"
+        versionCode 11
+        versionName "1.5.2"
         signingConfig signingConfigs.config
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
     productFlavors {
@@ -31,4 +33,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.0.0'
     compile 'com.android.support:support-v4:23.0.0'
     compile 'com.google.android.gms:play-services-ads:7.8.0'
+    compile 'com.google.android.gms:play-services:7.8.0'
 }

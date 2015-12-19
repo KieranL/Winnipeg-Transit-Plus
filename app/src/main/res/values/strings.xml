@@ -32,6 +32,8 @@
     <string name="features_count">Count</string>
     <string name="action_notification">Notification</string>
     <string name="banner_ad_stop_features_id">ca-app-pub-1189975520647633/3682591503</string>
-
+    <string name="pref_favourites_sort">pref_favourites_sort_list</string>
+    <string name="search_tip">Search by Street name, Route number or Stop number</string>
+    <string name="google_maps_key">AIzaSyBI288Hjgv2ZYa6b9QOz9VF1OOEZEDdwts</string>
 
 </resources>

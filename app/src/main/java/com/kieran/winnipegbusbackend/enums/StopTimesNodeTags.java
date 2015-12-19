@@ -12,7 +12,10 @@ public enum StopTimesNodeTags {
     ROUTE_COVERAGE("coverage"),
     STOP_NAME("name"),
     STOP_NUMBER("number"),
-    STOP("stop");
+    STOP("stop"),
+    GEOGRAPHIC("geographic"),
+    LATITUDE("latitude"),
+    LONGITUDE("longitude");
 
     public String tag;
 

@@ -5,7 +5,7 @@
         android:defaultValue="false"
         android:widgetLayout="@layout/checkbox"/>
     <ListPreference
-        android:key="pref_theme"
+        android:key="@string/pref_key_theme"
         android:title="@string/pref_theme_title"
         android:defaultValue="0"
         android:entries="@array/pref_theme"

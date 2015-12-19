@@ -6,4 +6,6 @@
     <attr name="addToFavouritesIcon" format="reference"/>
     <attr name="favouriteStopIcon" format="reference"/>
     <attr name="refreshIcon" format="reference"/>
+    <attr name="headerDivider" format="reference"/>
+    <attr name="buttonSelector" format="reference"/>
 </resources>

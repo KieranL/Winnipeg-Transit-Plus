@@ -4,6 +4,7 @@ package com.kieran.winnipegbusbackend;
 import com.kieran.winnipegbusbackend.enums.StopTimesNodeTags;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
@@ -95,6 +96,11 @@ public class Stop {
     }
 
     public StopFeatures createStopFeatures() {
-        return new StopFeatures(stopNumber, stopName);
+        return new StopFeatures(stopNumber, stopName, getGPSCoordinate());
+    }
+
+    private GPSCoordinate getGPSCoordinate() {
+        Node coordinates = XMLDocument.getElementsByTagName(StopTimesNodeTags.GEOGRAPHIC.tag).item(0);
+        return new GPSCoordinate(BusUtilities.getValue(StopTimesNodeTags.LATITUDE.tag, coordinates), BusUtilities.getValue(StopTimesNodeTags.LONGITUDE.tag, coordinates));
     }
 }

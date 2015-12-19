@@ -11,4 +11,6 @@
     <string name="pref_header_favourite_stops">Favourite Stops</string>
     <string name="pref_title_favourite_stops_sort">Sort type</string>
     <string name="pref_title_clock_setting">Use 24 Hour Time</string>
+    <string name="pref_key_theme">pref_theme</string>
+    <string name="pref_schedule_load_interval">pref_schedule_load_interval</string>
 </resources>

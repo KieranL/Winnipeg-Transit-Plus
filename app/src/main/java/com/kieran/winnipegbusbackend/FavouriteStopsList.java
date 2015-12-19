@@ -2,7 +2,7 @@ package com.kieran.winnipegbusbackend;
 
 import android.util.Xml;
 
-import com.kieran.winnipegbus.HomeScreenActivity;
+import com.kieran.winnipegbus.Activities.HomeScreenActivity;
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortTypeIds;
 import com.kieran.winnipegbusbackend.enums.FavouritesNodeTags;
 
@@ -19,7 +19,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class FavouriteStopsList {
-    static String FILES_DIR = HomeScreenActivity.filesDir + "/favourites.xml";
+    private final static String FILES_DIR = HomeScreenActivity.filesDir + "/favourites.xml";
     public static List<FavouriteStop> favouritesList = new ArrayList<>();
     public static boolean isLoadNeeded = true;
     private final static String XMLFeature = "http://xmlpull.org/v1/doc/features.html#indent-output";
@@ -60,6 +60,8 @@ public class FavouriteStopsList {
     }
 
    public static boolean loadFavourites() {
+       if(favouritesList.size() > 0)
+           isLoadNeeded = true;
        if(isLoadNeeded) {
            try {
                Document XMLDocument = (Document)BusUtilities.getXML(new FileInputStream(FILES_DIR)).getResult();

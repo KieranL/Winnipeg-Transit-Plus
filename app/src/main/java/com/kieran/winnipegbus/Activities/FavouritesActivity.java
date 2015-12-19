@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus;
+package com.kieran.winnipegbus.Activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -12,8 +12,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
-import com.google.android.gms.ads.AdView;
+import com.kieran.winnipegbus.ActivityUtilities;
 import com.kieran.winnipegbus.Adapters.StopListAdapter;
+import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbusbackend.FavouriteStop;
 import com.kieran.winnipegbusbackend.FavouriteStopsList;
 
@@ -24,17 +25,16 @@ public class FavouritesActivity extends BaseActivity {
     private StopListAdapter adapter;
     private List<FavouriteStop> favouriteStops;
     private int sortTypeId;
-    private AdView adView;
 
     @Override
     public void onRestart() {
         super.onRestart();
-        ActivityUtilities.initializeAdsIfEnabled(this, adView);
         reloadList();
     }
 
     private void reloadList() {
         favouriteStops.clear();
+        FavouriteStopsList.isLoadNeeded = true;
 
         if(FavouriteStopsList.length() == 0)
             FavouriteStopsList.isLoadNeeded = true;
@@ -46,15 +46,15 @@ public class FavouritesActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        adViewResId = R.id.stopsListAdView;
 
         setContentView(R.layout.activity_stops_list);
-        adView = (AdView) findViewById(R.id.stopsListAdView);
 
         favouriteStops = new ArrayList<>();
 
         ListView listView = (ListView) findViewById(R.id.stops_listView);
 
-        ActivityUtilities.initializeAdsIfEnabled(this, adView);
+        initializeAdsIfEnabled();
         getFavouritesList();
 
         createListViewListeners(listView);
@@ -64,33 +64,14 @@ public class FavouritesActivity extends BaseActivity {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        adView.pause();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        adView.resume();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                onBackPressed();
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        HomeScreenActivity.reCreate();
     }
 
     private void createListViewListeners(ListView listView) {
@@ -124,7 +105,7 @@ public class FavouritesActivity extends BaseActivity {
 
     private void getSortPreference() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        sortTypeId = Integer.parseInt(prefs.getString("pref_favourites_sort_list", "0"));
+        sortTypeId = Integer.parseInt(prefs.getString(getString(R.string.pref_favourites_sort), "0"));
     }
 
     private void getFavouritesList() {
@@ -137,12 +118,6 @@ public class FavouritesActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_favourites, menu);
         return true;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ActivityUtilities.destroyAdView(adView);
     }
 
     private void openStopTimes(int stopNumber) {

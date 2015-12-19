@@ -1,53 +1,63 @@
-package com.kieran.winnipegbus;
+package com.kieran.winnipegbus.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
-import com.google.android.gms.ads.AdView;
+import com.kieran.winnipegbus.ActivityUtilities;
+import com.kieran.winnipegbus.AppRater;
+import com.kieran.winnipegbus.R;
 
 
 public class HomeScreenActivity extends BaseActivity {
     public static final String SEARCH_QUERY = "search_query";
     public final static String STOP_NUMBER = "stop_number";
     public static String filesDir;
-    private Button button;
+    private Button searchButton;
     private EditText searchField;
-    private AdView adView;
-    private static BaseActivity instance;
 
     @Override
     protected void onRestart() {
         super.onRestart();
 
         updateGoButtonStatus();
-        ActivityUtilities.initializeAdsIfEnabled(this, adView);
     }
-
-    public static void reCreate() {
-        instance.recreate();
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
-        instance = this;
+        adViewResId = R.id.homeScreenAdView;
+
+        AppRater rater = new AppRater(this);
+        rater.setPhrases(R.string.rate_title, R.string.rate_explanation, R.string.rate_now_button, R.string.rate_later_button, R.string.rate_never_button);
+        rater.show();
 
         if(filesDir == null)
             filesDir = getFilesDir().getPath();
 
-        adView = (AdView) findViewById(R.id.homeScreenAdView);
-        button = (Button) findViewById(R.id.button);
+        searchButton = (Button) findViewById(R.id.search_button);
 
         searchField = (EditText) findViewById(R.id.search_field);
+        searchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    submitSearch(v);
+                    return true;
+                }
+                return false;
+            }
+        });
 
 
         TextWatcher watcher = new TextWatcher() {
@@ -65,32 +75,14 @@ public class HomeScreenActivity extends BaseActivity {
             }
         };
 
-        ActivityUtilities.initializeAdsIfEnabled(this, adView);
-        button.setEnabled(false);
+        initializeAdsIfEnabled();
+        searchButton.setEnabled(false);
         searchField.addTextChangedListener(watcher);
 
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        adView.pause();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        adView.resume();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ActivityUtilities.destroyAdView(adView);
-    }
-
     private void updateGoButtonStatus() {
-        button.setEnabled(searchField.getText().length() > 0);
+        searchButton.setEnabled(searchField.getText().length() > 0);
     }
 
     @Override
@@ -117,14 +109,14 @@ public class HomeScreenActivity extends BaseActivity {
             if(number >= 10000) {
                 ActivityUtilities.openStopTimes(this, number);
             }else {
-                startSearchActivity();
+                startSearchResultsActivity();
             }
         }catch (Exception e) {
-           startSearchActivity();
+           startSearchResultsActivity();
         }
     }
 
-    private void startSearchActivity() {
+    private void startSearchResultsActivity() {
         Intent intent = new Intent(this, SearchResultsActivity.class);
         intent.putExtra(SEARCH_QUERY, searchField.getText().toString());
         startActivity(intent);

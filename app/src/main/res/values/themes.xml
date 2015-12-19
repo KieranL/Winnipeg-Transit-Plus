@@ -10,6 +10,7 @@
         <item name="favouriteStopIcon">@drawable/ic_favourite_stops_dark</item>
         <item name="stopTimesHeaderBackground">@drawable/header_background_dark</item>
         <item name="refreshIcon">@drawable/ic_refresh_dark</item>
+        <item name="headerDivider">@drawable/divider_background</item>
     </style>
     <style name="Light" parent="Base.Theme.AppCompat.Light">
         <item name="stopTimesHeaderBackground">@drawable/header_background_light</item>
@@ -19,5 +20,23 @@
         <item name="outline">@drawable/panel_outline_light</item>
         <item name="android:textColorPrimary">@color/black</item>
         <item name="android:textColor">@color/black</item>
+        <item name="headerDivider">@drawable/divider_background</item>
     </style>
+    <style name="Rt" parent="Dark">
+        <item name="android:colorBackground">@color/dark_rt_red</item>
+        <item name="android:windowBackground">@color/rt_blue</item>
+        <item name="stopTimesHeaderBackground">@drawable/header_background_rt</item>
+        <item name="actionBarStyle">@style/ActionBar.Solid.Rt</item>
+        <item name="actionModeBackground">@drawable/cab_background_top_rt</item>
+        <item name="actionModeSplitBackground">@drawable/cab_background_bottom_rt</item>
+        <item name="headerDivider">@drawable/divider_background_rt</item>
+        <item name="colorButtonNormal">@color/rt_red</item>
+    </style>
+
+    <style name="ActionBar.Solid.Rt" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
+        <item name="background">@drawable/ab_solid_rt</item>
+        <item name="backgroundStacked">@drawable/ab_stacked_solid_rt</item>
+        <item name="backgroundSplit">@drawable/ab_bottom_solid_rt</item>
+    </style>
+
 </resources>

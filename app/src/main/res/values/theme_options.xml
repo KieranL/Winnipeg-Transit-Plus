@@ -3,10 +3,12 @@
     <string-array name="pref_theme">
         <item>Dark</item>
         <item>Light</item>
+        <!--<item>Rapid Transit</item>-->
     </string-array>
     <string-array name="pref_theme_values">
         <item>0</item>
         <item>1</item>
+        <!--<item>2</item>-->
     </string-array>
 
 </resources>

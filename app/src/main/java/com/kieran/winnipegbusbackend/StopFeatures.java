@@ -12,10 +12,12 @@ public class StopFeatures implements Serializable {
     private int stopNumber;
     private String stopName;
     private List<StopFeature> stopFeatures;
+    private GPSCoordinate coordinates;
 
-    public StopFeatures(int stopNumber, String stopName) {
+    public StopFeatures(int stopNumber, String stopName, GPSCoordinate coordinates) {
         this.stopNumber = stopNumber;
         this.stopName = stopName;
+        this.coordinates = coordinates;
         stopFeatures = new ArrayList<>();
     }
 
@@ -36,5 +38,17 @@ public class StopFeatures implements Serializable {
 
     public List<StopFeature> getStopFeatures() {
         return stopFeatures;
+    }
+
+    public GPSCoordinate getCoordinates() {
+        return coordinates;
+    }
+
+    public int getNumberofFeatures() {
+        return stopFeatures.size();
+    }
+
+    public void clearStopFeatures() {
+        stopFeatures.clear();
     }
 }

@@ -1,6 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <ListPreference
-        android:key="pref_favourites_sort_list"
+        android:key="@string/pref_favourites_sort"
         android:title="@string/pref_title_favourite_stops_sort"
         android:defaultValue="0"
         android:entries="@array/pref_favourites_sort_type"

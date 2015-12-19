@@ -7,7 +7,7 @@
 
 
     <ListPreference
-        android:key="pref_schedule_load_interval"
+        android:key="@string/pref_schedule_load_interval"
         android:title="@string/pref_title_schedule_load_interval"
         android:defaultValue="2"
         android:entries="@array/pref_bus_schedule_result_intervals"
