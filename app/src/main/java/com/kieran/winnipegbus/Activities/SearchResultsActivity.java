@@ -117,7 +117,7 @@ public class SearchResultsActivity extends BaseActivity {
 
     private void updateTitle() {
         if(searchQuery.getSearchQueryTypeId() == SearchQueryTypeIds.ROUTE_NUMBER.searchQueryTypeId)
-            setTitle("Results for Route " + searchQuery.getQuery());
+            setTitle("Stops for Rte " + searchQuery.getQuery());
     }
 
     @Override

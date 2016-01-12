@@ -1,7 +1,6 @@
 package com.kieran.winnipegbus.Activities;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -38,11 +37,11 @@ import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 public class StopTimesActivity extends BaseActivity {
 
+    public static final String FILTER_POSITIVE = "Done";
     private Stop stop;
     private int stopNumber;
     private String stopName;
@@ -54,7 +53,6 @@ public class StopTimesActivity extends BaseActivity {
     private List<Integer> routeNumberFilter = new ArrayList<>();
     private TextView title;
     private boolean[] selectedRoutes;
-    private Context context;
     private List<RouteSchedule> routeFilterRoutes = new ArrayList<>();
     public final static String STOP = "stop";
     public static ScheduledStop selectedStop;
@@ -62,12 +60,12 @@ public class StopTimesActivity extends BaseActivity {
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private ShakeDetector shakeDetector;
+    private boolean hasFilterChanged;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stop_times);
-        context = this;
         adViewResId = R.id.stopTimesAdView;
 
         FavouriteStopsList.loadFavourites();
@@ -152,7 +150,7 @@ public class StopTimesActivity extends BaseActivity {
 
     private StopTime getScheduleEndTime() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        StopTime endTime = new StopTime(new Date());
+        StopTime endTime = new StopTime(System.currentTimeMillis());
         endTime.increaseHour(Byte.parseByte(prefs.getString(getString(R.string.pref_schedule_load_interval), "2")));
 
         return endTime;
@@ -208,7 +206,7 @@ public class StopTimesActivity extends BaseActivity {
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-                if (!loading) {
+                if (!loading && animatedView != null) {
                     animatedView.setEnabled(true);
                     animatedView.getActionView().clearAnimation();
                 }
@@ -216,8 +214,10 @@ public class StopTimesActivity extends BaseActivity {
         });
 
         rotation.setRepeatCount(Animation.INFINITE);
-        animatedView.setEnabled(false);
-        animatedView.getActionView().startAnimation(rotation);
+        if(animatedView != null) {
+            animatedView.setEnabled(false);
+            animatedView.getActionView().startAnimation(rotation);
+        }
     }
 
     private void refresh() {
@@ -273,6 +273,7 @@ public class StopTimesActivity extends BaseActivity {
 
     private void openFilterWindow() {
         if (stop != null) {
+            hasFilterChanged = false;
             AlertDialog.Builder filterDialog = new AlertDialog.Builder(this);
             filterDialog.setTitle(R.string.filter_dialog_title);
             if (routeFilterRoutes.size() == 0)
@@ -294,6 +295,7 @@ public class StopTimesActivity extends BaseActivity {
             filterDialog.setMultiChoiceItems(charSequence, selectedRoutes, new AlertDialog.OnMultiChoiceClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                    hasFilterChanged = true;
                     int routeNumber = routeFilterRoutes.get(which).getRouteNumber();
                     selectedRoutes[which] = isChecked;
                     if (isChecked)
@@ -303,12 +305,14 @@ public class StopTimesActivity extends BaseActivity {
                 }
             });
 
-            filterDialog.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+            filterDialog.setPositiveButton(FILTER_POSITIVE, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    loading = true;
-                    startLoadingAnimation(refreshIcon);
-                    getTimes();
+                    if(hasFilterChanged) {
+                        loading = true;
+                        startLoadingAnimation(refreshIcon);
+                        getTimes();
+                    }
                 }
             });
 
@@ -352,10 +356,10 @@ public class StopTimesActivity extends BaseActivity {
                 }
 
                 if (result.getException() != null && stop == null) {
-                    ActivityUtilities.createLongToaster(context, getText(R.string.network_error).toString());
+                    ActivityUtilities.createLongToaster(getApplicationContext(), getText(R.string.network_error).toString());
                     title.setText(R.string.network_error);
                 } else if (stops.size() == 0) {
-                    ActivityUtilities.createLongToaster(context, getText(R.string.no_results_found).toString());
+                    ActivityUtilities.createLongToaster(getApplicationContext(), getText(R.string.no_results_found).toString());
                     title.setText(R.string.no_results_found);
                 } else {
                     title.setText(stopName);

@@ -17,7 +17,6 @@ import com.kieran.winnipegbus.ActivityUtilities;
 import com.kieran.winnipegbus.AppRater;
 import com.kieran.winnipegbus.R;
 
-
 public class HomeScreenActivity extends BaseActivity {
     public static final String SEARCH_QUERY = "search_query";
     public final static String STOP_NUMBER = "stop_number";

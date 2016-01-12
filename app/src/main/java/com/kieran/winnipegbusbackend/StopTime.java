@@ -4,17 +4,27 @@ import android.support.annotation.NonNull;
 
 import com.kieran.winnipegbusbackend.enums.TimeStatuses;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public class StopTime implements Comparable {
+    private static Calendar calendar = Calendar.getInstance();
     private byte hours;
     private byte minutes;
     private long milliseconds;
 
     public StopTime(Date date) {
-        hours = (byte)date.getHours();
-        minutes = (byte)date.getMinutes();
+        calendar.setTime(date);
+        hours = (byte)calendar.get(Calendar.HOUR_OF_DAY);
+        minutes = (byte)calendar.get(Calendar.MINUTE);
         milliseconds = date.getTime();
+    }
+
+    public StopTime(long milliseconds) {
+        this.milliseconds = milliseconds;
+        calendar.setTimeInMillis(milliseconds);
+        hours = (byte)calendar.get(Calendar.HOUR_OF_DAY);
+        minutes = (byte)calendar.get(Calendar.MINUTE);
     }
 
     public static int timeBehindMinutes(StopTime estimated, StopTime scheduled) {

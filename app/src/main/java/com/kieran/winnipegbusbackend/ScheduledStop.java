@@ -5,7 +5,7 @@ import com.kieran.winnipegbusbackend.enums.StopTimesNodeTags;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class ScheduledStop  {
+public class ScheduledStop {
 
     private final static String ARRIVAL_TAG = "arrival";
     private final static String DEPARTURE_TAG = "departure";
@@ -18,18 +18,16 @@ public class ScheduledStop  {
     private StopTime estimatedDepartureTime;
     private StopTime scheduledArrivalTime;
     private StopTime scheduledDepartureTime;
-    private int routeNumber;
     private boolean hasBikeRack;
     private boolean hasEasyAccess;
     private boolean hasArrivalTime;
     private ScheduledStopKey key;
-    private int coverageTypeId;
+    private RouteSchedule parentRoute;
 
-    public ScheduledStop(Node stopNode, int routeNumber, String routeName, int coverageTypeId) {
-        this.routeNumber = routeNumber;
+    public ScheduledStop(Node stopNode, RouteSchedule parentRoute) {
         this.stopNode = stopNode;
-        this.routeVariantName = routeName;
-        this.coverageTypeId = coverageTypeId;
+        this.routeVariantName = parentRoute.getRouteName();
+        this.parentRoute = parentRoute;
 
         loadVariantName();
         loadDepartureTimes();
@@ -42,7 +40,7 @@ public class ScheduledStop  {
     }
 
     private void loadKey() {
-        key = new ScheduledStopKey(BusUtilities.getValue(StopTimesNodeTags.SCHEDULED_STOP_KEY.tag, stopNode));
+        key = new ScheduledStopKey(BusUtilities.getValue(StopTimesNodeTags.KEY.tag, stopNode));
     }
 
     public void loadArrivalTimes() {
@@ -82,6 +80,10 @@ public class ScheduledStop  {
         return StopTime.getTimeStatus(estimatedDepartureTime, scheduledDepartureTime);
     }
 
+    public RouteKey getRouteKey() {
+        return new RouteKey(((Element) stopNode).getElementsByTagName(StopTimesNodeTags.VARIANT.tag).item(0));
+    }
+
 
     public String getRouteVariantName() {
         return routeVariantName;
@@ -104,7 +106,7 @@ public class ScheduledStop  {
     }
 
     public int getRouteNumber() {
-        return routeNumber;
+        return parentRoute.getRouteNumber();
     }
 
     public boolean hasBikeRack() {
@@ -126,6 +128,6 @@ public class ScheduledStop  {
     }
 
     public int getCoverageTypeId() {
-        return coverageTypeId;
+        return parentRoute.getCoverageType();
     }
 }

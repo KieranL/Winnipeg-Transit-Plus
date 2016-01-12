@@ -13,17 +13,13 @@ import java.util.List;
 
 public class RouteSchedule implements Comparable{
     private Node routeNode;
-    private int stopNumber;
-
     private int routeNumber;
     private String routeName;
     private int coverageType;
-
     private List<ScheduledStop> stops;
 
-    public RouteSchedule(Node node, int stopNumber) {
+    public RouteSchedule(Node node) {
         routeNode = node;
-        this.stopNumber = stopNumber;
         stops = new ArrayList<>();
 
         loadCoverageType();
@@ -54,7 +50,7 @@ public class RouteSchedule implements Comparable{
 
         for (int s = 0; s < scheduledStops.getLength(); s++) {
             Node stop = scheduledStops.item(s);
-            stops.add(new ScheduledStop(stop, routeNumber, routeName, coverageType));
+            stops.add(new ScheduledStop(stop, this));
         }
     }
 

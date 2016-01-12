@@ -13,15 +13,14 @@ import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbusbackend.ScheduledStop;
 import com.kieran.winnipegbusbackend.StopTime;
 
-import java.util.Date;
 import java.util.List;
 
 public class StopTimeAdapter extends ArrayAdapter<ScheduledStop> {
-    Context context;
-    int layoutResourceId;
-    boolean use24hrTime;
-    LayoutInflater inflater;
-    List<ScheduledStop> scheduledStops;
+    private Context context;
+    private int layoutResourceId;
+    private boolean use24hrTime;
+    private LayoutInflater inflater;
+    private List<ScheduledStop> scheduledStops;
 
     public StopTimeAdapter(Context context, int layoutResourceId, List<ScheduledStop> scheduledStops) {
         super(context, layoutResourceId, scheduledStops);
@@ -57,7 +56,7 @@ public class StopTimeAdapter extends ArrayAdapter<ScheduledStop> {
         ActivityUtilities.setTextViewColour(context, holder.routeNumber, scheduledStop);
         holder.routeVariantName.setText(scheduledStop.getRouteVariantName());
         holder.timeStatus.setText(scheduledStop.getTimeStatus());
-        holder.departureTime.setText(scheduledStop.getEstimatedDepartureTime().toFormattedString(new StopTime(new Date()), use24hrTime));
+        holder.departureTime.setText(scheduledStop.getEstimatedDepartureTime().toFormattedString(new StopTime(System.currentTimeMillis()), use24hrTime));
 
         return row;
     }

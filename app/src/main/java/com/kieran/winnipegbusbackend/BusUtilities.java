@@ -27,6 +27,14 @@ public class BusUtilities {
     private final static String END_TIME_PARAMETER = "end=";
     private static final String START_TIME_PARAMETER = "start=";
     private static final String STOP_FEATURE_PARAMETER = "features";
+    private static final String VARIANT_PARAMETER = "variant=";
+    private static final String API_KEY_PARAMETER = "api-key=";
+    private static final String STOPS_PARAMETER = "stops";
+    private static final String AMPERSAND = "&";
+    private static final String FORWARD_SLASH = "/";
+    private static final String COLON = ":";
+    private static final String QUESTION_MARK = "?";
+    private static final String SCHEDULE_PARAMETER = "schedule";
 
     public static StopTime convertToDate(String s) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
@@ -69,7 +77,7 @@ public class BusUtilities {
 
     public static String generateStopNumberURL(int stopNumber, List<Integer> routeNumbers, StopTime startTime, StopTime endTime) {
         String routeFilter = "";
-        String startTimeFilter ="";
+        String startTimeFilter = "";
         String endTimeFilter = "";
 
         if (routeNumbers != null) {
@@ -79,20 +87,20 @@ public class BusUtilities {
                 if (i < routeNumbers.size() - 1)
                     routes += ",";
             }
-            routeFilter = (ROUTE_PARAMETER + routes + "&");
+            routeFilter = (ROUTE_PARAMETER + routes + AMPERSAND);
         }
 
         if(startTime != null) {
             startTimeFilter += START_TIME_PARAMETER + startTime.to24hrTimeString();
-            startTimeFilter += "&";
+            startTimeFilter += AMPERSAND;
         }
 
         if(endTime != null) {
             endTimeFilter += END_TIME_PARAMETER + endTime.to24hrTimeString();
-            endTimeFilter += "&";
+            endTimeFilter += AMPERSAND;
         }
 
-        return API_URL + "stops/" + stopNumber + "/schedule?" + startTimeFilter + endTimeFilter + routeFilter + USAGE + API_KEY;
+        return API_URL + STOPS_PARAMETER + FORWARD_SLASH + stopNumber + FORWARD_SLASH + SCHEDULE_PARAMETER + QUESTION_MARK + startTimeFilter + endTimeFilter + routeFilter + USAGE + API_KEY;
     }
 
     public static String generateStopNumberURL(int stopNumber, int routeNumber, StopTime startTime, StopTime endTime) {
@@ -107,24 +115,28 @@ public class BusUtilities {
             int routeNumber = Integer.parseInt(search);
             return generateSearchQuery(routeNumber);
         }catch (Exception e) {
-            return new SearchQuery(search, API_URL + "stops:" + createURLFriendlyString(search) + "?api-key=" + API_KEY, SearchQueryTypeIds.GENERAL.searchQueryTypeId);
+            return new SearchQuery(search, API_URL + STOPS_PARAMETER + COLON + createURLFriendlyString(search) + QUESTION_MARK + API_KEY_PARAMETER + API_KEY, SearchQueryTypeIds.GENERAL.searchQueryTypeId);
         }
     }
 
     public static SearchQuery generateSearchQuery(int routeNumber) {
-            return new SearchQuery(Integer.toString(routeNumber), API_URL + "stops?" + ROUTE_PARAMETER + routeNumber + "&api-key=" + API_KEY, SearchQueryTypeIds.ROUTE_NUMBER.searchQueryTypeId);
+        return new SearchQuery(Integer.toString(routeNumber), API_URL + STOPS_PARAMETER + QUESTION_MARK + ROUTE_PARAMETER + routeNumber + AMPERSAND + API_KEY_PARAMETER + API_KEY, SearchQueryTypeIds.ROUTE_NUMBER.searchQueryTypeId);
+    }
+
+    public static SearchQuery generateSearchQuery(RouteKey key) {
+        return new SearchQuery(key.getKeyString(), API_URL + STOPS_PARAMETER + QUESTION_MARK + VARIANT_PARAMETER + key.getKeyString() + AMPERSAND + API_KEY_PARAMETER + API_KEY, SearchQueryTypeIds.ROUTE_NUMBER.searchQueryTypeId);
     }
 
     public static String generateStopFeaturesUrl(int stopNumber) {
-        return API_URL + "stops/" + Integer.toString(stopNumber) + "/" + STOP_FEATURE_PARAMETER + "?api-key=" + API_KEY;
+        return API_URL + STOPS_PARAMETER + FORWARD_SLASH + Integer.toString(stopNumber) + FORWARD_SLASH + STOP_FEATURE_PARAMETER + QUESTION_MARK + API_KEY_PARAMETER + API_KEY;
     }
 
     private static String createURLFriendlyString(String s) {
-        String[] words = s.split(" ");
+        String[] words = s.split("\\s+");
         String urlFriendlyString = words[0];
 
         for(int i = 1; i < words.length; i++)
-            urlFriendlyString+= "+" + words[i];
+            urlFriendlyString += "+" + words[i];
 
         return urlFriendlyString;
     }
@@ -140,4 +152,3 @@ public class BusUtilities {
             return CoverageTypes.REGULAR.typeId;
     }
 }
-

@@ -3,7 +3,7 @@ package com.kieran.winnipegbusbackend.enums;
 public enum StopTimesNodeTags {
     BIKE_RACK("bike-rack"),
     EASY_ACCESS("easy-access"),
-    SCHEDULED_STOP_KEY("key"),
+    KEY("key"),
     VARIANT_NAME("name"),
     SCHEDULED_STOPS("scheduled-stop"),
     ROUTE_NAME("name"),
@@ -12,6 +12,7 @@ public enum StopTimesNodeTags {
     ROUTE_COVERAGE("coverage"),
     STOP_NAME("name"),
     STOP_NUMBER("number"),
+    VARIANT("variant"),
     STOP("stop"),
     GEOGRAPHIC("geographic"),
     LATITUDE("latitude"),

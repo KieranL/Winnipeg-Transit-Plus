@@ -19,6 +19,7 @@ import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbusbackend.BusUtilities;
 import com.kieran.winnipegbusbackend.LoadResult;
 import com.kieran.winnipegbusbackend.ScheduledStop;
+import com.kieran.winnipegbusbackend.SearchQuery;
 import com.kieran.winnipegbusbackend.Stop;
 import com.kieran.winnipegbusbackend.StopTime;
 import com.kieran.winnipegbusbackend.UpcomingStop;
@@ -30,8 +31,6 @@ import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,11 +39,9 @@ public class ScheduledStopInfoActivity extends BaseActivity {
     private Timer timer;
     private NotificationCompat.Builder mBuilder;
     private NotificationManager mNotifyMgr;
-    private List<Integer> upcomingStopNumbers;
     private List<UpcomingStop> upcomingStops;
     private ScheduledStop scheduledStop;
     private boolean use24hrTime;
-    private boolean loading = true;
     private UpcomingStopsAdapter adapter;
     private List<AsyncTask> tasks;
 
@@ -57,7 +54,6 @@ public class ScheduledStopInfoActivity extends BaseActivity {
         scheduledStop = StopTimesActivity.selectedStop;
         scheduledStop.loadAdditionalInfo();
         use24hrTime = ActivityUtilities.getTimeSetting(this);
-        upcomingStopNumbers = new ArrayList<>();
         upcomingStops = new ArrayList<>();
 
         ListView listView = ((ListView)findViewById(R.id.listView_upcoming_stops));
@@ -71,7 +67,8 @@ public class ScheduledStopInfoActivity extends BaseActivity {
 
 
         fillTextViews();
-        tasks.add(new LoadStopsForRoute().execute(BusUtilities.generateSearchQuery(scheduledStop.getRouteNumber()).getQueryUrl()));
+        SearchQuery query = BusUtilities.generateSearchQuery(scheduledStop.getRouteKey());
+        tasks.add(new LoadStopsForRoute().execute(query.getQueryUrl()));
     }
 
     public void onResume(){
@@ -92,6 +89,7 @@ public class ScheduledStopInfoActivity extends BaseActivity {
         ActivityUtilities.setTextViewColour(this, routeNumber, scheduledStop);
 
         getTextView(R.id.bus_name).setText(scheduledStop.getRouteVariantName());
+
         if(scheduledStop.hasArrivalTime()) {
             findViewById(R.id.arrival_times_header).setVisibility(View.VISIBLE);
 
@@ -138,15 +136,15 @@ public class ScheduledStopInfoActivity extends BaseActivity {
 
     private void createNotification() {
         mBuilder = new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.route_number_background_rt)
-                        .setContentTitle(Integer.toString(scheduledStop.getRouteNumber()) + " " + scheduledStop.getRouteVariantName())
-                        .setContentText(scheduledStop.getEstimatedDepartureTime().toFormattedString(null, false))
-                        .setAutoCancel(true);
+                .setSmallIcon(R.drawable.route_number_background_rt)
+                .setContentTitle(Integer.toString(scheduledStop.getRouteNumber()) + " " + scheduledStop.getRouteVariantName())
+                .setContentText(scheduledStop.getEstimatedDepartureTime().toFormattedString(null, false))
+                .setAutoCancel(true);
 
         mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mNotifyMgr.notify(1337, mBuilder.build());
 
-       callAsynchronousTask();
+        callAsynchronousTask();
     }
 
     public void callAsynchronousTask() {
@@ -178,10 +176,10 @@ public class ScheduledStopInfoActivity extends BaseActivity {
             if (result.getResult() != null) {
                 NodeList stops = ((Document)result.getResult()).getElementsByTagName(StopTimesNodeTags.STOP.tag);
                 if(stops.getLength() > 0) {
+                    int stopNumber;
                     for (int s = 0; s < stops.getLength(); s++) {
                         Node stop = stops.item(s);
-                        int stopNumber = Integer.parseInt(BusUtilities.getValue(StopTimesNodeTags.STOP_NUMBER.tag, stop));
-                        upcomingStopNumbers.add(stopNumber);
+                        stopNumber = Integer.parseInt(BusUtilities.getValue(StopTimesNodeTags.STOP_NUMBER.tag, stop));
 
                         try {
                             tasks.add(new LoadStopTimes().executeOnExecutor(THREAD_POOL_EXECUTOR, BusUtilities.generateStopNumberURL(stopNumber, scheduledStop.getRouteNumber(), scheduledStop.getEstimatedDepartureTime(), null)));
@@ -212,12 +210,7 @@ public class ScheduledStopInfoActivity extends BaseActivity {
                 if(scheduledStop1 != null) {
                     UpcomingStop upcomingStop = new UpcomingStop(stopName, stop.getStopNumber(), scheduledStop1.getEstimatedDepartureTime(), scheduledStop1.getKey());
                     upcomingStops.add(upcomingStop);
-                    Collections.sort(upcomingStops, new Comparator<UpcomingStop>() {
-                        @Override
-                        public int compare(UpcomingStop lhs, UpcomingStop rhs) {
-                            return lhs.getKey().getStopNumber() - rhs.getKey().getStopNumber();
-                        }
-                    });
+                    Collections.sort(upcomingStops);
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -229,12 +222,12 @@ public class ScheduledStopInfoActivity extends BaseActivity {
         protected void onPostExecute(LoadResult result) {
             if (result.getResult() != null) {
 
-                    Stop stop = new Stop((Document)result.getResult());
-                    stop.loadRoutes();
-                    ScheduledStop scheduledStop1 = stop.getScheduledStopByKey(scheduledStop.getKey());
+                Stop stop = new Stop((Document)result.getResult());
+                stop.loadRoutes();
+                ScheduledStop scheduledStop1 = stop.getScheduledStopByKey(scheduledStop.getKey());
 
                 if(scheduledStop1 != null) {
-                    mBuilder.setContentText(scheduledStop1.getEstimatedDepartureTime().toFormattedString(new StopTime(new Date()), false) + " ver" + Integer.toString(i++));
+                    mBuilder.setContentText(scheduledStop1.getEstimatedDepartureTime().toFormattedString(new StopTime(System.currentTimeMillis()), false) + " ver" + Integer.toString(i++));
 
                     mNotifyMgr.notify(1337, mBuilder.build());
                 }

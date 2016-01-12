@@ -38,7 +38,7 @@ public class Stop {
         NodeList routes = XMLDocument.getElementsByTagName(StopTimesNodeTags.ROUTES.tag);
 
         for (int r = 0; r < routes.getLength(); r++)
-                routeList.add(new RouteSchedule(routes.item(r), stopNumber));
+                routeList.add(new RouteSchedule(routes.item(r)));
 
         return this;
     }

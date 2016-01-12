@@ -1,6 +1,8 @@
 package com.kieran.winnipegbusbackend;
 
-public class UpcomingStop {
+import android.support.annotation.NonNull;
+
+public class UpcomingStop implements Comparable {
     private String stopName;
     private StopTime time;
     private int stopNumber;
@@ -25,8 +27,12 @@ public class UpcomingStop {
         return time;
     }
 
-
     public ScheduledStopKey getKey() {
         return key;
+    }
+
+    @Override
+    public int compareTo(@NonNull Object another) {
+        return key.getStopNumber() - ((UpcomingStop)another).getKey().getStopNumber();
     }
 }
