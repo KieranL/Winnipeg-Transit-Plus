@@ -86,7 +86,7 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
         adViewResId = R.id.stopTimesAdView;
 
         //stopSchedule = null; //TODO remove dis
-
+        // test
         FavouriteStopsList.loadFavourites();
 
         ListView listView = (ListView) findViewById(R.id.stop_times_listview);
