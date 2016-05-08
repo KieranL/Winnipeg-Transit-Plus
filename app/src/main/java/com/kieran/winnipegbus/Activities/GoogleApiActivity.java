@@ -23,7 +23,7 @@ public abstract class GoogleApiActivity extends BaseActivity implements GoogleAp
         }
     }
 
-    private boolean isGooglePlayServicesAvailable() {
+    public boolean isGooglePlayServicesAvailable() {
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
         return ConnectionResult.SUCCESS == resultCode;
     }

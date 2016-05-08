@@ -14,21 +14,15 @@ public class StopTime implements Comparable, Serializable {
     private static final String EARLY_TEXT = "Early";
     private static final String LATE_TEXT = "Late";
     private static final String OK_TEXT = "Ok";
-    private static transient Calendar calendar;
+    private static transient Calendar calendar = Calendar.getInstance();
     private long milliseconds;
 
     public StopTime(Date date) {
         milliseconds = date.getTime();
-
-        if(calendar == null)
-            calendar = Calendar.getInstance();
     }
 
     public StopTime(long milliseconds) {
         this.milliseconds = milliseconds;
-
-        if(calendar == null)
-            calendar = Calendar.getInstance();
     }
 
     public static double timeBehindMinutes(StopTime estimated, StopTime scheduled) {

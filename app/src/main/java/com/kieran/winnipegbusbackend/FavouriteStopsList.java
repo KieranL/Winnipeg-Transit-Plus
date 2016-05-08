@@ -4,7 +4,6 @@ import android.util.Xml;
 
 import com.kieran.winnipegbus.Activities.BaseActivity;
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType;
-import com.kieran.winnipegbusbackend.enums.FavouritesNodeTags;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -21,6 +20,14 @@ import java.util.List;
 
 public class FavouriteStopsList {
     private final static String FILES_DIR = BaseActivity.filesDir + "/favourites.xml";
+
+    private final static String FAVOURITE_STOPS_TAG = "favouriteStops";
+    private final static String FAVOURITE_STOP_TAG = "favouriteStop";
+    private final static String STOP_NUMBER_TAG =  "stopNumber";
+    private final static String STOP_NAME_TAG = "stopName";
+    private final static String TIMES_USED_TAG = "timesUsed";
+    private final static String ALIAS_TAG = "alias";
+
     private static List<FavouriteStop> favouritesList = new ArrayList<>();
     public static boolean isLoadNeeded = true;
     private final static String XMLFeature = "http://xmlpull.org/v1/doc/features.html#indent-output";
@@ -62,14 +69,14 @@ public class FavouriteStopsList {
        if(isLoadNeeded) {
            try {
                Document XMLDocument = (Document)BusUtilities.getXML(new FileInputStream(FILES_DIR)).getResult();
-               NodeList favouriteStops = XMLDocument.getElementsByTagName(FavouritesNodeTags.FAVOURITE_STOP.tag);
+               NodeList favouriteStops = XMLDocument.getElementsByTagName(FAVOURITE_STOP_TAG);
 
                for (int r = 0; r < favouriteStops.getLength(); r++) {
                    Node curr = favouriteStops.item(r);
-                   int stopNumber = Integer.parseInt(BusUtilities.getValue(FavouritesNodeTags.STOP_NUMBER.tag, curr));
-                   String stopName = BusUtilities.getValue(FavouritesNodeTags.STOP_NAME.tag, favouriteStops.item(r));
-                   int timesUsed = Integer.parseInt(BusUtilities.getValue(FavouritesNodeTags.TIMES_USED.tag, curr));
-                   String alias = BusUtilities.getValue(FavouritesNodeTags.ALIAS.tag, favouriteStops.item(r));
+                   int stopNumber = Integer.parseInt(BusUtilities.getValue(STOP_NUMBER_TAG, curr));
+                   String stopName = BusUtilities.getValue(STOP_NAME_TAG, favouriteStops.item(r));
+                   int timesUsed = Integer.parseInt(BusUtilities.getValue(TIMES_USED_TAG, curr));
+                   String alias = BusUtilities.getValue(ALIAS_TAG, favouriteStops.item(r));
 
                    FavouriteStop favouriteStop = new FavouriteStop(stopName, stopNumber, timesUsed);
                     if(alias != null)
@@ -93,37 +100,37 @@ public class FavouriteStopsList {
             fos = new FileOutputStream(FILES_DIR);
             XmlSerializer serializer = Xml.newSerializer();
             serializer.setOutput(fos, "UTF-8");
-            serializer.startTag("", FavouritesNodeTags.FAVOURITE_STOPS.tag);
+            serializer.startTag("", FAVOURITE_STOPS_TAG);
             serializer.setFeature(XMLFeature, true);
 
             for (int i = 0; i < favouritesList.size(); i++) {
                 try {
                     FavouriteStop favouriteStop = favouritesList.get(i);
-                    serializer.startTag("", FavouritesNodeTags.FAVOURITE_STOP.tag);
-                    serializer.startTag("", FavouritesNodeTags.STOP_NUMBER.tag);
+                    serializer.startTag("", FAVOURITE_STOP_TAG);
+                    serializer.startTag("", STOP_NUMBER_TAG);
                     serializer.text(Integer.toString(favouritesList.get(i).getNumber()));
-                    serializer.endTag("", FavouritesNodeTags.STOP_NUMBER.tag);
+                    serializer.endTag("", STOP_NUMBER_TAG);
 
-                    serializer.startTag("", FavouritesNodeTags.STOP_NAME.tag);
+                    serializer.startTag("", STOP_NAME_TAG);
                     serializer.text(favouriteStop.getName());
-                    serializer.endTag("", FavouritesNodeTags.STOP_NAME.tag);
+                    serializer.endTag("", STOP_NAME_TAG);
 
                     if (favouriteStop.getAlias() != null) {
-                        serializer.startTag("", FavouritesNodeTags.ALIAS.tag);
+                        serializer.startTag("", ALIAS_TAG);
                         serializer.text(favouriteStop.getAlias());
-                        serializer.endTag("", FavouritesNodeTags.ALIAS.tag);
+                        serializer.endTag("", ALIAS_TAG);
                     }
 
-                    serializer.startTag("", FavouritesNodeTags.TIMES_USED.tag);
+                    serializer.startTag("", TIMES_USED_TAG);
                     serializer.text(Integer.toString(favouriteStop.getTimesUsed()));
-                    serializer.endTag("", FavouritesNodeTags.TIMES_USED.tag);
+                    serializer.endTag("", TIMES_USED_TAG);
 
-                    serializer.endTag("", FavouritesNodeTags.FAVOURITE_STOP.tag);
+                    serializer.endTag("", FAVOURITE_STOP_TAG);
                 }catch (Exception e) {
                     //intentionally blank
                 }
             }
-            serializer.endTag("", FavouritesNodeTags.FAVOURITE_STOPS.tag);
+            serializer.endTag("", FAVOURITE_STOPS_TAG);
             serializer.endDocument();
             serializer.flush();
             fos.close();

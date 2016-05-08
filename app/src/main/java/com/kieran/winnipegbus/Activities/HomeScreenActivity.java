@@ -23,6 +23,7 @@ import com.kieran.winnipegbusbackend.Stop;
 
 public class HomeScreenActivity extends GoogleApiActivity implements LocationListener {
     public static final String LOCATION_SERVICES_NOT_AVAILABLE = "Location services are not enabled";
+    public static final String ACQUIRING_LOCATION = "Acquiring Location...";
     private Button searchButton;
     private EditText searchField;
 
@@ -139,7 +140,7 @@ public class HomeScreenActivity extends GoogleApiActivity implements LocationLis
     }
 
     private void startNearbyStopsActivity() {
-        if(isLocationEnabled()) {
+        if(isLocationEnabled() && isGooglePlayServicesAvailable()) {
             Intent intent = new Intent(this, SearchResultsActivity.class);
             Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
 
@@ -147,7 +148,7 @@ public class HomeScreenActivity extends GoogleApiActivity implements LocationLis
                 intent.putExtra(SearchResultsActivity.SEARCH_QUERY, BusUtilities.generateSearchQuery(location, getNearbyStopsDistance()));
                 startActivity(intent);
             }else {
-                //TODO something
+                showShortToaster(ACQUIRING_LOCATION);
             }
         }else {
             showLongToaster(LOCATION_SERVICES_NOT_AVAILABLE);
