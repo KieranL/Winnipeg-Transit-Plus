@@ -11,6 +11,8 @@
         <item name="stopTimesHeaderBackground">@drawable/header_background_dark</item>
         <item name="refreshIcon">@drawable/ic_refresh_dark</item>
         <item name="headerDivider">@drawable/divider_background</item>
+        <item name="nearbyStopsIcon">@drawable/ic_nearby_dark</item>
+        <item name="mapIcon">@drawable/ic_map_dark</item>
     </style>
     <style name="Light" parent="Base.Theme.AppCompat.Light">
         <item name="stopTimesHeaderBackground">@drawable/header_background_light</item>
@@ -21,6 +23,8 @@
         <item name="android:textColorPrimary">@color/black</item>
         <item name="android:textColor">@color/black</item>
         <item name="headerDivider">@drawable/divider_background</item>
+        <item name="nearbyStopsIcon">@drawable/ic_nearby_light</item>
+        <item name="mapIcon">@drawable/ic_map_light</item>
     </style>
     <style name="Rt" parent="Dark">
         <item name="android:colorBackground">@color/dark_rt_red</item>
@@ -31,12 +35,38 @@
         <item name="actionModeSplitBackground">@drawable/cab_background_bottom_rt</item>
         <item name="headerDivider">@drawable/divider_background_rt</item>
         <item name="colorButtonNormal">@color/rt_red</item>
+        <!--<item name="android:alertDialogTheme">@style/MyOpaqueAlertDialog</item>-->
+
     </style>
 
     <style name="ActionBar.Solid.Rt" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
         <item name="background">@drawable/ab_solid_rt</item>
         <item name="backgroundStacked">@drawable/ab_stacked_solid_rt</item>
         <item name="backgroundSplit">@drawable/ab_bottom_solid_rt</item>
+    </style>
+
+    <style name="MyOpaqueAlertDialog" parent="Base.Theme.AppCompat.Dialog.Alert">
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:buttonBarButtonStyle">@style/rt_dialog_buttonbar</item>
+        <!--<item name="android:borderlessButtonStyle">@style/rt_dialog_borderless_button</item>-->
+        <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
+        <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
+        <item name="android:alertDialogStyle">@style/rt_dialog_style</item>
+    </style>
+
+    <style name="rt_dialog_style">
+        <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
+        <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
+        <item name="android:topDark">@color/rt_blue</item>
+        <item name="android:centerBright">@color/rt_blue</item>
+    </style>
+
+    <style name="rt_dialog_buttonbar">
+        <item name="android:background">@color/rt_red</item>
+    </style>
+
+    <style name="rt_dialog_borderless_button">
+
     </style>
 
 </resources>

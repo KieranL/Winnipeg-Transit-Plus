@@ -28,6 +28,7 @@ public class SettingsActivity extends PreferenceActivity {
         return Integer.parseInt(prefs.getString(context.getString(R.string.pref_key_theme), "0"));
     }
 
+    @SuppressWarnings("deprecation")
     private void setupSimplePreferencesScreen() {
         addPreferencesFromResource(R.xml.pref_container);
 
@@ -47,6 +48,7 @@ public class SettingsActivity extends PreferenceActivity {
         addPreferencesFromResource(R.xml.pref_favourite_stops);
 
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_key_theme)));
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_key_nearby_distance)));
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_favourites_sort)));
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_schedule_load_interval)));
     }

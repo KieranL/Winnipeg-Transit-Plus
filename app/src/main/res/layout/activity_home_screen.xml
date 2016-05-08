@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:imeOptions="actionSearch"
+            android:inputType="text"
             android:hint="@string/search_hint"/>
 
         <TextView

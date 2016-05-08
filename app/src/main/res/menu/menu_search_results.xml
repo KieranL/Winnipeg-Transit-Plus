@@ -5,13 +5,22 @@
 
     <item
         android:id="@+id/loadingIcon"
-        android:visible="false"
-        app:showAsAction="always"/>
+        android:visible="true"
+        app:showAsAction="always"
+        android:title="@string/refresh_stop_times_button"
+        android:icon="?refreshIcon"/>
+    <item
+        android:id="@+id/map"
+        android:icon="?mapIcon"
+        android:title="@string/map"
+        app:showAsAction="ifRoom"
+        android:visible="true"/>
     <item
         android:id="@+id/favourites"
         android:icon="?favouriteStopIcon"
         android:title="@string/favourites"
         app:showAsAction="ifRoom" />
+
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

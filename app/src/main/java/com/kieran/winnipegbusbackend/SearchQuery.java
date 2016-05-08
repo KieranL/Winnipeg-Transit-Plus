@@ -1,22 +1,26 @@
 package com.kieran.winnipegbusbackend;
 
-public class SearchQuery {
+import com.kieran.winnipegbusbackend.enums.SearchQueryType;
+
+import java.io.Serializable;
+
+public class SearchQuery implements Serializable {
     private String query;
     private String queryUrl;
-    private int searchQueryTypeId;
+    private SearchQueryType searchQueryType;
 
-    public SearchQuery(String query, String queryURL, int searchQueryTypeId) {
+    public SearchQuery(String query, String queryURL, SearchQueryType searchQueryType) {
         this.query = query;
         this.queryUrl = queryURL;
-        this.searchQueryTypeId = searchQueryTypeId;
+        this.searchQueryType = searchQueryType;
     }
 
     public String getQuery() {
         return query;
     }
 
-    public int getSearchQueryTypeId() {
-        return searchQueryTypeId;
+    public SearchQueryType getSearchQueryType() {
+        return searchQueryType;
     }
 
     public String getQueryUrl() {

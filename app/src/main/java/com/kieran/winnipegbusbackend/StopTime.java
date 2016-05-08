@@ -2,64 +2,65 @@ package com.kieran.winnipegbusbackend;
 
 import android.support.annotation.NonNull;
 
-import com.kieran.winnipegbusbackend.enums.TimeStatuses;
-
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
-public class StopTime implements Comparable {
-    private static Calendar calendar = Calendar.getInstance();
-    private byte hours;
-    private byte minutes;
+public class StopTime implements Comparable, Serializable {
+    private static final double DUE_TIME = 0.5;
+    private static final String DUE_STRING = "Due";
+    private static final double EARLY_TIME = -0.5;
+    private static final double LATE_TIME = 0.5;
+    private static final String EARLY_TEXT = "Early";
+    private static final String LATE_TEXT = "Late";
+    private static final String OK_TEXT = "Ok";
+    private static transient Calendar calendar;
     private long milliseconds;
 
     public StopTime(Date date) {
-        calendar.setTime(date);
-        hours = (byte)calendar.get(Calendar.HOUR_OF_DAY);
-        minutes = (byte)calendar.get(Calendar.MINUTE);
         milliseconds = date.getTime();
+
+        if(calendar == null)
+            calendar = Calendar.getInstance();
     }
 
     public StopTime(long milliseconds) {
         this.milliseconds = milliseconds;
-        calendar.setTimeInMillis(milliseconds);
-        hours = (byte)calendar.get(Calendar.HOUR_OF_DAY);
-        minutes = (byte)calendar.get(Calendar.MINUTE);
+
+        if(calendar == null)
+            calendar = Calendar.getInstance();
     }
 
-    public static int timeBehindMinutes(StopTime estimated, StopTime scheduled) {
-        return Math.round(((estimated.milliseconds - scheduled.milliseconds) / 1000 / 60));
+    public static double timeBehindMinutes(StopTime estimated, StopTime scheduled) {
+        return (estimated.milliseconds - scheduled.milliseconds) / 1000 / 60;
     }
 
     public static String getTimeStatus(StopTime estimated, StopTime scheduled) {
-        int timeStatusNum = timeBehindMinutes(estimated, scheduled);
+        double timeStatusNum = timeBehindMinutes(estimated, scheduled);
 
-        if (timeStatusNum == 0)
-            return TimeStatuses.Ok.status;
-        else if (timeStatusNum < 0)
-            return TimeStatuses.Early.status;
+        if (timeStatusNum < LATE_TIME && timeStatusNum > EARLY_TIME)
+            return OK_TEXT;
+        else if (timeStatusNum <= EARLY_TIME)
+            return EARLY_TEXT;
         else
-            return TimeStatuses.Late.status;
+            return LATE_TEXT;
     }
 
-    public void setHours(byte hours) {
-        this.hours = hours;
+    public void increaseHour(int increase) {
+        milliseconds += increase * 1000 * 60 * 60;
     }
 
-    public void increaseHour(byte increase) {
-        hours += increase;
-    }
-
-    public String getMinutes() {
+    public String getMinutesString() {
+        int minutes = getMinutes();
         return (minutes >= 10) ? String.valueOf(minutes) : ("0" + String.valueOf(minutes));
     }
 
-    public String getHours() {
-        return String.valueOf(hours);
+    public String getHoursString() {
+        return Integer.toString(getHours());
     }
 
     public String toString() {
-        return getHours() + ":" + getMinutes();
+        return getHoursString() + ":" + getMinutesString();
     }
 
     public long getMilliseconds() {
@@ -68,13 +69,14 @@ public class StopTime implements Comparable {
 
     public String to12hrTimeString() {
         String timeString;
+        int hours = getHours();
 
         if(hours == 0)
-            timeString = "12" + ":" + getMinutes();
+            timeString = "12" + ":" + getMinutesString();
         else if(hours <= 12)
-            timeString = getHours() + ":" + getMinutes();
+            timeString = getHoursString() + ":" + getMinutesString();
         else
-            timeString = (hours - 12) + ":" + getMinutes();
+            timeString = (hours - 12) + ":" + getMinutesString();
 
         timeString += (hours >= 12) ? "p" : "a";
 
@@ -83,12 +85,12 @@ public class StopTime implements Comparable {
 
     public String toFormattedString(StopTime currentTime, boolean use24hrTime) {
         if(currentTime != null) {
-            int remainingTime = timeBehindMinutes(this, currentTime);
+            double remainingTime = timeBehindMinutes(this, currentTime);
 
-            if (remainingTime <= 1)
-                return "Due";
-            else if (remainingTime <= 15)
-                return remainingTime + " min";
+            if (remainingTime < DUE_TIME)
+                return DUE_STRING;
+            else if (remainingTime < 15)
+                return Math.round(remainingTime) + " min";
         }
 
         if(use24hrTime)
@@ -97,12 +99,48 @@ public class StopTime implements Comparable {
             return this.to12hrTimeString();
     }
 
+    public String toDateString() {
+        String dateString = "";
+        calendar.setTimeInMillis(milliseconds);
+        int month = (calendar.get(Calendar.MONTH) + 1);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        dateString += calendar.get(Calendar.YEAR);
+        dateString += "-" + (month >= 10 ? month : "0" + month);
+        dateString += "-" + (day >= 10 ? day : "0" + day);
+
+        return dateString;
+    }
+
+    public String toURLTimeString() {
+        return toDateString() + "T" + to24hrTimeString() + ":00";
+    }
+
     public String to24hrTimeString() {
-        return ((hours < 10) ? "0" + getHours() : getHours()) + ":" + getMinutes();
+        int hours = getHours();
+        return ((hours < 10) ? "0" + getHoursString() : getHoursString()) + ":" + getMinutesString();
     }
 
     @Override
     public int compareTo(@NonNull Object another) {
         return (int)(milliseconds - ((StopTime)another).getMilliseconds());
+    }
+
+    public void decreaseMilliSeconds(long time) {
+        milliseconds -= time;
+    }
+
+    private int getMinutes() {
+        calendar.setTimeInMillis(milliseconds);
+        return  calendar.get(Calendar.MINUTE);
+    }
+
+    private int getHours() {
+        calendar.setTimeInMillis(milliseconds);
+        return  calendar.get(Calendar.HOUR_OF_DAY);
+    }
+
+    public void increaseMinute(int minutes) {
+        milliseconds += minutes * 1000 * 60;
     }
 }

@@ -30,16 +30,6 @@ public class UpcomingStopsAdapter extends ArrayAdapter<UpcomingStop> {
     }
 
     @Override
-    public boolean areAllItemsEnabled() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnabled(int position) {
-        return false;
-    }
-
-    @Override
     public View getView(int position, View row, ViewGroup parent) {
         StopHolder holder;
 
@@ -56,15 +46,21 @@ public class UpcomingStopsAdapter extends ArrayAdapter<UpcomingStop> {
         }
 
         UpcomingStop upcomingStop = upComingStops.get(position);
-        holder.stopNumber.setText(Integer.toString(upcomingStop.getStopNumber()));
-        holder.stopName.setText(upcomingStop.getStopName());
+        holder.upcomingStop = upcomingStop;
+        holder.stopNumber.setText(Integer.toString(upcomingStop.getNumber()));
+        holder.stopName.setText(upcomingStop.getName());
         holder.time.setText(upcomingStop.getTime().toFormattedString(null, use24hrTime));
         return row;
     }
 
-    static class StopHolder {
+    public static class StopHolder {
         TextView time;
         TextView stopName;
         TextView stopNumber;
+        UpcomingStop upcomingStop;
+
+        public UpcomingStop getUpcomingStop() {
+            return upcomingStop;
+        }
     }
 }

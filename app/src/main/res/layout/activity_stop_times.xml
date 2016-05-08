@@ -2,17 +2,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.kieran.winnipegbus.Activities.FavouritesActivity"
-    android:padding="4dp">
+    tools:context="com.kieran.winnipegbus.Activities.StopTimesActivity">
+
+
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/stopTimesAdView"
+        android:id="@+id/stop_times_swipe_refresh">
 
     <ListView
+        android:padding="4dp"
         android:id="@+id/stop_times_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:divider="@null"
-        android:layout_alignParentTop="true"
-        android:clickable="false"
-        android:layout_above="@+id/stopTimesAdView"/>
+        android:layout_alignParentTop="true"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <com.google.android.gms.ads.AdView
         android:paddingTop="2dp"

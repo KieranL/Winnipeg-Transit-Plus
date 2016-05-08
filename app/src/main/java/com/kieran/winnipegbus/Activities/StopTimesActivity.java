@@ -4,24 +4,24 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.kieran.winnipegbus.ActivityUtilities;
 import com.kieran.winnipegbus.Adapters.StopTimeAdapter;
 import com.kieran.winnipegbus.LoadXMLAsyncTask;
+import com.kieran.winnipegbus.NotificationService;
 import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbus.ShakeDetector;
 import com.kieran.winnipegbusbackend.BusUtilities;
@@ -31,6 +31,7 @@ import com.kieran.winnipegbusbackend.LoadResult;
 import com.kieran.winnipegbusbackend.RouteSchedule;
 import com.kieran.winnipegbusbackend.ScheduledStop;
 import com.kieran.winnipegbusbackend.Stop;
+import com.kieran.winnipegbusbackend.StopSchedule;
 import com.kieran.winnipegbusbackend.StopTime;
 
 import org.w3c.dom.Document;
@@ -39,28 +40,44 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class StopTimesActivity extends BaseActivity {
+public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, ShakeDetector.OnShakeListener, AdapterView.OnItemLongClickListener {
 
-    public static final String FILTER_POSITIVE = "Done";
-    private Stop stop;
+    private static final String FILTER_POSITIVE = "Done";
+    public static final String STOP = "stop";
+    private static final String UPDATED_STRING = "Updated %s";
+    private static final String ACTIONBAR_TEXT = "Stop %d";
+    private static final String DELETE_THIS_FAVOURITE = "Delete this Favourite?";
+    private static final String DIALOG_YES = "Yes";
+    private static final String DIALOG_NO = "No";
+    private static final String CREATE_NOTIFICATION_FOR_BUS = "Create a notification for this bus?";
+    private StopSchedule stopSchedule; //TODO: static?
+
     private int stopNumber;
     private String stopName;
-    private boolean loading = true;
+    private boolean loading = false;
     private List<ScheduledStop> stops = new ArrayList<>();
-    private ListView listView;
     private StopTimeAdapter adapter;
-    private MenuItem refreshIcon;
     private List<Integer> routeNumberFilter = new ArrayList<>();
     private TextView title;
     private boolean[] selectedRoutes;
     private List<RouteSchedule> routeFilterRoutes = new ArrayList<>();
-    public final static String STOP = "stop";
-    public static ScheduledStop selectedStop;
     private AsyncTask loadStopTimesTask;
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private ShakeDetector shakeDetector;
     private boolean hasFilterChanged;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView lastUpdated;
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        int newStopNumber = ((Stop) intent.getSerializableExtra(STOP)).getNumber();
+        if (newStopNumber != stopNumber) {
+            stopNumber = newStopNumber;
+            setIntent(intent);
+            recreate();
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,34 +85,49 @@ public class StopTimesActivity extends BaseActivity {
         setContentView(R.layout.activity_stop_times);
         adViewResId = R.id.stopTimesAdView;
 
+        //stopSchedule = null; //TODO remove dis
+
         FavouriteStopsList.loadFavourites();
 
-        listView = (ListView) findViewById(R.id.stop_times_listview);
+        ListView listView = (ListView) findViewById(R.id.stop_times_listview);
 
-        createListViewListener();
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.stop_times_swipe_refresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setColorSchemeResources(R.color.rt_blue, R.color.rt_red);
+
+        listView.setOnItemClickListener(this);
+        //listView.setOnItemLongClickListener(this); //TODO disable to remove notification system
 
         adapter = new StopTimeAdapter(this, R.layout.listview_stop_times_row, stops);
         listView.addHeaderView(getLayoutInflater().inflate(R.layout.listview_stop_times_header, null));
         listView.setAdapter(adapter);
 
         Intent intent = getIntent();
-        stopNumber = intent.getIntExtra(HomeScreenActivity.STOP_NUMBER, 0);
-        setTitle("Stop " + Integer.toString(stopNumber));
+
+        if (title == null) {
+            title = ((TextView) findViewById(R.id.listView_stop_times_header_text));
+            lastUpdated = (TextView) findViewById(R.id.stop_times_header_last_updated);
+        }
+
+        Stop stop = (Stop) intent.getSerializableExtra(STOP);
+        stopName = stop.getName();
+        title.setText(stopName);
+        stopNumber = stop.getNumber();
+
+        setTitle(String.format(ACTIONBAR_TEXT, stopNumber));
 
         initializeAdsIfEnabled();
-        getTimes();
         createShakeListener();
     }
 
     public void createShakeListener() {
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        shakeDetector = new ShakeDetector(new ShakeDetector.OnShakeListener() {
-            @Override
-            public void onShake() {
-                refresh();
-            }
-        });
+        PackageManager PM = getPackageManager();
+
+        if (PM.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER)) {
+            sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            shakeDetector = new ShakeDetector(this);
+        }
     }
 
     @Override
@@ -119,24 +151,15 @@ public class StopTimesActivity extends BaseActivity {
         sensorManager.unregisterListener(shakeDetector);
     }
 
-    private void createListViewListener() {
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                openAdditionalInfo(position);
-            }
-        });
-    }
-
     private void openAdditionalInfo(int position) {
         Intent intent;
-        if (stop != null) {
+        if (stopSchedule != null) {
             if (position == 0) {
                 intent = new Intent(this, StopInfoActivity.class);
-                intent.putExtra(STOP, stop.createStopFeatures());
+                intent.putExtra(StopInfoActivity.STOP_FEATURES, stopSchedule.createStopFeatures());
             } else {
-                selectedStop = stops.get(position - 1);
                 intent = new Intent(this, ScheduledStopInfoActivity.class);
+                intent.putExtra(ScheduledStopInfoActivity.STOP, stops.get(position - 1));
             }
             startActivity(intent);
         }
@@ -145,13 +168,14 @@ public class StopTimesActivity extends BaseActivity {
 
     private void getTimes() {
         String urlPath = BusUtilities.generateStopNumberURL(stopNumber, routeNumberFilter, null, getScheduleEndTime());
+
         loadStopTimesTask = new LoadStopTimes().execute(urlPath);
     }
 
     private StopTime getScheduleEndTime() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         StopTime endTime = new StopTime(System.currentTimeMillis());
-        endTime.increaseHour(Byte.parseByte(prefs.getString(getString(R.string.pref_schedule_load_interval), "2")));
+        endTime.increaseHour(Integer.parseInt(prefs.getString(getString(R.string.pref_schedule_load_interval), "2")));
 
         return endTime;
     }
@@ -159,72 +183,43 @@ public class StopTimesActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.menu_stop_times, menu);
-        refreshIcon = menu.findItem(R.id.action_refresh);
-
-        refreshIcon.setActionView(R.layout.iv_refresh);
-
-        refreshIcon.getActionView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                menu.performIdentifierAction(refreshIcon.getItemId(), 0);
-            }
-        });
-
-        startLoadingAnimation(refreshIcon);
 
         menu.findItem(R.id.add_to_favourites_button).setIcon(getFavouritesButtonDrawable(FavouriteStopsList.contains(stopNumber)));
-
+        onOptionsItemSelected(menu.findItem(R.id.action_refresh)); //manually click the refresh button, this is the only way the swipe refresh loading spinner works correctly on initial load. Not happy with this but it was the only way I could get it to work
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     private Drawable getFavouritesButtonDrawable(boolean isFavoured) {
         int themeId = super.getThemeResId();
+        int drawableId;
+
         if (themeId == R.style.Dark || themeId == R.style.Rt)
             if (isFavoured)
-                return getResources().getDrawable(R.drawable.ic_favourite_stops_dark);
+                drawableId = R.drawable.ic_favourite_stops_dark;
             else
-                return getResources().getDrawable(R.drawable.ic_add_to_favourites_dark);
+                drawableId = R.drawable.ic_add_to_favourites_dark;
         else if (isFavoured)
-            return getResources().getDrawable(R.drawable.ic_favourite_stops_light);
+            drawableId = R.drawable.ic_favourite_stops_light;
         else
-            return getResources().getDrawable(R.drawable.ic_add_to_favourites_light);
-    }
+            drawableId = R.drawable.ic_add_to_favourites_light;
 
-    private void startLoadingAnimation(final MenuItem animatedView) {
-        final Animation rotation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh);
-
-        rotation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-                if (!loading && animatedView != null) {
-                    animatedView.setEnabled(true);
-                    animatedView.getActionView().clearAnimation();
-                }
-            }
-        });
-
-        rotation.setRepeatCount(Animation.INFINITE);
-        if(animatedView != null) {
-            animatedView.setEnabled(false);
-            animatedView.getActionView().startAnimation(rotation);
-        }
+        return getResources().getDrawable(drawableId);
     }
 
     private void refresh() {
-        loading = true;
-        startLoadingAnimation(refreshIcon);
-        adapter.loadTimeSetting();
-        getTimes();
+        if (!loading) {
+            if (isOnline()) {
+                loading = true;
+
+                adapter.loadTimeSetting();
+
+                getTimes();
+            } else {
+                showLongToaster(getText(R.string.network_error).toString());
+            }
+        }
+        swipeRefreshLayout.setRefreshing(loading);
     }
 
     @Override
@@ -237,10 +232,10 @@ public class StopTimesActivity extends BaseActivity {
                 handleFavouritesClick(item);
                 return true;
             case R.id.action_filter:
-                if (!loading && stop != null)
+                if (!loading && stopSchedule != null)
                     openFilterWindow();
                 else
-                    ActivityUtilities.createLongToaster(this, getString(R.string.wait_for_load));
+                    showLongToaster(getString(R.string.wait_for_load));
                 return true;
 
         }
@@ -249,37 +244,37 @@ public class StopTimesActivity extends BaseActivity {
 
     private void handleFavouritesClick(final MenuItem item) {
         if (FavouriteStopsList.contains(stopNumber)) {
-
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-            alertDialog.setMessage("Delete this Favourite?");
+            alertDialog.setMessage(DELETE_THIS_FAVOURITE);
 
-            alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            alertDialog.setPositiveButton(DIALOG_YES, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialogInterface, int which) {
                     FavouriteStopsList.removeFromFavourites(stopNumber);
                     item.setIcon(getFavouritesButtonDrawable(false));
                 }
             });
 
-            alertDialog.setNegativeButton("No", null);
+            alertDialog.setNegativeButton(DIALOG_NO, null);
             alertDialog.create().show();
-        } else if (!loading) {
+        } else if (stopName != null && !stopName.equals("")) {
             FavouriteStopsList.addToFavourites(new FavouriteStop(stopName, stopNumber));
             item.setIcon(getFavouritesButtonDrawable(true));
         } else {
-            ActivityUtilities.createLongToaster(this, getString(R.string.wait_for_load));
+            showLongToaster(getString(R.string.wait_for_load));
         }
 
     }
 
     private void openFilterWindow() {
-        if (stop != null) {
+        if (stopSchedule != null) {
             hasFilterChanged = false;
             AlertDialog.Builder filterDialog = new AlertDialog.Builder(this);
             filterDialog.setTitle(R.string.filter_dialog_title);
+
             if (routeFilterRoutes.size() == 0)
                 getFilterRoutes();
 
-            if (routeFilterRoutes.size() < stop.getRouteList().size()) {
+            if (routeFilterRoutes.size() < stopSchedule.getRouteList().size()) {
                 routeFilterRoutes.clear();
                 getFilterRoutes();
             }
@@ -308,68 +303,95 @@ public class StopTimesActivity extends BaseActivity {
             filterDialog.setPositiveButton(FILTER_POSITIVE, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    if(hasFilterChanged) {
-                        loading = true;
-                        startLoadingAnimation(refreshIcon);
-                        getTimes();
+                    if (hasFilterChanged) {
+                        refresh();
                     }
                 }
             });
 
             filterDialog.create().show();
         } else {
-            ActivityUtilities.createLongToaster(this, getString(R.string.wait_for_load));
+            showLongToaster(getString(R.string.wait_for_load));
         }
     }
 
     public void getFilterRoutes() {
-        for (RouteSchedule routeSchedule : stop.getRouteList())
+        for (RouteSchedule routeSchedule : stopSchedule.getRouteList())
             routeFilterRoutes.add(new RouteSchedule(routeSchedule));
 
         Collections.sort(routeFilterRoutes);
     }
 
+    @Override
+    public void onRefresh() {
+        refresh();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        openAdditionalInfo(position);
+    }
+
+    @Override
+    public void onShake() {
+        refresh();
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+        if (position != 0) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+            alertDialog.setMessage(CREATE_NOTIFICATION_FOR_BUS);
+            alertDialog.setPositiveButton(DIALOG_YES, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialogInterface, int which) {
+                    ScheduledStop selectedStop = stops.get(position - 1);
+                    NotificationService.createNotification(stopNumber, selectedStop.getRouteNumber(), selectedStop.getKey(), selectedStop.getRouteVariantName(), stopName, selectedStop.getEstimatedDepartureTime(), getApplicationContext(), selectedStop.getCoverageType());
+                }
+            });
+
+            alertDialog.setNegativeButton(DIALOG_NO, null);
+            alertDialog.create().show();
+            return true;
+        }
+        return false;
+    }
+
     private class LoadStopTimes extends LoadXMLAsyncTask {
         @Override
         protected LoadResult doInBackground(String... urls) {
-            LoadResult result = BusUtilities.getXML(urls[0]);
+            LoadResult result = super.doInBackground(urls);
 
             if (loading && result.getResult() != null) {
-                if (stop == null) {
-                    stop = new Stop((Document) result.getResult(), stopNumber);
-                    stop.loadRoutes();
-                    stopName = stop.getName();
+                if (stopSchedule == null) {
+                    stopSchedule = new StopSchedule((Document) result.getResult(), stopNumber);
+                    stopName = stopSchedule.getName();
                 } else {
-                    stop.refresh((Document) result.getResult());
+                    stopSchedule.refresh((Document) result.getResult());
                 }
                 stops.clear();
-                stops.addAll(stop.getScheduledStopsSorted());
+                stops.addAll(stopSchedule.getScheduledStopsSorted());
             }
             return result;
         }
 
         @Override
         protected void onPostExecute(LoadResult result) {
-            if (loading) {
-                if (title == null) {
-                    title = ((TextView) findViewById(R.id.listView_stop_times_header_text));
-                }
-
-                if (result.getException() != null && stop == null) {
-                    ActivityUtilities.createLongToaster(getApplicationContext(), getText(R.string.network_error).toString());
+            if (result.getException() != null && loading) {
+                showLongToaster(getText(R.string.network_error).toString());
+                if (stopSchedule == null)
                     title.setText(R.string.network_error);
-                } else if (stops.size() == 0) {
-                    ActivityUtilities.createLongToaster(getApplicationContext(), getText(R.string.no_results_found).toString());
-                    title.setText(R.string.no_results_found);
-                } else {
-                    title.setText(stopName);
-                }
-
-                adapter.notifyDataSetChanged();
+            } else if (stops.size() == 0 && loading) {
+                showLongToaster(getText(R.string.no_results_found).toString());
+                title.setText(R.string.no_results_found);
+            } else {
+                title.setText(stopName);
             }
 
+            adapter.notifyDataSetChanged();
+
+            lastUpdated.setText(String.format(UPDATED_STRING, new StopTime(System.currentTimeMillis()).toFormattedString(null, getTimeSetting())));
+            swipeRefreshLayout.setRefreshing(false);
             loading = false;
         }
-
     }
 }

@@ -1,26 +1,25 @@
 package com.kieran.winnipegbusbackend;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
-public class UpcomingStop implements Comparable {
-    private String stopName;
+import com.kieran.winnipegbus.NotificationData;
+import com.kieran.winnipegbusbackend.enums.CoverageTypes;
+
+public class UpcomingStop extends Stop implements Comparable {
     private StopTime time;
-    private int stopNumber;
     private ScheduledStopKey key;
 
     public UpcomingStop(String stopName, int stopNumber, StopTime time, ScheduledStopKey key) {
-        this.stopName = stopName;
-        this.stopNumber = stopNumber;
+        super(stopName, stopNumber);
         this.time = time;
         this.key = key;
     }
 
-    public String getStopName() {
-        return stopName;
-    }
-
-    public int getStopNumber() {
-        return stopNumber;
+    public UpcomingStop(Stop stop, StopTime time, ScheduledStopKey key) {
+        super(stop);
+        this.time = time;
+        this.key = key;
     }
 
     public StopTime getTime() {
@@ -35,4 +34,9 @@ public class UpcomingStop implements Comparable {
     public int compareTo(@NonNull Object another) {
         return key.getStopNumber() - ((UpcomingStop)another).getKey().getStopNumber();
     }
+
+    public NotificationData toNotificationData(int routeNumber, String variantName, Context context, CoverageTypes coverageType) {
+        return new NotificationData(stopNumber, routeNumber, key, variantName, stopName, context, time, coverageType);
+    }
+
 }

@@ -8,4 +8,6 @@
     <attr name="refreshIcon" format="reference"/>
     <attr name="headerDivider" format="reference"/>
     <attr name="buttonSelector" format="reference"/>
+    <attr name="nearbyStopsIcon" format="reference"/>
+    <attr name="mapIcon" format="reference"/>
 </resources>

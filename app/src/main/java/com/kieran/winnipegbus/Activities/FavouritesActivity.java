@@ -1,117 +1,75 @@
 package com.kieran.winnipegbus.Activities;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
-import com.kieran.winnipegbus.ActivityUtilities;
 import com.kieran.winnipegbus.Adapters.StopListAdapter;
 import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbusbackend.FavouriteStop;
 import com.kieran.winnipegbusbackend.FavouriteStopsList;
+import com.kieran.winnipegbusbackend.enums.FavouritesListSortType;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class FavouritesActivity extends BaseActivity {
+public class FavouritesActivity extends BaseActivity implements AdapterView.OnItemClickListener, OnItemLongClickListener {
     private StopListAdapter adapter;
-    private List<FavouriteStop> favouriteStops;
-    private int sortTypeId;
 
     @Override
-    public void onRestart() {
+    protected void onRestart() {
         super.onRestart();
+        FavouriteStopsList.sort(getSortPreference());
+        reloadList();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FavouriteStopsList.sort(getSortPreference());
         reloadList();
     }
 
     private void reloadList() {
-        favouriteStops.clear();
         FavouriteStopsList.isLoadNeeded = true;
-
-        if(FavouriteStopsList.length() == 0)
-            FavouriteStopsList.isLoadNeeded = true;
-
         getFavouritesList();
         adapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         adViewResId = R.id.stopsListAdView;
 
-        setContentView(R.layout.activity_stops_list);
-
-        favouriteStops = new ArrayList<>();
+        setContentView(R.layout.activity_favourite_stops);
 
         ListView listView = (ListView) findViewById(R.id.stops_listView);
 
         initializeAdsIfEnabled();
         getFavouritesList();
 
-        createListViewListeners(listView);
+        listView.setOnItemClickListener(this);
+        listView.setOnItemLongClickListener(this);
 
-        adapter = new StopListAdapter(this, R.layout.listview_stops_row, favouriteStops);
+        adapter = new StopListAdapter(this, R.layout.listview_stops_row);
         listView.setAdapter(adapter);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void createListViewListeners(ListView listView) {
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                FavouriteStop stop = (FavouriteStop)parent.getItemAtPosition(position);
-                openStopTimes(stop.getStopNumber());
-            }
-        });
-
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        listView.setOnItemLongClickListener(new OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                alertDialog.setMessage("Delete this Favourite?");
-                alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogInterface, int which) {
-                        FavouriteStopsList.removeFromFavourites(adapter.getItem(position).getStopNumber());
-                        reloadList();
-                    }
-                });
-
-                alertDialog.setNegativeButton("No", null);
-                alertDialog.create().show();
-
-                return true;
-            }
-        });
-    }
-
-    private void getSortPreference() {
+    private FavouritesListSortType getSortPreference() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        sortTypeId = Integer.parseInt(prefs.getString(getString(R.string.pref_favourites_sort), "0"));
+        return FavouritesListSortType.getEnum(prefs.getString(getString(R.string.pref_favourites_sort), "0"));
     }
 
     private void getFavouritesList() {
         FavouriteStopsList.loadFavourites();
-        getSortPreference();
-        favouriteStops.addAll(FavouriteStopsList.getFavouriteStopsSorted(sortTypeId));
+        StopListAdapter.sortPreference =  getSortPreference();
     }
 
     @Override
@@ -120,12 +78,65 @@ public class FavouritesActivity extends BaseActivity {
         return true;
     }
 
-    private void openStopTimes(int stopNumber) {
-        try{
-            FavouriteStopsList.getFavouriteStopByStopNumber(stopNumber).use();
-            FavouriteStopsList.saveFavouriteStops();
-        } catch (Exception e) {}
+    private void openStopTimesAndUse(FavouriteStop favouriteStop) {
+        favouriteStop.use();
+        FavouriteStopsList.saveFavouriteStops();
 
-        ActivityUtilities.openStopTimes(this, stopNumber);
+        openStopTimes(favouriteStop);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        FavouriteStop stop = adapter.getItem(position);
+        openStopTimesAndUse(stop);
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+        final Context context = this;
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+
+        alertDialog.setMessage("Edit this Favourite?");
+        alertDialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogInterface, int which) {
+                FavouriteStopsList.removeFromFavourites(adapter.getItem(position).getNumber());
+                reloadList();
+            }
+        });
+
+        alertDialog.setNeutralButton("Rename", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogInterface, int which) {
+                AlertDialog.Builder renameDialog = new AlertDialog.Builder(context);
+                final EditText editText = new EditText(context);
+                final FavouriteStop favouriteStop = FavouriteStopsList.get(position);
+                editText.setText(favouriteStop.getDisplayName());
+                renameDialog.setView(editText);
+
+                renameDialog.setNeutralButton("Default", null);
+
+                renameDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        FavouriteStopsList.get(position).setAlias(editText.getText().toString());
+                        FavouriteStopsList.saveFavouriteStops();
+                        reloadList();
+                    }
+                });
+                renameDialog.setNegativeButton("Cancel", null);
+
+                Button button = renameDialog.show().getButton(DialogInterface.BUTTON_NEUTRAL);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        editText.setText(favouriteStop.getName());
+                    }
+                });
+            }
+        });
+
+        alertDialog.setNegativeButton("Cancel", null);
+        alertDialog.create().show();
+
+        return true;
     }
 }

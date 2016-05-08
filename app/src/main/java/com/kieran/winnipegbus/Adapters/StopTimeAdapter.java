@@ -8,10 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.kieran.winnipegbus.ActivityUtilities;
+import com.kieran.winnipegbus.Activities.BaseActivity;
 import com.kieran.winnipegbus.R;
+import com.kieran.winnipegbusbackend.BusUtilities;
 import com.kieran.winnipegbusbackend.ScheduledStop;
-import com.kieran.winnipegbusbackend.StopTime;
 
 import java.util.List;
 
@@ -31,7 +31,6 @@ public class StopTimeAdapter extends ArrayAdapter<ScheduledStop> {
 
         loadTimeSetting();
     }
-
 
     @Override
     public View getView(int position, View row, ViewGroup parent) {
@@ -53,16 +52,16 @@ public class StopTimeAdapter extends ArrayAdapter<ScheduledStop> {
 
         ScheduledStop scheduledStop = scheduledStops.get(position);
         holder.routeNumber.setText(Integer.toString(scheduledStop.getRouteNumber()));
-        ActivityUtilities.setTextViewColour(context, holder.routeNumber, scheduledStop);
+        BaseActivity.setTextViewColour(context, holder.routeNumber, scheduledStop);
         holder.routeVariantName.setText(scheduledStop.getRouteVariantName());
         holder.timeStatus.setText(scheduledStop.getTimeStatus());
-        holder.departureTime.setText(scheduledStop.getEstimatedDepartureTime().toFormattedString(new StopTime(System.currentTimeMillis()), use24hrTime));
+        holder.departureTime.setText(scheduledStop.getEstimatedDepartureTime().toFormattedString(BusUtilities.lastQueryTime, use24hrTime));
 
         return row;
     }
 
     public void loadTimeSetting() {
-        use24hrTime = ActivityUtilities.getTimeSetting(context);
+        use24hrTime = BaseActivity.getTimeSetting(context);
     }
 
     private static class StopTimeHolder {

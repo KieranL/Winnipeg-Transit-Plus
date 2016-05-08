@@ -6,24 +6,33 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.GridView;
 import android.widget.TextView;
 
 import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbusbackend.FavouriteStop;
+import com.kieran.winnipegbusbackend.FavouriteStopsList;
+import com.kieran.winnipegbusbackend.enums.FavouritesListSortType;
 
 import java.util.List;
 
 public class StopListAdapter extends ArrayAdapter<FavouriteStop> {
-    private Context context;
+    //public class MyAdapter<T> extends ArrayAdapter<T extends BasicDataModel>
     private int layoutResourceId;
-    private List<FavouriteStop> favouriteStops;
+    public static FavouritesListSortType sortPreference;
+    private List<FavouriteStop> stops;
+    private LayoutInflater inflater;
 
-    public StopListAdapter(Context context, int layoutResourceId, List<FavouriteStop> favouriteStops) {
-        super(context, layoutResourceId, favouriteStops);
+    public StopListAdapter(Context context, int layoutResourceId) {
+        super(context, layoutResourceId, FavouriteStopsList.getFavouriteStopsSorted(sortPreference));
         this.layoutResourceId = layoutResourceId;
-        this.context = context;
-        this.favouriteStops = favouriteStops;
+        inflater = ((Activity)context).getLayoutInflater();
+    }
+
+    public StopListAdapter(Context context, int layoutResourceId, List<FavouriteStop> stops) {
+        super(context, layoutResourceId, stops);
+        this.stops = stops;
+        this.layoutResourceId = layoutResourceId;
+        inflater = ((Activity)context).getLayoutInflater();
     }
 
     @Override
@@ -32,24 +41,26 @@ public class StopListAdapter extends ArrayAdapter<FavouriteStop> {
         StopHolder holder;
 
         if(row == null) {
-            LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
 
             holder = new StopHolder();
             holder.stopNumber = (TextView)row.findViewById(R.id.favourites_stop_number);
             holder.stopName = (TextView)row.findViewById(R.id.favourites_stop_name);
-           // holder.routeNumbers = (GridView)row.findViewById(R.id.gridview_stops_row_route_numbers);
-          //  holder.routeNumbers.setAdapter(new GridviewAdapter(context));
-           // holder.routeNumbers.setOnItemClickListener(null);
 
             row.setTag(holder);
         } else {
             holder = (StopHolder)row.getTag();
         }
 
-        FavouriteStop favouriteStop = favouriteStops.get(position);
-        holder.stopNumber.setText(Integer.toString(favouriteStop.getStopNumber()));
-        holder.stopName.setText(favouriteStop.getStopName());
+        FavouriteStop favouriteStop;
+
+        if(stops != null)
+            favouriteStop = stops.get(position);
+        else
+            favouriteStop = FavouriteStopsList.get(position);
+
+        holder.stopNumber.setText(Integer.toString(favouriteStop.getNumber()));
+        holder.stopName.setText(favouriteStop.getDisplayName());
 
         return row;
     }
@@ -57,6 +68,5 @@ public class StopListAdapter extends ArrayAdapter<FavouriteStop> {
     static class StopHolder {
         TextView stopNumber;
         TextView stopName;
-        GridView routeNumbers;
     }
 }

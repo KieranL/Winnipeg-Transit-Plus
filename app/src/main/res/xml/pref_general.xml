@@ -13,4 +13,13 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
 
+    <ListPreference
+        android:key="@string/pref_key_nearby_distance"
+        android:title="@string/pref_nearby_distance_title"
+        android:defaultValue="100"
+        android:entries="@array/pref_nearby_distance"
+        android:entryValues="@array/pref_nearby_distance_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
 </PreferenceScreen>

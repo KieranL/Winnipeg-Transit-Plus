@@ -1,79 +1,75 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:padding="4dp"
-    tools:context="com.kieran.winnipegbus.Activities.StopInfoActivity">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="24sp"
-        android:paddingBottom="8dp"
-        android:id="@+id/stop_features_title" />
+    tools:context="com.kieran.winnipegbus.Activities.StopInfoActivity"
+    android:orientation="horizontal">
 
     <RelativeLayout
-        android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/outline"
-        android:layout_below="@+id/stop_features_title"
-        android:id="@+id/stop_features_group">
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:paddingRight="4dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/features_feature"
-            android:id="@+id/features_feature"
-            android:layout_alignParentLeft="true"
-            android:paddingLeft="4dp"/>
+            android:textSize="24sp"
+            android:paddingBottom="8dp"
+            android:id="@+id/stop_features_title" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/features_count"
-            android:id="@+id/features_count"
-            android:layout_alignParentRight="true"
-            android:paddingRight="4dp"/>
 
-        <ListView
-            android:paddingTop="4dp"
+        <RelativeLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/listView_stop_features"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/features_feature"/>
+            android:background="?attr/outline"
+            android:id="@+id/stop_features_group"
+            android:layout_below="@+id/stop_features_title" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/features_feature"
+                android:id="@+id/features_feature"
+                android:layout_alignParentLeft="true"
+                android:paddingLeft="4dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/features_count"
+                android:id="@+id/features_count"
+                android:layout_alignParentRight="true"
+                android:paddingRight="4dp"/>
+
+            <ListView
+                android:paddingTop="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/listView_stop_features"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/features_feature"/>
+        </RelativeLayout>
+
     </RelativeLayout>
 
     <FrameLayout
+        android:layout_weight="1"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
-        android:layout_below="@id/stop_features_group"
-        android:layout_above="@+id/stopFeaturesAdView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <fragment
-
             android:id="@+id/map"
             class="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </FrameLayout>
 
-    <com.google.android.gms.ads.AdView
-        xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:visibility="gone"
-        android:id="@+id/stopFeaturesAdView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_stop_features_id">
-    </com.google.android.gms.ads.AdView>
 
 
-
-</RelativeLayout>
+</LinearLayout>

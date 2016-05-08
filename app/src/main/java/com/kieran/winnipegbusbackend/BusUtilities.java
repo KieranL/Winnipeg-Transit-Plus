@@ -1,11 +1,14 @@
 package com.kieran.winnipegbusbackend;
 
-import com.kieran.winnipegbusbackend.enums.CoverageTypes;
-import com.kieran.winnipegbusbackend.enums.SearchQueryTypeIds;
+import android.location.Location;
+import android.util.Log;
+
+import com.kieran.winnipegbusbackend.enums.SearchQueryType;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,8 +20,15 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 
 public class BusUtilities {
+    public static final int START_TIME_DECREASE = 10000;
+    public static final int DT_EXPRESS_MAX_RT_NUM = 10;
+    public static final String QUERY_TIME = "query-time";
+    public static final String STRING_NOT_AVAILABLE_ERROR = "Err";
     private final static String API_KEY = "FTy2QN8ts293ZlhYP1t";
     private final static String API_URL = "http://api.winnipegtransit.com/v2/";
     private final static String USAGE = "usage=short&api-key=";
@@ -35,6 +45,10 @@ public class BusUtilities {
     private static final String COLON = ":";
     private static final String QUESTION_MARK = "?";
     private static final String SCHEDULE_PARAMETER = "schedule";
+    private static final String DISTANCE_PARAMETER = "distance=";
+    private static final String LATIITUDE_PARAMETER = "lat=";
+    private static final String LONGITUDE_PARAMETER = "lon=";
+    public static StopTime lastQueryTime = new StopTime(System.currentTimeMillis());
 
     public static StopTime convertToDate(String s) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
@@ -44,6 +58,10 @@ public class BusUtilities {
         } catch (ParseException e) {
             return null;
         }
+    }
+
+    public static boolean isDownTownExpress(int routeNumber) {
+        return routeNumber < DT_EXPRESS_MAX_RT_NUM;
     }
 
     public static String getValue(String tag, Node originalNode) {
@@ -69,6 +87,19 @@ public class BusUtilities {
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document XMLDocument = db.parse(inputStream);
 
+            try {
+                XPath xPath = XPathFactory.newInstance().newXPath();
+                String expression = "/stop-schedule";
+                NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(XMLDocument, XPathConstants.NODESET);
+                Node node = nodeList.item(0);
+
+                Element element = (Element) node;
+
+                lastQueryTime = convertToDate(element.getAttribute(QUERY_TIME));
+            }catch (Exception e) {
+
+            }
+
             return new LoadResult(XMLDocument, null);
         } catch (Exception e) {
             return new LoadResult(null, e);
@@ -91,12 +122,14 @@ public class BusUtilities {
         }
 
         if(startTime != null) {
-            startTimeFilter += START_TIME_PARAMETER + startTime.to24hrTimeString();
+            startTime.decreaseMilliSeconds(START_TIME_DECREASE); //decrease start time for API inconsistency? not sure what the reason this is for
+            startTimeFilter += START_TIME_PARAMETER + startTime.toURLTimeString();
             startTimeFilter += AMPERSAND;
+            startTime.decreaseMilliSeconds(-START_TIME_DECREASE);
         }
 
         if(endTime != null) {
-            endTimeFilter += END_TIME_PARAMETER + endTime.to24hrTimeString();
+            endTimeFilter += END_TIME_PARAMETER + endTime.toURLTimeString();
             endTimeFilter += AMPERSAND;
         }
 
@@ -115,20 +148,20 @@ public class BusUtilities {
             int routeNumber = Integer.parseInt(search);
             return generateSearchQuery(routeNumber);
         }catch (Exception e) {
-            return new SearchQuery(search, API_URL + STOPS_PARAMETER + COLON + createURLFriendlyString(search) + QUESTION_MARK + API_KEY_PARAMETER + API_KEY, SearchQueryTypeIds.GENERAL.searchQueryTypeId);
+            return new SearchQuery(search, API_URL + STOPS_PARAMETER + COLON + createURLFriendlyString(search) + QUESTION_MARK + USAGE + API_KEY, SearchQueryType.GENERAL);
         }
     }
 
     public static SearchQuery generateSearchQuery(int routeNumber) {
-        return new SearchQuery(Integer.toString(routeNumber), API_URL + STOPS_PARAMETER + QUESTION_MARK + ROUTE_PARAMETER + routeNumber + AMPERSAND + API_KEY_PARAMETER + API_KEY, SearchQueryTypeIds.ROUTE_NUMBER.searchQueryTypeId);
+        return new SearchQuery(Integer.toString(routeNumber), API_URL + STOPS_PARAMETER + QUESTION_MARK + ROUTE_PARAMETER + routeNumber + AMPERSAND + USAGE + API_KEY, SearchQueryType.ROUTE_NUMBER);
     }
 
     public static SearchQuery generateSearchQuery(RouteKey key) {
-        return new SearchQuery(key.getKeyString(), API_URL + STOPS_PARAMETER + QUESTION_MARK + VARIANT_PARAMETER + key.getKeyString() + AMPERSAND + API_KEY_PARAMETER + API_KEY, SearchQueryTypeIds.ROUTE_NUMBER.searchQueryTypeId);
+        return new SearchQuery(key.getKeyString(), API_URL + STOPS_PARAMETER + QUESTION_MARK + VARIANT_PARAMETER + key.getKeyString() + AMPERSAND + USAGE + API_KEY, SearchQueryType.ROUTE_NUMBER);
     }
 
     public static String generateStopFeaturesUrl(int stopNumber) {
-        return API_URL + STOPS_PARAMETER + FORWARD_SLASH + Integer.toString(stopNumber) + FORWARD_SLASH + STOP_FEATURE_PARAMETER + QUESTION_MARK + API_KEY_PARAMETER + API_KEY;
+        return API_URL + STOPS_PARAMETER + FORWARD_SLASH + Integer.toString(stopNumber) + FORWARD_SLASH + STOP_FEATURE_PARAMETER + QUESTION_MARK + USAGE + API_KEY;
     }
 
     private static String createURLFriendlyString(String s) {
@@ -141,14 +174,11 @@ public class BusUtilities {
         return urlFriendlyString;
     }
 
-    public static int getCoverageTypeId(String coverageType) {
-        if(coverageType.equals(CoverageTypes.EXPRESS.typeName))
-            return CoverageTypes.EXPRESS.typeId;
-        else if(coverageType.equals(CoverageTypes.SUPER_EXPRESS.typeName))
-            return CoverageTypes.SUPER_EXPRESS.typeId;
-        else if(coverageType.equals(CoverageTypes.RAPID_TRANSIT.typeName))
-            return CoverageTypes.RAPID_TRANSIT.typeId;
-        else
-            return CoverageTypes.REGULAR.typeId;
+    public static SearchQuery generateSearchQuery(Location location, int radius) {
+        Log.e("location accuracv", Float.toString(location.getAccuracy()));
+        int totalRadius = Math.round(location.getAccuracy()) + radius;
+        Log.e("DISTANCE", Float.toString(totalRadius));
+        String url = API_URL + STOPS_PARAMETER + QUESTION_MARK + DISTANCE_PARAMETER + totalRadius + AMPERSAND + LATIITUDE_PARAMETER + location.getLatitude() + AMPERSAND + LONGITUDE_PARAMETER + location.getLongitude() + AMPERSAND + USAGE + API_KEY;
+        return new SearchQuery("NearbyStops", url, SearchQueryType.NEARBY);
     }
 }

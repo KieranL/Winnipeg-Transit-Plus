@@ -2,10 +2,29 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.kieran.winnipegbus" >
 
+    <uses-feature
+        android:name="android.hardware.location.GPS"
+        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.Location"
+        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.location.NETWORK"
+        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.sensor.accelerometer"
+        android:required="false"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-feature android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!--
+ The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but are recommended.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -18,7 +37,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".Activities.HomeScreenActivity"
+            android:name="com.kieran.winnipegbus.Activities.HomeScreenActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,59 +46,70 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.StopTimesActivity"
+            android:name="com.kieran.winnipegbus.Activities.StopTimesActivity"
             android:configChanges="orientation|screenSize"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.HomeScreenActivity" />
+                android:value="com.kieran.winnipegbus.Activities.HomeScreenActivity" />
         </activity>
         <activity
-            android:name=".Activities.FavouritesActivity"
+            android:name="com.kieran.winnipegbus.Activities.FavouritesActivity"
             android:label="@string/title_activity_favourites"
-            android:parentActivityName=".Activities.HomeScreenActivity" >
+            android:parentActivityName="com.kieran.winnipegbus.Activities.HomeScreenActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.HomeScreenActivity" />
+                android:value="com.kieran.winnipegbus.Activities.HomeScreenActivity" />
         </activity>
         <activity
-            android:name=".Activities.SettingsActivity"
+            android:name="com.kieran.winnipegbus.Activities.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
         <activity
-            android:name=".Activities.SearchResultsActivity"
+            android:name="com.kieran.winnipegbus.Activities.SearchResultsActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_search_results"
-            android:parentActivityName=".Activities.HomeScreenActivity" >
+            android:parentActivityName="com.kieran.winnipegbus.Activities.HomeScreenActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.HomeScreenActivity" />
+                android:value="com.kieran.winnipegbus.Activities.HomeScreenActivity" />
         </activity>
         <activity
-            android:name=".Activities.ScheduledStopInfoActivity"
+            android:name="com.kieran.winnipegbus.Activities.ScheduledStopInfoActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_scheduled_stop_info"
-            android:parentActivityName=".Activities.StopTimesActivity" >
+            android:parentActivityName="com.kieran.winnipegbus.Activities.StopTimesActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.StopTimesActivity" />
+                android:value="com.kieran.winnipegbus.Activities.StopTimesActivity" />
         </activity>
         <activity
-            android:name=".Activities.StopInfoActivity"
-            android:configChanges="orientation|screenSize"
+            android:name="com.kieran.winnipegbus.Activities.StopInfoActivity"
             android:label="@string/title_activity_stop_info"
-            android:parentActivityName=".Activities.StopTimesActivity" >
+            android:parentActivityName="com.kieran.winnipegbus.Activities.StopTimesActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.StopTimesActivity" />
+                android:value="com.kieran.winnipegbus.Activities.StopTimesActivity" />
         </activity>
+
+        <!--<service android:name="com.kieran.winnipegbus.NotificationService" /> TODO re-enable for notification service-->
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".Activities.StopsMapActivity"
+            android:label="@string/title_activity_route_map" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.kieran.winnipegbus.Activities.SearchResultsActivity" />
+        </activity>
     </application>
 
 </manifest>

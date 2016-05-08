@@ -1,11 +1,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.kieran.winnipegbus.Activities.FavouritesActivity"
-    android:padding="4dp">
+    android:layout_height="match_parent">
 
-    <include layout="@layout/listview_stops"/>
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/search_results_swipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/stopsListAdView">
+        <include layout="@layout/listview_stops"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"

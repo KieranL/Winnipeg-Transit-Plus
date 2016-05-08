@@ -4,7 +4,9 @@ import com.kieran.winnipegbusbackend.enums.StopTimesNodeTags;
 
 import org.w3c.dom.Node;
 
-public class RouteKey {
+import java.io.Serializable;
+
+public class RouteKey implements Serializable {
     private int routeNumber;
     private int routeDirection;
     private char variant;

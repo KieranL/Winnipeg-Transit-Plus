@@ -4,7 +4,7 @@ import org.w3c.dom.Node;
 
 import java.io.Serializable;
 
-public class StopFeature implements Serializable{
+public class StopFeature implements Serializable {
     private static final String NAME_TAG = "name";
     private static final String COUNT_TAG = "count";
     private int count;

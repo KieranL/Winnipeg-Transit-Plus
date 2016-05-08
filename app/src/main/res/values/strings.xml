@@ -3,13 +3,13 @@
     <string name="search_hint">Search</string>
     <string name="button_send">Go</string>
     <string name="action_settings">Settings</string>
-    <string name="enter_valid_stop_number">Please enter a valid stop number.</string>
+    <string name="enter_valid_stop_number">Please enter a valid stopSchedule number.</string>
     <string name="network_error">Network Error</string>
     <string name="route_number_filter_hint">Route number filter</string>
     <string name="favourites">Favourites</string>
     <string name="title_activity_favourites">Favourites</string>
     <string name="add_widget">Add Widget</string>
-    <string name="configure">Enter a stop number</string>
+    <string name="configure">Enter a stopSchedule number</string>
     <string name="banner_ad_home_unit_id">ca-app-pub-1189975520647633/7696260309</string>
     <string name="banner_ad_stops_list_unit_id">ca-app-pub-1189975520647633/9812121904</string>
     <string name="banner_ad_stop_times_unit_id">ca-app-pub-1189975520647633/1321335907</string>
@@ -30,10 +30,15 @@
     <string name="title_activity_stop_info">StopInfoActivity</string>
     <string name="features_feature">Feature</string>
     <string name="features_count">Count</string>
-    <string name="action_notification">Notification</string>
+    <string name="action_notification">Create Notification</string>
     <string name="banner_ad_stop_features_id">ca-app-pub-1189975520647633/3682591503</string>
     <string name="pref_favourites_sort">pref_favourites_sort_list</string>
     <string name="search_tip">Search by Street name, Route number or Stop number</string>
     <string name="google_maps_key">AIzaSyBI288Hjgv2ZYa6b9QOz9VF1OOEZEDdwts</string>
+    <string name="map">Map</string>
+    <string name="title_activity_route_map">Map</string>
+    <string name="test_device_id_gs6e">2BCF178C0DAA545593FB48844D1C242B</string>
+    <string name="action_nearby_stops">Nearby Stops</string>
+    <string name="stop_times_header_updated_text">Updated</string>
 
 </resources>

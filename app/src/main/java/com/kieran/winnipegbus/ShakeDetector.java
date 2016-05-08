@@ -5,43 +5,33 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 
 public class ShakeDetector implements SensorEventListener {
-
-    // Minimum acceleration needed to count as a shake movement
     private static final int MIN_SHAKE_ACCELERATION = 5;
 
-    // Minimum number of movements to register a shake
     private static final int MIN_MOVEMENTS = 2;
 
-    // Maximum time (in milliseconds) for the whole shake to occur
     private static final int MAX_SHAKE_DURATION = 500;
 
     // Arrays to store gravity and linear acceleration values
-    private float[] mGravity = { 0.0f, 0.0f, 0.0f };
-    private float[] mLinearAcceleration = { 0.0f, 0.0f, 0.0f };
+    private float[] gravity = { 0.0f, 0.0f, 0.0f };
+    private float[] linearAcceleration = { 0.0f, 0.0f, 0.0f };
 
     // Indexes for x, y, and z values
     private static final int X = 0;
     private static final int Y = 1;
     private static final int Z = 2;
 
-    // OnShakeListener that will be notified when the shake is detected
-    private OnShakeListener mShakeListener;
+    private OnShakeListener shakeListener;
 
-    // Start time for the shake detection
-    long startTime = 0;
+    private long startTime = 0;
 
-    // Counter for shake movements
-    int moveCount = 0;
+    private int moveCount = 0;
 
-    // Constructor that sets the shake listener
     public ShakeDetector(OnShakeListener shakeListener) {
-        mShakeListener = shakeListener;
+        this.shakeListener = shakeListener;
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        // This method will be called when the accelerometer detects a change.
-
         // Call a helper method that wraps code from the Android developer site
         setCurrentAcceleration(event);
 
@@ -70,10 +60,8 @@ public class ShakeDetector implements SensorEventListener {
 
                 // Check if enough movements have been made to qualify as a shake
                 if (moveCount > MIN_MOVEMENTS) {
-                    // It's a shake! Notify the listener.
-                    mShakeListener.onShake();
+                    shakeListener.onShake();
 
-                    // Reset for the next one!
                     resetShakeDetection();
                 }
             }
@@ -98,14 +86,14 @@ public class ShakeDetector implements SensorEventListener {
         final float alpha = 0.8f;
 
         // Gravity components of x, y, and z acceleration
-        mGravity[X] = alpha * mGravity[X] + (1 - alpha) * event.values[X];
-        mGravity[Y] = alpha * mGravity[Y] + (1 - alpha) * event.values[Y];
-        mGravity[Z] = alpha * mGravity[Z] + (1 - alpha) * event.values[Z];
+        gravity[X] = alpha * gravity[X] + (1 - alpha) * event.values[X];
+        gravity[Y] = alpha * gravity[Y] + (1 - alpha) * event.values[Y];
+        gravity[Z] = alpha * gravity[Z] + (1 - alpha) * event.values[Z];
 
         // Linear acceleration along the x, y, and z axes (gravity effects removed)
-        mLinearAcceleration[X] = event.values[X] - mGravity[X];
-        mLinearAcceleration[Y] = event.values[Y] - mGravity[Y];
-        mLinearAcceleration[Z] = event.values[Z] - mGravity[Z];
+        linearAcceleration[X] = event.values[X] - gravity[X];
+        linearAcceleration[Y] = event.values[Y] - gravity[Y];
+        linearAcceleration[Z] = event.values[Z] - gravity[Z];
 
         /*
          *  END SECTION from Android developer site
@@ -114,19 +102,18 @@ public class ShakeDetector implements SensorEventListener {
 
     private float getMaxCurrentLinearAcceleration() {
         // Start by setting the value to the x value
-        float maxLinearAcceleration = mLinearAcceleration[X];
+        float maxLinearAcceleration = linearAcceleration[X];
 
         // Check if the y value is greater
-        if (mLinearAcceleration[Y] > maxLinearAcceleration) {
-            maxLinearAcceleration = mLinearAcceleration[Y];
+        if (linearAcceleration[Y] > maxLinearAcceleration) {
+            maxLinearAcceleration = linearAcceleration[Y];
         }
 
         // Check if the z value is greater
-        if (mLinearAcceleration[Z] > maxLinearAcceleration) {
-            maxLinearAcceleration = mLinearAcceleration[Z];
+        if (linearAcceleration[Z] > maxLinearAcceleration) {
+            maxLinearAcceleration = linearAcceleration[Z];
         }
 
-        // Return the greatest value
         return maxLinearAcceleration;
     }
 

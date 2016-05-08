@@ -13,10 +13,23 @@
         android:textSize="24sp"
         android:layout_height="wrap_content"
         android:id="@+id/listView_stop_times_header_text"
-        android:background="?attr/stopTimesHeaderBackground"
-        android:paddingBottom="6dp"/>
-    <View
+        android:background="?attr/stopTimesHeaderBackground" />
+
+    <TextView
         android:layout_below="@+id/listView_stop_times_header_text"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_alignParentRight="true"
+        android:id="@+id/stop_times_header_last_updated"
+        android:background="?attr/stopTimesHeaderBackground"
+        android:gravity="right"
+        android:paddingBottom="2dp"
+        android:textSize="12sp"
+        android:paddingRight="2dp"/>
+
+    <View
+        android:layout_below="@+id/stop_times_header_last_updated"
         android:layout_width="fill_parent"
         android:layout_height="2dp"
         android:background="?attr/headerDivider"/>

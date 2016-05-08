@@ -1,6 +1,8 @@
 package com.kieran.winnipegbusbackend;
 
-public class ScheduledStopKey {
+import java.io.Serializable;
+
+public class ScheduledStopKey implements Serializable{
     private int busKey;
     private int stopNumber;
 
@@ -21,5 +23,9 @@ public class ScheduledStopKey {
 
     public String toString() {
         return "Key: " + busKey + " stop on route: " + stopNumber;
+    }
+
+    public boolean equals(ScheduledStopKey another) {
+        return busKey == another.getBusKey();
     }
 }

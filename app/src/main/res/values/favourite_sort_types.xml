@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="pref_favourites_sort_type">
-        <item>Added Order</item>
         <item>Stop Number Ascending</item>
         <item>Stop Number Descending</item>
         <item>Frequency Ascending</item>
@@ -12,7 +11,6 @@
         <item>1</item>
         <item>2</item>
         <item>3</item>
-        <item>4</item>
     </string-array>
 
 </resources>

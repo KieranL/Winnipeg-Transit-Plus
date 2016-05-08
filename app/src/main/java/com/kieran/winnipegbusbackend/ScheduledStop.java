@@ -1,18 +1,19 @@
 package com.kieran.winnipegbusbackend;
 
+import com.kieran.winnipegbusbackend.enums.CoverageTypes;
 import com.kieran.winnipegbusbackend.enums.StopTimesNodeTags;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class ScheduledStop {
+import java.io.Serializable;
 
+public class ScheduledStop implements Serializable {
     private final static String ARRIVAL_TAG = "arrival";
     private final static String DEPARTURE_TAG = "departure";
     private final static String ESTIMATED_TAG = "estimated";
     private final static String SCHEDULED_TAG = "scheduled";
 
-    private Node stopNode;
     private String routeVariantName;
     private StopTime estimatedArrivalTime;
     private StopTime estimatedDepartureTime;
@@ -20,60 +21,56 @@ public class ScheduledStop {
     private StopTime scheduledDepartureTime;
     private boolean hasBikeRack;
     private boolean hasEasyAccess;
-    private boolean hasArrivalTime;
     private ScheduledStopKey key;
     private RouteSchedule parentRoute;
+    private RouteKey routeKey;
 
     public ScheduledStop(Node stopNode, RouteSchedule parentRoute) {
-        this.stopNode = stopNode;
         this.routeVariantName = parentRoute.getRouteName();
         this.parentRoute = parentRoute;
 
-        loadVariantName();
-        loadDepartureTimes();
+        loadVariantName(stopNode);
+        loadDepartureTimes(stopNode);
+        loadAdditionalInfo(stopNode);
+        routeKey = new RouteKey(((Element) stopNode).getElementsByTagName(StopTimesNodeTags.VARIANT.tag).item(0));
     }
 
-    public void loadAdditionalInfo() {
-        loadArrivalTimes();
-        loadBusInfo();
-        loadKey();
+    public void loadAdditionalInfo(Node stopNode) {
+        loadArrivalTimes(stopNode);
+        loadBusInfo(stopNode);
+        loadKey(stopNode);
     }
 
-    private void loadKey() {
+    private void loadKey(Node stopNode) {
         key = new ScheduledStopKey(BusUtilities.getValue(StopTimesNodeTags.KEY.tag, stopNode));
     }
 
-    public void loadArrivalTimes() {
+    public void loadArrivalTimes(Node stopNode) {
         Node arrivalStopNode = ((Element) stopNode).getElementsByTagName(ARRIVAL_TAG).item(0);
         try {
             estimatedArrivalTime = BusUtilities.convertToDate(BusUtilities.getValue(ESTIMATED_TAG, arrivalStopNode));
             scheduledArrivalTime = BusUtilities.convertToDate(BusUtilities.getValue(SCHEDULED_TAG, arrivalStopNode));
-            hasArrivalTime = true;
         } catch (Exception e) {
-            hasArrivalTime = false;
+            //TODO what to do here?
         }
     }
 
-    private void loadDepartureTimes() {
+    private void loadDepartureTimes(Node stopNode) {
         Node departureStopNode = ((Element) stopNode).getElementsByTagName(DEPARTURE_TAG).item(0);
 
         estimatedDepartureTime = BusUtilities.convertToDate(BusUtilities.getValue(ESTIMATED_TAG, departureStopNode));
         scheduledDepartureTime = BusUtilities.convertToDate(BusUtilities.getValue(SCHEDULED_TAG, departureStopNode));
     }
 
-    private void loadVariantName() {
+    private void loadVariantName(Node stopNode) {
         String name = BusUtilities.getValue(StopTimesNodeTags.VARIANT_NAME.tag, stopNode);
         if(name != null)
             routeVariantName = name;
     }
 
-    public void loadBusInfo() {
+    public void loadBusInfo(Node stopNode) {
         hasEasyAccess = Boolean.parseBoolean(BusUtilities.getValue(StopTimesNodeTags.EASY_ACCESS.tag, stopNode));
         hasBikeRack = Boolean.parseBoolean(BusUtilities.getValue(StopTimesNodeTags.BIKE_RACK.tag, stopNode));
-    }
-
-    public int getTimeBehindInMinutes() {
-        return StopTime.timeBehindMinutes(estimatedDepartureTime, scheduledDepartureTime);
     }
 
     public String getTimeStatus() {
@@ -81,9 +78,8 @@ public class ScheduledStop {
     }
 
     public RouteKey getRouteKey() {
-        return new RouteKey(((Element) stopNode).getElementsByTagName(StopTimesNodeTags.VARIANT.tag).item(0));
+        return routeKey;
     }
-
 
     public String getRouteVariantName() {
         return routeVariantName;
@@ -118,16 +114,14 @@ public class ScheduledStop {
     }
 
     public boolean hasArrivalTime() {
-        return hasArrivalTime;
+        return estimatedArrivalTime != null && scheduledArrivalTime != null;
     }
 
     public ScheduledStopKey getKey() {
-        if(key == null)
-            loadKey();
         return key;
     }
 
-    public int getCoverageTypeId() {
+    public CoverageTypes getCoverageType() {
         return parentRoute.getCoverageType();
     }
 }

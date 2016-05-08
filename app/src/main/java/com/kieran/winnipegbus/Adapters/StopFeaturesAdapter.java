@@ -14,15 +14,13 @@ import com.kieran.winnipegbusbackend.StopFeature;
 import java.util.List;
 
 public class StopFeaturesAdapter extends ArrayAdapter<StopFeature> {
-    Context context;
-    int layoutResourceId;
-    List<StopFeature> stopFeatures;
-    LayoutInflater inflater;
+    private int layoutResourceId;
+    private List<StopFeature> stopFeatures;
+    private LayoutInflater inflater;
 
     public StopFeaturesAdapter(Context context, int layoutResourceId, List<StopFeature> stopFeatures) {
         super(context, layoutResourceId, stopFeatures);
         this.layoutResourceId = layoutResourceId;
-        this.context = context;
         this.stopFeatures = stopFeatures;
         inflater = ((Activity)context).getLayoutInflater();
     }
@@ -58,7 +56,7 @@ public class StopFeaturesAdapter extends ArrayAdapter<StopFeature> {
         return row;
     }
 
-    static class StopHolder {
+    private static class StopHolder {
         TextView name;
         TextView count;
     }

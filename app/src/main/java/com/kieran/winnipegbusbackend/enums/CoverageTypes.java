@@ -1,16 +1,27 @@
 package com.kieran.winnipegbusbackend.enums;
 
-public enum CoverageTypes {
-    REGULAR(1, "regular"),
-    EXPRESS(2, "express"),
-    SUPER_EXPRESS(3, "super express"),
-    RAPID_TRANSIT(4, "rapid transit");
+import java.io.Serializable;
 
-    public int typeId;
+public enum CoverageTypes implements Serializable {
+    REGULAR("regular"),
+    EXPRESS("express"),
+    SUPER_EXPRESS("super express"),
+    RAPID_TRANSIT("rapid transit");
+
     public String typeName;
 
-    CoverageTypes(int typeId, String typeName) {
-        this.typeId = typeId;
+    CoverageTypes(String typeName) {
         this.typeName = typeName;
+    }
+
+    public static CoverageTypes getEnum(String coverageType) {
+        if(coverageType.equals(CoverageTypes.EXPRESS.typeName))
+            return CoverageTypes.EXPRESS;
+        else if(coverageType.equals(CoverageTypes.SUPER_EXPRESS.typeName))
+            return CoverageTypes.SUPER_EXPRESS;
+        else if(coverageType.equals(CoverageTypes.RAPID_TRANSIT.typeName))
+            return CoverageTypes.RAPID_TRANSIT;
+        else
+            return CoverageTypes.REGULAR;
     }
 }
