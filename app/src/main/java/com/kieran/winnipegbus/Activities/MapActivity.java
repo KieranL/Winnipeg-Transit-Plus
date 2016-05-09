@@ -48,7 +48,7 @@ public abstract class MapActivity extends GoogleApiActivity implements GoogleApi
         map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
             public boolean onMyLocationButtonClick() {
-                if (isLocationEnabled()) {
+                if (isLocationEnabled() && isGooglePlayServicesAvailable()) {
                     return false;
                 } else {
                     showLongToaster("Location services are disabled");

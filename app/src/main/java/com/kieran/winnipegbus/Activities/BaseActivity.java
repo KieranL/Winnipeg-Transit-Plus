@@ -1,14 +1,17 @@
 package com.kieran.winnipegbus.Activities;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -189,6 +192,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public boolean isLocationEnabled() {
         int locationMode = 0;
         String locationProviders;
+        boolean isLocationEnabled;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
             try {
@@ -198,11 +202,12 @@ public abstract class BaseActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+            isLocationEnabled =  locationMode != Settings.Secure.LOCATION_MODE_OFF;
 
         }else{
             locationProviders = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-            return !TextUtils.isEmpty(locationProviders);
+            isLocationEnabled =  !TextUtils.isEmpty(locationProviders);
         }
+        return isLocationEnabled && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 }

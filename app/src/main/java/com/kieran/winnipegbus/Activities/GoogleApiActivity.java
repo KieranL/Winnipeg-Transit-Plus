@@ -1,8 +1,12 @@
 package com.kieran.winnipegbus.Activities;
 
+import android.Manifest;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -12,7 +16,9 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.kieran.winnipegbus.R;
 
+
 public abstract class GoogleApiActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    private static final int FINE_LOCATION = 1;
     protected GoogleApiClient googleApiClient;
     protected final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     public static final int LOCATION_REFRESH_INTERVAL = 30000;
@@ -66,14 +72,37 @@ public abstract class GoogleApiActivity extends BaseActivity implements GoogleAp
 
     public int getNearbyStopsDistance() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        return Integer.parseInt(prefs.getString(getString(R.string.pref_key_nearby_distance), "100"));
+        return Integer.parseInt(prefs.getString(getString(R.string.pref_key_nearby_distance), "200"));
     }
 
-    protected LocationRequest requestLocation() {
-        LocationRequest locationRequest = LocationRequest.create().setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        locationRequest.setInterval(LOCATION_REFRESH_INTERVAL);
-        locationRequest.setFastestInterval(LOCATION_REFRESH_INTERVAL);
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, (LocationListener) this);
-        return locationRequest;
+
+
+    protected void requestLocation() {
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            validatedLocationRequest();
+        }else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode){
+            case FINE_LOCATION:
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    validatedLocationRequest();
+        }
+    }
+
+    private LocationRequest validatedLocationRequest() {
+        try {
+            LocationRequest locationRequest = LocationRequest.create().setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+            locationRequest.setInterval(LOCATION_REFRESH_INTERVAL);
+            locationRequest.setFastestInterval(LOCATION_REFRESH_INTERVAL);
+            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, (LocationListener) this);
+            return locationRequest;
+        }catch (Exception e) {
+            return null;
+        }
     }
 }

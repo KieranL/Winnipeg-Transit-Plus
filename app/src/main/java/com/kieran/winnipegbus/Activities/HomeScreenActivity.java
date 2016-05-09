@@ -24,6 +24,7 @@ import com.kieran.winnipegbusbackend.Stop;
 public class HomeScreenActivity extends GoogleApiActivity implements LocationListener {
     public static final String LOCATION_SERVICES_NOT_AVAILABLE = "Location services are not enabled";
     public static final String ACQUIRING_LOCATION = "Acquiring Location...";
+    public static final String LOCATION_UPDATED = "Location updated";
     private Button searchButton;
     private EditText searchField;
 
@@ -157,6 +158,6 @@ public class HomeScreenActivity extends GoogleApiActivity implements LocationLis
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.e("location accuracy", Float.toString(location.getAccuracy()));
+        Log.e("foo", "location updated");
     }
 }

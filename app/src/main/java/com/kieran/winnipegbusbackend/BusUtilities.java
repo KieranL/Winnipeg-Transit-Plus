@@ -1,7 +1,6 @@
 package com.kieran.winnipegbusbackend;
 
 import android.location.Location;
-import android.util.Log;
 
 import com.kieran.winnipegbusbackend.enums.SearchQueryType;
 
@@ -175,9 +174,7 @@ public class BusUtilities {
     }
 
     public static SearchQuery generateSearchQuery(Location location, int radius) {
-        Log.e("location accuracv", Float.toString(location.getAccuracy()));
         int totalRadius = Math.round(location.getAccuracy()) + radius;
-        Log.e("DISTANCE", Float.toString(totalRadius));
         String url = API_URL + STOPS_PARAMETER + QUESTION_MARK + DISTANCE_PARAMETER + totalRadius + AMPERSAND + LATIITUDE_PARAMETER + location.getLatitude() + AMPERSAND + LONGITUDE_PARAMETER + location.getLongitude() + AMPERSAND + USAGE + API_KEY;
         return new SearchQuery("NearbyStops", url, SearchQueryType.NEARBY);
     }
