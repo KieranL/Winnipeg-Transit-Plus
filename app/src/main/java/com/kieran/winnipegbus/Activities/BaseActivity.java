@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -30,7 +31,7 @@ import com.kieran.winnipegbusbackend.enums.CoverageTypes;
 
 public abstract class BaseActivity extends AppCompatActivity {
     public static String filesDir;
-    private AdView adView; //Static?
+    private AdView adView;
     protected int adViewResId = 0;
 
     @Override
@@ -152,6 +153,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
+    protected void showLongToaster(@StringRes int resId) {
+        Toast.makeText(this, getString(resId), Toast.LENGTH_LONG).show();
+    }
 
     protected void showShortToaster(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();

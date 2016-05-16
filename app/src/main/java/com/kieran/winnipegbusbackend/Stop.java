@@ -3,6 +3,9 @@ package com.kieran.winnipegbusbackend;
 import java.io.Serializable;
 
 public class Stop implements Serializable {
+    public final static String STOP_NAME_TAG = "name";
+    public final static String STOP_NUMBER_TAG = "number";
+    public final static String STOP_TAG = "stop";
     protected String stopName;
     protected int stopNumber;
 

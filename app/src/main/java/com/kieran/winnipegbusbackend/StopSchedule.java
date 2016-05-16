@@ -2,7 +2,6 @@ package com.kieran.winnipegbusbackend;
 
 
 import com.google.android.gms.maps.model.LatLng;
-import com.kieran.winnipegbusbackend.enums.StopTimesNodeTags;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -14,6 +13,11 @@ import java.util.Comparator;
 import java.util.List;
 
 public class StopSchedule extends Stop {
+    private final static String ROUTES_TAG = "route-schedule";
+    private final static String GEOGRAPHIC_TAG = "geographic";
+    public final static String LATITUDE_TAG = "latitude";
+    public final static String LONGITUDE_TAG = "longitude";
+
     private List<RouteSchedule> routeList = new ArrayList<>();
     private LatLng latLng;
 
@@ -32,11 +36,11 @@ public class StopSchedule extends Stop {
     }
 
     private void loadStopNumber(Document document) {
-        stopNumber = Integer.parseInt(BusUtilities.getValue(StopTimesNodeTags.STOP_NUMBER.tag, document.getElementsByTagName(StopTimesNodeTags.STOP.tag).item(0)));
+        stopNumber = Integer.parseInt(BusUtilities.getValue(STOP_NUMBER_TAG, document.getElementsByTagName(STOP_TAG).item(0)));
     }
 
     public StopSchedule loadRoutes(Document document) {
-        NodeList routes = document.getElementsByTagName(StopTimesNodeTags.ROUTES.tag);
+        NodeList routes = document.getElementsByTagName(ROUTES_TAG);
 
         for (int r = 0; r < routes.getLength(); r++)
                 routeList.add(new RouteSchedule(routes.item(r)));
@@ -45,12 +49,12 @@ public class StopSchedule extends Stop {
     }
 
     public void loadStopName(Document document) {
-        stopName = BusUtilities.getValue(StopTimesNodeTags.STOP_NAME.tag,  document.getElementsByTagName(StopTimesNodeTags.STOP.tag).item(0));
+        stopName = BusUtilities.getValue(STOP_NAME_TAG,  document.getElementsByTagName(STOP_TAG).item(0));
     }
 
     public void loadLatLng(Document document) {
-        Node coordinates = document.getElementsByTagName(StopTimesNodeTags.GEOGRAPHIC.tag).item(0);
-        latLng = new LatLng(Double.parseDouble(BusUtilities.getValue(StopTimesNodeTags.LATITUDE.tag, coordinates)), Double.parseDouble(BusUtilities.getValue(StopTimesNodeTags.LONGITUDE.tag, coordinates)));
+        Node coordinates = document.getElementsByTagName(GEOGRAPHIC_TAG).item(0);
+        latLng = new LatLng(Double.parseDouble(BusUtilities.getValue(LATITUDE_TAG, coordinates)), Double.parseDouble(BusUtilities.getValue(LONGITUDE_TAG, coordinates)));
     }
 
     public List<RouteSchedule> getRouteList() {
@@ -61,8 +65,7 @@ public class StopSchedule extends Stop {
         List<ScheduledStop> scheduledStops = new ArrayList<>();
 
         for (RouteSchedule r : routeList)
-            for (ScheduledStop s : r.getScheduledStops())
-                scheduledStops.add(s);
+            scheduledStops.addAll(r.getScheduledStops());
 
         return scheduledStops;
     }

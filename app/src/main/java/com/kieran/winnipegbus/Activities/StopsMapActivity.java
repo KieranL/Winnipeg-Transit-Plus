@@ -37,8 +37,8 @@ public class StopsMapActivity extends MapActivity {
 
     @Override
     public void onConnected(Bundle dataBundle) {
-        if(SearchResultsActivity.searchResultsList != null) {
-            for (FavouriteStop favouriteStop : SearchResultsActivity.searchResultsList) {
+        if(SearchResultsActivity.searchResults != null) {
+            for (FavouriteStop favouriteStop : SearchResultsActivity.searchResults.getStops()) {
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(favouriteStop.getLatLng());
                 markerOptions.title(Integer.toString(favouriteStop.getNumber()));
@@ -65,7 +65,7 @@ public class StopsMapActivity extends MapActivity {
         double minLng = 0;
 
         if(cameraUpdate == null) {
-            for (FavouriteStop favouriteStop : SearchResultsActivity.searchResultsList) {
+            for (FavouriteStop favouriteStop : SearchResultsActivity.searchResults.getStops()) {
                 if (maxLat == 0 || favouriteStop.getLatLng().latitude > maxLat)
                     maxLat = favouriteStop.getLatLng().latitude;
                 if (maxLng == 0 || favouriteStop.getLatLng().longitude > maxLng)

@@ -60,8 +60,19 @@ public class HomeScreenActivity extends GoogleApiActivity implements LocationLis
             }
         });
 
+        initializeAdsIfEnabled();
+        searchButton.setEnabled(false);
+        searchField.addTextChangedListener(createTextWatcher());
 
-        TextWatcher watcher = new TextWatcher() {
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this).build();
+        connectClient();
+    }
+
+    private TextWatcher createTextWatcher() {
+        return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -75,16 +86,6 @@ public class HomeScreenActivity extends GoogleApiActivity implements LocationLis
                 updateGoButtonStatus();
             }
         };
-
-        initializeAdsIfEnabled();
-        searchButton.setEnabled(false);
-        searchField.addTextChangedListener(watcher);
-
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this).build();
-        connectClient();
     }
 
     private void updateGoButtonStatus() {
@@ -160,4 +161,5 @@ public class HomeScreenActivity extends GoogleApiActivity implements LocationLis
     public void onLocationChanged(Location location) {
         Log.e("foo", "location updated");
     }
+
 }

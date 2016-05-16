@@ -1,7 +1,6 @@
 package com.kieran.winnipegbusbackend;
 
 import com.kieran.winnipegbusbackend.enums.CoverageTypes;
-import com.kieran.winnipegbusbackend.enums.StopTimesNodeTags;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -13,6 +12,11 @@ public class ScheduledStop implements Serializable {
     private final static String DEPARTURE_TAG = "departure";
     private final static String ESTIMATED_TAG = "estimated";
     private final static String SCHEDULED_TAG = "scheduled";
+    private final static String BIKE_RACK_TAG = "bike-rack";
+    private final static String EASY_ACCESS_TAG = "easy-access";
+    private final static String STOP_KEY_TAG = "key";
+    private final static String VARIANT_NAME_TAG = "name";
+    private final static String VARIANT_TAG= "variant";
 
     private String routeVariantName;
     private StopTime estimatedArrivalTime;
@@ -32,7 +36,7 @@ public class ScheduledStop implements Serializable {
         loadVariantName(stopNode);
         loadDepartureTimes(stopNode);
         loadAdditionalInfo(stopNode);
-        routeKey = new RouteKey(((Element) stopNode).getElementsByTagName(StopTimesNodeTags.VARIANT.tag).item(0));
+        routeKey = new RouteKey(((Element) stopNode).getElementsByTagName(VARIANT_TAG).item(0));
     }
 
     public void loadAdditionalInfo(Node stopNode) {
@@ -42,7 +46,7 @@ public class ScheduledStop implements Serializable {
     }
 
     private void loadKey(Node stopNode) {
-        key = new ScheduledStopKey(BusUtilities.getValue(StopTimesNodeTags.KEY.tag, stopNode));
+        key = new ScheduledStopKey(BusUtilities.getValue(STOP_KEY_TAG, stopNode));
     }
 
     public void loadArrivalTimes(Node stopNode) {
@@ -63,14 +67,14 @@ public class ScheduledStop implements Serializable {
     }
 
     private void loadVariantName(Node stopNode) {
-        String name = BusUtilities.getValue(StopTimesNodeTags.VARIANT_NAME.tag, stopNode);
+        String name = BusUtilities.getValue(VARIANT_NAME_TAG, stopNode);
         if(name != null)
             routeVariantName = name;
     }
 
     public void loadBusInfo(Node stopNode) {
-        hasEasyAccess = Boolean.parseBoolean(BusUtilities.getValue(StopTimesNodeTags.EASY_ACCESS.tag, stopNode));
-        hasBikeRack = Boolean.parseBoolean(BusUtilities.getValue(StopTimesNodeTags.BIKE_RACK.tag, stopNode));
+        hasEasyAccess = Boolean.parseBoolean(BusUtilities.getValue(EASY_ACCESS_TAG, stopNode));
+        hasBikeRack = Boolean.parseBoolean(BusUtilities.getValue(BIKE_RACK_TAG, stopNode));
     }
 
     public String getTimeStatus() {

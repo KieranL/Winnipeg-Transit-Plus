@@ -20,9 +20,9 @@ import com.kieran.winnipegbusbackend.BusUtilities;
 import com.kieran.winnipegbusbackend.LoadResult;
 import com.kieran.winnipegbusbackend.ScheduledStop;
 import com.kieran.winnipegbusbackend.SearchQuery;
+import com.kieran.winnipegbusbackend.Stop;
 import com.kieran.winnipegbusbackend.StopSchedule;
 import com.kieran.winnipegbusbackend.UpcomingStop;
-import com.kieran.winnipegbusbackend.enums.StopTimesNodeTags;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -40,13 +40,13 @@ public class ScheduledStopInfoActivity extends BaseActivity implements AdapterVi
     private boolean use24hrTime;
     private UpcomingStopsAdapter adapter;
     private List<AsyncTask> tasks;
-    public static final String STOP =  "stop";
+    public static final String STOP_EXTRA = "stop";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scheduled_stop_info);
-        scheduledStop = (ScheduledStop) getIntent().getSerializableExtra(STOP);
+        scheduledStop = (ScheduledStop) getIntent().getSerializableExtra(STOP_EXTRA);
 
         if (scheduledStop != null) {
             use24hrTime = getTimeSetting();
@@ -155,12 +155,12 @@ public class ScheduledStopInfoActivity extends BaseActivity implements AdapterVi
         @Override
         protected void onPostExecute(LoadResult result) {
             if (result.getResult() != null) {
-                NodeList stops = ((Document)result.getResult()).getElementsByTagName(StopTimesNodeTags.STOP.tag);
+                NodeList stops = ((Document)result.getResult()).getElementsByTagName(Stop.STOP_TAG);
                 if(stops.getLength() > 0) {
                     int stopNumber;
                     for (int s = 0; s < stops.getLength(); s++) {
                         Node stop = stops.item(s);
-                        stopNumber = Integer.parseInt(BusUtilities.getValue(StopTimesNodeTags.STOP_NUMBER.tag, stop));
+                        stopNumber = Integer.parseInt(BusUtilities.getValue(Stop.STOP_NUMBER_TAG, stop));
 
                         try {
                             tasks.add(new LoadStopTimes().executeOnExecutor(THREAD_POOL_EXECUTOR, BusUtilities.generateStopNumberURL(stopNumber, scheduledStop.getRouteNumber(), scheduledStop.getEstimatedDepartureTime(), null)));
@@ -170,7 +170,7 @@ public class ScheduledStopInfoActivity extends BaseActivity implements AdapterVi
                     }
                 }
             }else if(result.getException() != null) {
-                showLongToaster(getText(R.string.network_error).toString());
+                showLongToaster(R.string.network_error);
                 Log.e("ERRor", result.getException().getMessage());
             }
         }

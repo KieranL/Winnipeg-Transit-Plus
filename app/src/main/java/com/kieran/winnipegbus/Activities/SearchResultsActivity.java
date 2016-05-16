@@ -12,54 +12,45 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.kieran.winnipegbus.Adapters.StopListAdapter;
 import com.kieran.winnipegbus.LoadXMLAsyncTask;
 import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbusbackend.BusUtilities;
-import com.kieran.winnipegbusbackend.FavouriteStop;
 import com.kieran.winnipegbusbackend.FavouriteStopsList;
 import com.kieran.winnipegbusbackend.LoadResult;
 import com.kieran.winnipegbusbackend.SearchQuery;
+import com.kieran.winnipegbusbackend.SearchResults;
 import com.kieran.winnipegbusbackend.Stop;
 import com.kieran.winnipegbusbackend.enums.SearchQueryType;
-import com.kieran.winnipegbusbackend.enums.StopTimesNodeTags;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class SearchResultsActivity extends GoogleApiActivity implements AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, LocationListener {
     public static final String SEARCH_QUERY = "search_query";
-    public static List<FavouriteStop> searchResultsList = new ArrayList<>();
+    public static final String NEARBY_STOPS = "Nearby Stops";
+    public static final String STOPS_ON_RTE = "Stops on Rte %s";
     private StopListAdapter adapter;
     private SearchQuery searchQuery;
     private boolean loading = false;
     private AsyncTask task;
-    private ListView listView;
     private SwipeRefreshLayout swipeRefreshLayout;
+    public static SearchResults searchResults = new SearchResults();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        searchResultsList.clear();
+        searchResults.clear();
         adViewResId = R.id.stopsListAdView;
         setContentView(R.layout.activity_search_results);
 
-        listView = (ListView) findViewById(R.id.stops_listView);
+        ListView listView = (ListView) findViewById(R.id.stops_listView);
 
         listView.setOnItemClickListener(this);
 
-        adapter = new StopListAdapter(this, R.layout.listview_stops_row, searchResultsList);
+        adapter = new StopListAdapter(this, R.layout.listview_stops_row, searchResults.getStops());
         listView.setAdapter(adapter);
 
         listView.setOnItemLongClickListener(this);
@@ -106,7 +97,7 @@ public class SearchResultsActivity extends GoogleApiActivity implements AdapterV
 
                 task = new LoadSearchResults().execute(searchQuery.getQueryUrl());
             }else {
-                showLongToaster(getText(R.string.network_error).toString());
+                showLongToaster(R.string.network_error);
             }
         }
         swipeRefreshLayout.setRefreshing(loading);
@@ -115,7 +106,8 @@ public class SearchResultsActivity extends GoogleApiActivity implements AdapterV
     @Override
     public void onDestroy() {
         super.onDestroy();
-        task.cancel(true);
+        if(task != null)
+            task.cancel(true);
         loading = false;
     }
 
@@ -132,9 +124,9 @@ public class SearchResultsActivity extends GoogleApiActivity implements AdapterV
 
     private void updateTitle() {
         if(searchQuery.getSearchQueryType() == SearchQueryType.ROUTE_NUMBER)
-            setTitle("Stops on Rte " + searchQuery.getQuery());
+            setTitle(String.format(STOPS_ON_RTE, searchQuery.getQuery()));
         else if(searchQuery.getSearchQueryType() == SearchQueryType.NEARBY)
-            setTitle("Nearby Stops");
+            setTitle(NEARBY_STOPS);
     }
 
     @Override
@@ -147,7 +139,7 @@ public class SearchResultsActivity extends GoogleApiActivity implements AdapterV
                 if (!loading)
                     openMap();
                 else
-                    showLongToaster(getString(R.string.wait_for_load));
+                    showLongToaster(R.string.wait_for_load);
                 return true;
             case R.id.loadingIcon:
                 refresh();
@@ -171,7 +163,7 @@ public class SearchResultsActivity extends GoogleApiActivity implements AdapterV
         alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int which) {
                 FavouriteStopsList.loadFavourites();
-                FavouriteStopsList.addToFavourites(searchResultsList.get(position));
+                FavouriteStopsList.addToFavourites(searchResults.get(position));
             }
         });
 
@@ -201,33 +193,20 @@ public class SearchResultsActivity extends GoogleApiActivity implements AdapterV
         protected void onPostExecute(LoadResult result) {
             if(loading) {
                 if (result.getResult() != null) {
-                    searchResultsList.clear();
-                    NodeList stops = ((Document) result.getResult()).getElementsByTagName(StopTimesNodeTags.STOP.tag);
-                    if (stops.getLength() > 0) {
-                        for (int s = 0; s < stops.getLength(); s++) {
-                            Node stop = stops.item(s);
-                            FavouriteStop favouriteStop = new FavouriteStop(BusUtilities.getValue(StopTimesNodeTags.STOP_NAME.tag, stop), Integer.parseInt(BusUtilities.getValue(StopTimesNodeTags.STOP_NUMBER.tag, stop)));
-                            searchResultsList.add(favouriteStop);
+                    searchResults.loadStops(result);
 
-                                favouriteStop.setLatLng(getLatLng(stop));
-
-                        }
-
-                        adapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(getApplicationContext(), R.string.no_results_found, Toast.LENGTH_LONG).show();
+                    if (searchResults.getLength() <= 0) {
+                        showLongToaster(R.string.no_results_found);
                     }
                 } else if (result.getException() != null) {
-                    Toast.makeText(getApplicationContext(), R.string.network_error, Toast.LENGTH_LONG).show();
+                    showLongToaster(R.string.network_error);
                 }
             }
 
+            adapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);
             loading = false;
         }
     }
 
-    private LatLng getLatLng(Node stop) {
-        return new LatLng(Double.parseDouble(BusUtilities.getValue(StopTimesNodeTags.LATITUDE.tag, stop)), Double.parseDouble(BusUtilities.getValue(StopTimesNodeTags.LONGITUDE.tag, stop)));
-    }
 }

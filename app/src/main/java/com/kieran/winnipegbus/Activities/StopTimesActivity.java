@@ -28,6 +28,7 @@ import com.kieran.winnipegbusbackend.BusUtilities;
 import com.kieran.winnipegbusbackend.FavouriteStop;
 import com.kieran.winnipegbusbackend.FavouriteStopsList;
 import com.kieran.winnipegbusbackend.LoadResult;
+import com.kieran.winnipegbusbackend.Route;
 import com.kieran.winnipegbusbackend.RouteSchedule;
 import com.kieran.winnipegbusbackend.ScheduledStop;
 import com.kieran.winnipegbusbackend.Stop;
@@ -50,7 +51,7 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
     private static final String DIALOG_YES = "Yes";
     private static final String DIALOG_NO = "No";
     private static final String CREATE_NOTIFICATION_FOR_BUS = "Create a notification for this bus?";
-    private StopSchedule stopSchedule; //TODO: static?
+    private StopSchedule stopSchedule;
 
     private int stopNumber;
     private String stopName;
@@ -60,7 +61,7 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
     private List<Integer> routeNumberFilter = new ArrayList<>();
     private TextView title;
     private boolean[] selectedRoutes;
-    private List<RouteSchedule> routeFilterRoutes = new ArrayList<>();
+    private List<Route> routeFilterRoutes = new ArrayList<>();
     private AsyncTask loadStopTimesTask;
     private SensorManager sensorManager;
     private Sensor accelerometer;
@@ -85,8 +86,6 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
         setContentView(R.layout.activity_stop_times);
         adViewResId = R.id.stopTimesAdView;
 
-        //stopSchedule = null; //TODO remove dis
-        // test
         FavouriteStopsList.loadFavourites();
 
         ListView listView = (ListView) findViewById(R.id.stop_times_listview);
@@ -118,6 +117,7 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
 
         initializeAdsIfEnabled();
         createShakeListener();
+        loading = false;
     }
 
     public void createShakeListener() {
@@ -159,7 +159,7 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
                 intent.putExtra(StopInfoActivity.STOP_FEATURES, stopSchedule.createStopFeatures());
             } else {
                 intent = new Intent(this, ScheduledStopInfoActivity.class);
-                intent.putExtra(ScheduledStopInfoActivity.STOP, stops.get(position - 1));
+                intent.putExtra(ScheduledStopInfoActivity.STOP_EXTRA, stops.get(position - 1));
             }
             startActivity(intent);
         }
@@ -191,18 +191,13 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
 
     @SuppressWarnings("deprecation")
     private Drawable getFavouritesButtonDrawable(boolean isFavoured) {
-        int themeId = super.getThemeResId();
+        int themeId = getThemeResId();
         int drawableId;
 
-        if (themeId == R.style.Dark || themeId == R.style.Rt)
-            if (isFavoured)
-                drawableId = R.drawable.ic_favourite_stops_dark;
-            else
-                drawableId = R.drawable.ic_add_to_favourites_dark;
-        else if (isFavoured)
-            drawableId = R.drawable.ic_favourite_stops_light;
+        if(isFavoured)
+            drawableId = (themeId == R.style.Light) ? R.drawable.ic_favourite_stops_light : R.drawable.ic_favourite_stops_dark;
         else
-            drawableId = R.drawable.ic_add_to_favourites_light;
+            drawableId = (themeId == R.style.Light) ? R.drawable.ic_add_to_favourites_light : R.drawable.ic_add_to_favourites_dark;
 
         return getResources().getDrawable(drawableId);
     }
@@ -216,7 +211,7 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
 
                 getTimes();
             } else {
-                showLongToaster(getText(R.string.network_error).toString());
+                showLongToaster(R.string.network_error);
             }
         }
         swipeRefreshLayout.setRefreshing(loading);
@@ -235,7 +230,7 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
                 if (!loading && stopSchedule != null)
                     openFilterWindow();
                 else
-                    showLongToaster(getString(R.string.wait_for_load));
+                    showLongToaster(R.string.wait_for_load);
                 return true;
 
         }
@@ -249,7 +244,7 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
 
             alertDialog.setPositiveButton(DIALOG_YES, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialogInterface, int which) {
-                    FavouriteStopsList.removeFromFavourites(stopNumber);
+                    FavouriteStopsList.remove(stopNumber);
                     item.setIcon(getFavouritesButtonDrawable(false));
                 }
             });
@@ -260,9 +255,8 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
             FavouriteStopsList.addToFavourites(new FavouriteStop(stopName, stopNumber));
             item.setIcon(getFavouritesButtonDrawable(true));
         } else {
-            showLongToaster(getString(R.string.wait_for_load));
+            showLongToaster(R.string.wait_for_load);
         }
-
     }
 
     private void openFilterWindow() {
@@ -311,13 +305,13 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
 
             filterDialog.create().show();
         } else {
-            showLongToaster(getString(R.string.wait_for_load));
+            showLongToaster(R.string.wait_for_load);
         }
     }
 
     public void getFilterRoutes() {
         for (RouteSchedule routeSchedule : stopSchedule.getRouteList())
-            routeFilterRoutes.add(new RouteSchedule(routeSchedule));
+            routeFilterRoutes.add(new Route(routeSchedule));
 
         Collections.sort(routeFilterRoutes);
     }
@@ -377,11 +371,11 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
         @Override
         protected void onPostExecute(LoadResult result) {
             if (result.getException() != null && loading) {
-                showLongToaster(getText(R.string.network_error).toString());
+                showLongToaster(R.string.network_error);
                 if (stopSchedule == null)
                     title.setText(R.string.network_error);
             } else if (stops.size() == 0 && loading) {
-                showLongToaster(getText(R.string.no_results_found).toString());
+                showLongToaster(R.string.no_results_found);
                 title.setText(R.string.no_results_found);
             } else {
                 title.setText(stopName);

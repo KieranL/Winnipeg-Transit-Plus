@@ -90,7 +90,7 @@ public class StopInfoActivity extends MapActivity {
                 stopFeatures.loadFeatures((Document) result.getResult());
                 showStopFeatures();
             }else if(result.getException() != null) {
-                showLongToaster(getText(R.string.network_error).toString());
+                showLongToaster(R.string.network_error);
             }
         }
     }

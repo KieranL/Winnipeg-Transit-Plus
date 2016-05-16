@@ -87,8 +87,7 @@ public class FavouritesActivity extends BaseActivity implements AdapterView.OnIt
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        FavouriteStop stop = adapter.getItem(position);
-        openStopTimesAndUse(stop);
+        openStopTimesAndUse(adapter.getItem(position));
     }
 
     @Override
@@ -99,7 +98,7 @@ public class FavouritesActivity extends BaseActivity implements AdapterView.OnIt
         alertDialog.setMessage("Edit this Favourite?");
         alertDialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int which) {
-                FavouriteStopsList.removeFromFavourites(adapter.getItem(position).getNumber());
+                FavouriteStopsList.remove(adapter.getItem(position).getNumber());
                 reloadList();
             }
         });

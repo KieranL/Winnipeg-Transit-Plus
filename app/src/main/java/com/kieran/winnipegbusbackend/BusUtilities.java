@@ -45,7 +45,7 @@ public class BusUtilities {
     private static final String QUESTION_MARK = "?";
     private static final String SCHEDULE_PARAMETER = "schedule";
     private static final String DISTANCE_PARAMETER = "distance=";
-    private static final String LATIITUDE_PARAMETER = "lat=";
+    private static final String LATITUDE_PARAMETER = "lat=";
     private static final String LONGITUDE_PARAMETER = "lon=";
     public static StopTime lastQueryTime = new StopTime(System.currentTimeMillis());
 
@@ -175,7 +175,7 @@ public class BusUtilities {
 
     public static SearchQuery generateSearchQuery(Location location, int radius) {
         int totalRadius = Math.round(location.getAccuracy()) + radius;
-        String url = API_URL + STOPS_PARAMETER + QUESTION_MARK + DISTANCE_PARAMETER + totalRadius + AMPERSAND + LATIITUDE_PARAMETER + location.getLatitude() + AMPERSAND + LONGITUDE_PARAMETER + location.getLongitude() + AMPERSAND + USAGE + API_KEY;
+        String url = API_URL + STOPS_PARAMETER + QUESTION_MARK + DISTANCE_PARAMETER + totalRadius + AMPERSAND + LATITUDE_PARAMETER + location.getLatitude() + AMPERSAND + LONGITUDE_PARAMETER + location.getLongitude() + AMPERSAND + USAGE + API_KEY;
         return new SearchQuery("NearbyStops", url, SearchQueryType.NEARBY);
     }
 }

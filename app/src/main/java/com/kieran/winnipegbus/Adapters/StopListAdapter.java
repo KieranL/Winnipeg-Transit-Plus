@@ -16,7 +16,6 @@ import com.kieran.winnipegbusbackend.enums.FavouritesListSortType;
 import java.util.List;
 
 public class StopListAdapter extends ArrayAdapter<FavouriteStop> {
-    //public class MyAdapter<T> extends ArrayAdapter<T extends BasicDataModel>
     private int layoutResourceId;
     public static FavouritesListSortType sortPreference;
     private List<FavouriteStop> stops;

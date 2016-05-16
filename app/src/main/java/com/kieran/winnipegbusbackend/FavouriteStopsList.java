@@ -51,7 +51,7 @@ public class FavouriteStopsList {
         return false;
     }
 
-    public static void removeFromFavourites(int stopNumber) {
+    public static void remove(int stopNumber) {
         favouritesList.remove(getFavouriteStopByStopNumber(stopNumber));
         saveFavouriteStops();
     }
