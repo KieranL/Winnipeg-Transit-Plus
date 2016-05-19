@@ -141,14 +141,18 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
     @Override
     public void onResume() {
         super.onResume();
-        sensorManager.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_UI);
+
+        if(sensorManager != null)
+            sensorManager.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_UI);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         loading = false;
-        sensorManager.unregisterListener(shakeDetector);
+
+        if(sensorManager != null)
+            sensorManager.unregisterListener(shakeDetector);
     }
 
     private void openAdditionalInfo(int position) {
