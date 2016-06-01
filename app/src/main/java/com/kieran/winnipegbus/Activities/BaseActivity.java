@@ -172,7 +172,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @SuppressWarnings("deprecation")
     public static void setTextViewColour(Context context, TextView textView, CoverageTypes coverageType, int routeNumber) {
-        if(BusUtilities.isDownTownExpress(routeNumber)) {
+        if(BusUtilities.isDownTownSpirit(routeNumber)) {
             textView.setTextColor(context.getResources().getColor(R.color.white));
             textView.setBackgroundResource(R.drawable.route_number_background_dt_spirit);
         }else if(coverageType == CoverageTypes.REGULAR) {
