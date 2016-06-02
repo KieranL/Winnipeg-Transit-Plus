@@ -20,6 +20,7 @@
         <item name="favouriteStopIcon">@drawable/ic_favourite_stops_light</item>
         <item name="refreshIcon">@drawable/ic_refresh_light</item>
         <item name="outline">@drawable/panel_outline_light</item>
+        <item name="checkBoxSelector">@drawable/checkbox_checked_style_light</item>
         <item name="android:textColorPrimary">@color/black</item>
         <item name="android:textColor">@color/black</item>
         <item name="headerDivider">@drawable/divider_background</item>

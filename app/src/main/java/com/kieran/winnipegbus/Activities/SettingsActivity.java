@@ -1,19 +1,52 @@
 package com.kieran.winnipegbus.Activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
 
 import com.kieran.winnipegbus.ActivityManager;
 import com.kieran.winnipegbus.R;
 
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends AppCompatPreferenceActivity {
     private static Context context;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setupActionBar();
+        setTheme(getThemeResId());
+    }
+
+    @Override
+    protected void onApplyThemeResource(Resources.Theme theme, int resId, boolean first) {
+        theme.applyStyle(getThemeResId(), true);
+    }
+
+    public int getThemeResId() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int themeId = Integer.parseInt(prefs.getString(getString(R.string.pref_key_theme), "0"));
+        switch (themeId) {
+            case 0: return R.style.Dark;
+            case 1: return R.style.Light;
+            case 2: return R.style.Rt;
+            default: return R.style.Dark;
+        }
+    }
+
+    private void setupActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -71,6 +104,7 @@ public class SettingsActivity extends PreferenceActivity {
                 int newThemeId  = Integer.parseInt((String)value);
                 if(newThemeId != getThemeId()) {
                     ActivityManager.refreshThemes();
+                    setTheme();
                 }
 
             }
@@ -78,6 +112,10 @@ public class SettingsActivity extends PreferenceActivity {
             return true;
         }
     };
+
+    private static void setTheme() {
+        ((Activity)context).recreate();
+    }
 
     private static void bindPreferenceSummaryToValue(Preference preference) {
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
