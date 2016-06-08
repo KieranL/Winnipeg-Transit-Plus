@@ -12,6 +12,7 @@ public class Route implements Comparable, Serializable {
     private final static String ROUTE_COVERAGE_TAG = "coverage";
     private final static String ROUTE_NUMBER_TAG = "key";
     private final static String ROUTE_NAME_TAG = "name";
+    public static final int DT_SPIRIT_MAX_RT_NUM = 10;
 
     protected int routeNumber;
     protected String routeName;
@@ -47,5 +48,13 @@ public class Route implements Comparable, Serializable {
     @Override
     public int compareTo(@NonNull Object another) {
         return routeNumber - ((Route)another).getRouteNumber();
+    }
+
+    public boolean isDownTownSpirit() {
+        return isDownTownSpirit(routeNumber);
+    }
+
+    public static boolean isDownTownSpirit(int routeNumber) {
+        return routeNumber < DT_SPIRIT_MAX_RT_NUM;
     }
 }

@@ -24,7 +24,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.kieran.winnipegbus.ActivityManager;
 import com.kieran.winnipegbus.R;
-import com.kieran.winnipegbusbackend.BusUtilities;
+import com.kieran.winnipegbusbackend.Route;
 import com.kieran.winnipegbusbackend.ScheduledStop;
 import com.kieran.winnipegbusbackend.Stop;
 import com.kieran.winnipegbusbackend.enums.CoverageTypes;
@@ -172,7 +172,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @SuppressWarnings("deprecation")
     public static void setTextViewColour(Context context, TextView textView, CoverageTypes coverageType, int routeNumber) {
-        if(BusUtilities.isDownTownSpirit(routeNumber)) {
+        if(Route.isDownTownSpirit(routeNumber)) {
             textView.setTextColor(context.getResources().getColor(R.color.white));
             textView.setBackgroundResource(R.drawable.route_number_background_dt_spirit);
         }else if(coverageType == CoverageTypes.REGULAR) {

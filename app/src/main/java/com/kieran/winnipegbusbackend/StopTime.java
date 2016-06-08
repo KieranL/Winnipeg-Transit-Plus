@@ -17,6 +17,10 @@ public class StopTime implements Comparable, Serializable {
     private static transient Calendar calendar = Calendar.getInstance();
     private long milliseconds;
 
+    public StopTime() {
+        milliseconds = System.currentTimeMillis();
+    }
+
     public StopTime(Date date) {
         milliseconds = date.getTime();
     }

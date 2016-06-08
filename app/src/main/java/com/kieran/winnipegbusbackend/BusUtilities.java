@@ -25,7 +25,6 @@ import javax.xml.xpath.XPathFactory;
 
 public class BusUtilities {
     public static final int START_TIME_DECREASE = 10000;
-    public static final int DT_EXPRESS_MAX_RT_NUM = 10;
     public static final String QUERY_TIME = "query-time";
     public static final String STRING_NOT_AVAILABLE_ERROR = "Err";
     private final static String API_KEY = "FTy2QN8ts293ZlhYP1t";
@@ -47,7 +46,8 @@ public class BusUtilities {
     private static final String DISTANCE_PARAMETER = "distance=";
     private static final String LATITUDE_PARAMETER = "lat=";
     private static final String LONGITUDE_PARAMETER = "lon=";
-    public static StopTime lastQueryTime = new StopTime(System.currentTimeMillis());
+    public static final String SERVICE_ADVISORIES_PARAMETER = "service-advisories";
+    public static StopTime lastQueryTime = new StopTime();
 
     public static StopTime convertToDate(String s) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
@@ -57,10 +57,6 @@ public class BusUtilities {
         } catch (ParseException e) {
             return null;
         }
-    }
-
-    public static boolean isDownTownExpress(int routeNumber) {
-        return routeNumber < DT_EXPRESS_MAX_RT_NUM;
     }
 
     public static String getValue(String tag, Node originalNode) {
@@ -161,6 +157,10 @@ public class BusUtilities {
 
     public static String generateStopFeaturesUrl(int stopNumber) {
         return API_URL + STOPS_PARAMETER + FORWARD_SLASH + Integer.toString(stopNumber) + FORWARD_SLASH + STOP_FEATURE_PARAMETER + QUESTION_MARK + USAGE + API_KEY;
+    }
+
+    public static String generateServiceAdvisoriesUrl() {
+        return API_URL + SERVICE_ADVISORIES_PARAMETER + QUESTION_MARK + API_KEY_PARAMETER + API_KEY;
     }
 
     private static String createURLFriendlyString(String s) {
