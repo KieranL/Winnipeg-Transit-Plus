@@ -5,7 +5,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,7 +23,6 @@ import com.kieran.winnipegbusbackend.Stop;
 public class HomeScreenActivity extends GoogleApiActivity implements LocationListener {
     public static final String LOCATION_SERVICES_NOT_AVAILABLE = "Location services are not enabled";
     public static final String ACQUIRING_LOCATION = "Acquiring Location...";
-    public static final String LOCATION_UPDATED = "Location updated";
     private Button searchButton;
     private EditText searchField;
 
@@ -111,9 +109,17 @@ public class HomeScreenActivity extends GoogleApiActivity implements LocationLis
             case R.id.nearby_stops:
                 startNearbyStopsActivity();
                 return true;
+            case R.id.service_advisories:
+                startServiceAdvisoriesActivity();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void startServiceAdvisoriesActivity() {
+        Intent intent = new Intent(this, ServiceAdvisoriesActivity.class);
+        startActivity(intent);
     }
 
     public void submitSearch(View view) {
@@ -159,7 +165,6 @@ public class HomeScreenActivity extends GoogleApiActivity implements LocationLis
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.e("foo", "location updated");
-    }
 
+    }
 }

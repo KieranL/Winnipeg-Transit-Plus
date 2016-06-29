@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class StopTime implements Comparable, Serializable {
     private static final double DUE_TIME = 0.5;
@@ -95,6 +96,10 @@ public class StopTime implements Comparable, Serializable {
             return this.to24hrTimeString();
         else
             return this.to12hrTimeString();
+    }
+
+    public String toFormattedDateString(boolean use24hrTime) {
+        return  calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.CANADA) + " " + calendar.get(Calendar.DAY_OF_MONTH) + " " +  toFormattedString(null, use24hrTime);
     }
 
     public String toDateString() {

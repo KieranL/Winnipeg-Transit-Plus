@@ -1,7 +1,9 @@
 package com.kieran.winnipegbusbackend;
 
 import android.location.Location;
+import android.os.AsyncTask;
 
+import com.kieran.winnipegbus.LoadXMLAsyncTask;
 import com.kieran.winnipegbusbackend.enums.SearchQueryType;
 
 import org.w3c.dom.Document;
@@ -101,6 +103,15 @@ public class BusUtilities {
         }
     }
 
+    public static AsyncTask getXMLAsync(String path, final OnLoadResultReceiveListener listener) {
+        return new LoadXMLAsyncTask() {
+            @Override
+            protected void onPostExecute(LoadResult result) {
+                listener.OnReceive(result);
+            }
+        }.execute(path);
+    }
+
     public static String generateStopNumberURL(int stopNumber, List<Integer> routeNumbers, StopTime startTime, StopTime endTime) {
         String routeFilter = "";
         String startTimeFilter = "";
@@ -177,5 +188,9 @@ public class BusUtilities {
         int totalRadius = Math.round(location.getAccuracy()) + radius;
         String url = API_URL + STOPS_PARAMETER + QUESTION_MARK + DISTANCE_PARAMETER + totalRadius + AMPERSAND + LATITUDE_PARAMETER + location.getLatitude() + AMPERSAND + LONGITUDE_PARAMETER + location.getLongitude() + AMPERSAND + USAGE + API_KEY;
         return new SearchQuery("NearbyStops", url, SearchQueryType.NEARBY);
+    }
+
+    public interface OnLoadResultReceiveListener {
+        void OnReceive(LoadResult result);
     }
 }
