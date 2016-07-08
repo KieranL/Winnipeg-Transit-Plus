@@ -2,17 +2,20 @@ package com.kieran.winnipegbusbackend.ServiceAdvisories;
 
 import com.kieran.winnipegbusbackend.StopTime;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ServiceAdvisory {
+public class ServiceAdvisory implements Serializable {
     private String title;
     private String header;
-    private List<String> affectedStops;
+    private List<AffectedStop> affectedStops;
     private List<Reroute> reroutes;
     private StopTime updatedAt;
 
-    public ServiceAdvisory(String title, List<Reroute> reroutes, StopTime updatedAt) {
+    public ServiceAdvisory(String title, String header, List<AffectedStop> affectedStops, List<Reroute> reroutes, StopTime updatedAt) {
         this.title = title;
+        this.header = header;
+        this.affectedStops = affectedStops;
         this.reroutes = reroutes;
         this.updatedAt = updatedAt;
     }
@@ -27,5 +30,13 @@ public class ServiceAdvisory {
 
     public StopTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public String getHeader() {
+        return header;
+    }
+
+    public List<AffectedStop> getAffectedStops() {
+        return affectedStops;
     }
 }
