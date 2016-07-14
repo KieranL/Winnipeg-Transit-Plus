@@ -5,13 +5,20 @@
     android:layout_height="match_parent"
     tools:context="com.kieran.winnipegbus.Activities.ServiceAdvisoriesActivity">
 
-    <ListView
-        android:padding="4dp"
-        android:id="@+id/service_advisories_listview"
+    <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:dividerHeight="5dp"
-        android:layout_alignParentTop="true"
-        xmlns:android="http://schemas.android.com/apk/res/android"/>
+        android:layout_height="fill_parent"
+        android:id="@+id/service_advisories_swipe_refresh">
+
+        <ListView
+            android:padding="4dp"
+            android:id="@+id/service_advisories_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:dividerHeight="5dp"
+            android:layout_alignParentTop="true"
+            xmlns:android="http://schemas.android.com/apk/res/android"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </RelativeLayout>
