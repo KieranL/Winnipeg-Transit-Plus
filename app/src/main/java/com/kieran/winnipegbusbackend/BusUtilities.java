@@ -51,7 +51,7 @@ public class BusUtilities {
     public static final String SERVICE_ADVISORIES_PARAMETER = "service-advisories";
     public static StopTime lastQueryTime = new StopTime();
 
-    public static StopTime convertToDate(String s) {
+    public static StopTime convertToStopTime(String s) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
 
         try {
@@ -92,7 +92,7 @@ public class BusUtilities {
 
                 Element element = (Element) node;
 
-                lastQueryTime = convertToDate(element.getAttribute(QUERY_TIME));
+                lastQueryTime = convertToStopTime(element.getAttribute(QUERY_TIME));
             }catch (Exception e) {
 
             }

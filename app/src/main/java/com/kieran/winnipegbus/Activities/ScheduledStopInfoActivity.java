@@ -1,20 +1,17 @@
 package com.kieran.winnipegbus.Activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.kieran.winnipegbus.Adapters.UpcomingStopsAdapter;
 import com.kieran.winnipegbus.LoadXMLAsyncTask;
-import com.kieran.winnipegbus.NotificationData;
-import com.kieran.winnipegbus.NotificationService;
 import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbusbackend.BusUtilities;
 import com.kieran.winnipegbusbackend.LoadResult;
@@ -22,6 +19,7 @@ import com.kieran.winnipegbusbackend.ScheduledStop;
 import com.kieran.winnipegbusbackend.SearchQuery;
 import com.kieran.winnipegbusbackend.Stop;
 import com.kieran.winnipegbusbackend.StopSchedule;
+import com.kieran.winnipegbusbackend.StopTime;
 import com.kieran.winnipegbusbackend.UpcomingStop;
 
 import org.w3c.dom.Document;
@@ -32,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ScheduledStopInfoActivity extends BaseActivity implements AdapterView.OnItemClickListener {
+public class ScheduledStopInfoActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
     public static final String EASY_ACCESS = "Easy access: %s";
     public static final String BIKE_RACK = "Bike rack: %s";
     private List<UpcomingStop> upcomingStops;
@@ -41,6 +39,9 @@ public class ScheduledStopInfoActivity extends BaseActivity implements AdapterVi
     private UpcomingStopsAdapter adapter;
     private List<AsyncTask> tasks;
     public static final String STOP_EXTRA = "stop";
+    private SearchQuery query;
+    private boolean loading = false;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +63,12 @@ public class ScheduledStopInfoActivity extends BaseActivity implements AdapterVi
             listView.setAdapter(adapter);
             tasks = new ArrayList<>();
 
-            //listView.setOnItemClickListener(this); //TODO disable to remove notification system
+            swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.upcoming_stops_swipeRefresh);
+            swipeRefreshLayout.setOnRefreshListener(this);
+            swipeRefreshLayout.setColorSchemeResources(R.color.rt_blue, R.color.rt_red);
 
             fillTextViews();
-            SearchQuery query = BusUtilities.generateSearchQuery(scheduledStop.getRouteKey());
-            tasks.add(new LoadStopsForRoute().execute(query.getQueryUrl()));
+            query = BusUtilities.generateSearchQuery(scheduledStop.getRouteKey());
         }else {
             finish();
         }
@@ -129,26 +131,37 @@ public class ScheduledStopInfoActivity extends BaseActivity implements AdapterVi
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_scheduled_stop_info, menu);
+
+        onOptionsItemSelected(menu.findItem(R.id.action_refresh));
         return true;
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (position > 0) {
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-            final UpcomingStop upcomingStop = ((UpcomingStopsAdapter.StopHolder) view.getTag()).getUpcomingStop();
-            alertDialog.setMessage("Create a notification for this bus at " + upcomingStop.toString() + "?");
-            alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialogInterface, int which) {
-
-                    NotificationData notificationData = upcomingStop.toNotificationData(scheduledStop.getRouteNumber(), scheduledStop.getRouteVariantName(), getApplicationContext(), scheduledStop.getCoverageType());
-                    NotificationService.createNotification(notificationData);
-                }
-            });
-
-            alertDialog.setNegativeButton("No", null);
-            alertDialog.create().show();
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                refresh();
+                return true;
         }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void refresh() {
+        if (!loading) {
+            if (isOnline()) {
+                loading = true;
+                upcomingStops.clear();
+                tasks.add(new LoadStopsForRoute().execute(query.getQueryUrl()));
+            } else {
+                showLongToaster(R.string.network_error);
+            }
+        }
+        swipeRefreshLayout.setRefreshing(loading);
+    }
+
+    @Override
+    public void onRefresh() {
+        refresh();
     }
 
     public class LoadStopsForRoute extends LoadXMLAsyncTask {
@@ -163,7 +176,9 @@ public class ScheduledStopInfoActivity extends BaseActivity implements AdapterVi
                         stopNumber = Integer.parseInt(BusUtilities.getValue(Stop.STOP_NUMBER_TAG, stop));
 
                         try {
-                            tasks.add(new LoadStopTimes().executeOnExecutor(THREAD_POOL_EXECUTOR, BusUtilities.generateStopNumberURL(stopNumber, scheduledStop.getRouteNumber(), scheduledStop.getEstimatedDepartureTime(), null)));
+                            StopTime latest = scheduledStop.getEstimatedDepartureTime().getMilliseconds() > BusUtilities.lastQueryTime.getMilliseconds() ? scheduledStop.getEstimatedDepartureTime() : BusUtilities.lastQueryTime;
+
+                            tasks.add(new LoadStopTimes().executeOnExecutor(THREAD_POOL_EXECUTOR, BusUtilities.generateStopNumberURL(stopNumber, scheduledStop.getRouteNumber(), latest, null)));
                         }catch (Exception e) {
                             Log.e("Task", "task error");
                         }
@@ -171,8 +186,8 @@ public class ScheduledStopInfoActivity extends BaseActivity implements AdapterVi
                 }
             }else if(result.getException() != null) {
                 showLongToaster(R.string.network_error);
-                Log.e("ERRor", result.getException().getMessage());
             }
+            tasks.remove(this);
         }
     }
 
@@ -186,9 +201,16 @@ public class ScheduledStopInfoActivity extends BaseActivity implements AdapterVi
                 if(scheduledStop1 != null) {
                     UpcomingStop upcomingStop = new UpcomingStop(stopSchedule, scheduledStop1.getEstimatedDepartureTime(), scheduledStop1.getKey());
                     upcomingStops.add(upcomingStop);
-                    Collections.sort(upcomingStops);
-                    adapter.notifyDataSetChanged();
                 }
+            }
+
+            tasks.remove(this);
+
+            if(tasks.isEmpty()) {
+                Collections.sort(upcomingStops);
+                adapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing(false);
+                loading = false;
             }
         }
     }

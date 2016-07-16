@@ -167,7 +167,6 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
             }
             startActivity(intent);
         }
-
     }
 
     private void getTimes() {
@@ -178,7 +177,7 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
 
     private StopTime getScheduleEndTime() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        StopTime endTime = new StopTime(System.currentTimeMillis());
+        StopTime endTime = new StopTime();
         endTime.increaseHour(Integer.parseInt(prefs.getString(getString(R.string.pref_schedule_load_interval), "2")));
 
         return endTime;
@@ -241,26 +240,30 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
         return super.onOptionsItemSelected(item);
     }
 
-    private void handleFavouritesClick(final MenuItem item) {
+    private void handleFavouritesClick(MenuItem item) {
         if (FavouriteStopsList.contains(stopNumber)) {
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-            alertDialog.setMessage(DELETE_THIS_FAVOURITE);
-
-            alertDialog.setPositiveButton(DIALOG_YES, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialogInterface, int which) {
-                    FavouriteStopsList.remove(stopNumber);
-                    item.setIcon(getFavouritesButtonDrawable(false));
-                }
-            });
-
-            alertDialog.setNegativeButton(DIALOG_NO, null);
-            alertDialog.create().show();
+            openDeleteFavouriteDialog(item);
         } else if (stopName != null && !stopName.equals("")) {
             FavouriteStopsList.addToFavourites(new FavouriteStop(stopName, stopNumber));
             item.setIcon(getFavouritesButtonDrawable(true));
         } else {
             showLongToaster(R.string.wait_for_load);
         }
+    }
+
+    private void openDeleteFavouriteDialog(final MenuItem item) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setMessage(DELETE_THIS_FAVOURITE);
+
+        alertDialog.setPositiveButton(DIALOG_YES, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogInterface, int which) {
+                FavouriteStopsList.remove(stopNumber);
+                item.setIcon(getFavouritesButtonDrawable(false));
+            }
+        });
+
+        alertDialog.setNegativeButton(DIALOG_NO, null);
+        alertDialog.create().show();
     }
 
     private void openFilterWindow() {
@@ -387,7 +390,7 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
 
             adapter.notifyDataSetChanged();
 
-            lastUpdated.setText(String.format(UPDATED_STRING, new StopTime(System.currentTimeMillis()).toFormattedString(null, getTimeSetting())));
+            lastUpdated.setText(String.format(UPDATED_STRING, new StopTime().toFormattedString(null, getTimeSetting())));
             swipeRefreshLayout.setRefreshing(false);
             loading = false;
         }

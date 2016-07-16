@@ -5,7 +5,7 @@ import com.kieran.winnipegbusbackend.StopTime;
 import java.io.Serializable;
 import java.util.List;
 
-public class ServiceAdvisory implements Serializable {
+public class ServiceAdvisory implements Serializable, Comparable {
     private String title;
     private String header;
     private List<AffectedStop> affectedStops;
@@ -38,5 +38,10 @@ public class ServiceAdvisory implements Serializable {
 
     public List<AffectedStop> getAffectedStops() {
         return affectedStops;
+    }
+
+    @Override
+    public int compareTo(Object another) {
+        return -updatedAt.compareTo(((ServiceAdvisory)another).getUpdatedAt());
     }
 }

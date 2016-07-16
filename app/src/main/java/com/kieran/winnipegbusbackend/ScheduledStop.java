@@ -52,8 +52,8 @@ public class ScheduledStop implements Serializable {
     public void loadArrivalTimes(Node stopNode) {
         Node arrivalStopNode = ((Element) stopNode).getElementsByTagName(ARRIVAL_TAG).item(0);
         try {
-            estimatedArrivalTime = BusUtilities.convertToDate(BusUtilities.getValue(ESTIMATED_TAG, arrivalStopNode));
-            scheduledArrivalTime = BusUtilities.convertToDate(BusUtilities.getValue(SCHEDULED_TAG, arrivalStopNode));
+            estimatedArrivalTime = BusUtilities.convertToStopTime(BusUtilities.getValue(ESTIMATED_TAG, arrivalStopNode));
+            scheduledArrivalTime = BusUtilities.convertToStopTime(BusUtilities.getValue(SCHEDULED_TAG, arrivalStopNode));
         } catch (Exception e) {
             //TODO what to do here?
         }
@@ -62,8 +62,8 @@ public class ScheduledStop implements Serializable {
     private void loadDepartureTimes(Node stopNode) {
         Node departureStopNode = ((Element) stopNode).getElementsByTagName(DEPARTURE_TAG).item(0);
 
-        estimatedDepartureTime = BusUtilities.convertToDate(BusUtilities.getValue(ESTIMATED_TAG, departureStopNode));
-        scheduledDepartureTime = BusUtilities.convertToDate(BusUtilities.getValue(SCHEDULED_TAG, departureStopNode));
+        estimatedDepartureTime = BusUtilities.convertToStopTime(BusUtilities.getValue(ESTIMATED_TAG, departureStopNode));
+        scheduledDepartureTime = BusUtilities.convertToStopTime(BusUtilities.getValue(SCHEDULED_TAG, departureStopNode));
     }
 
     private void loadVariantName(Node stopNode) {

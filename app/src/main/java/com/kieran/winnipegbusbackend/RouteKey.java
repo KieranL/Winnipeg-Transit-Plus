@@ -19,6 +19,12 @@ public class RouteKey implements Serializable {
             variant = elements[2].charAt(0);
     }
 
+    public RouteKey(int routeNumber, int routeDirection, char variant) {
+        this.routeNumber = routeNumber;
+        this.routeDirection = routeDirection;
+        this.variant = variant;
+    }
+
     public String getKeyString() {
         String key = routeNumber + "-" + routeDirection;
 

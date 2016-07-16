@@ -34,17 +34,23 @@
     <FrameLayout
         android:paddingTop="8dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/bus_number_name"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" >
 
-        <ListView
-            android:background="?attr/outline"
-            android:divider="@null"
-            android:layout_width="match_parent"
+        <android.support.v4.widget.SwipeRefreshLayout
             android:layout_height="wrap_content"
-            android:id="@+id/listView_upcoming_stops"/>
+            android:layout_width="match_parent"
+            android:id="@+id/upcoming_stops_swipeRefresh">
+
+            <ListView
+                android:background="?attr/outline"
+                android:divider="@null"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/listView_upcoming_stops"/>
+        </android.support.v4.widget.SwipeRefreshLayout>
     </FrameLayout>
 
 </RelativeLayout>

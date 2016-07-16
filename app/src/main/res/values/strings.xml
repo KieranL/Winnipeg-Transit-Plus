@@ -41,5 +41,6 @@
     <string name="action_nearby_stops">Nearby Stops</string>
     <string name="stop_times_header_updated_text">Updated</string>
     <string name="title_activity_service_advisories">Service Advisories</string>
+    <string name="title_activity_service_advisory">Service Advisory</string>
 
 </resources>
