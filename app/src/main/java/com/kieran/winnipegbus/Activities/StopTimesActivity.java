@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import com.kieran.winnipegbus.Adapters.StopTimeAdapter;
 import com.kieran.winnipegbus.LoadXMLAsyncTask;
-import com.kieran.winnipegbus.NotificationService;
 import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbus.ShakeDetector;
 import com.kieran.winnipegbusbackend.BusUtilities;
@@ -41,7 +40,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, ShakeDetector.OnShakeListener, AdapterView.OnItemLongClickListener {
+public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, ShakeDetector.OnShakeListener {
 
     private static final String FILTER_POSITIVE = "Done";
     public static final String STOP = "stop";
@@ -95,7 +94,6 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
         swipeRefreshLayout.setColorSchemeResources(R.color.rt_blue, R.color.rt_red);
 
         listView.setOnItemClickListener(this);
-        //listView.setOnItemLongClickListener(this); //TODO disable to remove notification system
 
         adapter = new StopTimeAdapter(this, R.layout.listview_stop_times_row, stops);
         listView.addHeaderView(getLayoutInflater().inflate(R.layout.listview_stop_times_header, null));
@@ -336,25 +334,6 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
     @Override
     public void onShake() {
         refresh();
-    }
-
-    @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-        if (position != 0) {
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-            alertDialog.setMessage(CREATE_NOTIFICATION_FOR_BUS);
-            alertDialog.setPositiveButton(DIALOG_YES, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialogInterface, int which) {
-                    ScheduledStop selectedStop = stops.get(position - 1);
-                    NotificationService.createNotification(stopNumber, selectedStop.getRouteNumber(), selectedStop.getKey(), selectedStop.getRouteVariantName(), stopName, selectedStop.getEstimatedDepartureTime(), getApplicationContext(), selectedStop.getCoverageType());
-                }
-            });
-
-            alertDialog.setNegativeButton(DIALOG_NO, null);
-            alertDialog.create().show();
-            return true;
-        }
-        return false;
     }
 
     private class LoadStopTimes extends LoadXMLAsyncTask {

@@ -25,13 +25,13 @@ public class ReroutesAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public int getChildrenCount(int i) {
-        return reroutes.get(i).getInstructions().size();
+    public int getChildrenCount(int groupPosition) {
+        return reroutes.get(groupPosition).getInstructions().size();
     }
 
     @Override
-    public Object getGroup(int i) {
-        return reroutes.get(i);
+    public Object getGroup(int groupPosition) {
+        return reroutes.get(groupPosition);
     }
 
     @Override
@@ -40,13 +40,13 @@ public class ReroutesAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public long getGroupId(int i) {
-        return i;
+    public long getGroupId(int groupPosition) {
+        return groupPosition;
     }
 
     @Override
-    public long getChildId(int i, int i1) {
-        return i1;
+    public long getChildId(int groupPosition, int childPosition) {
+        return childPosition;
     }
 
     @Override
@@ -71,7 +71,7 @@ public class ReroutesAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public boolean isChildSelectable(int i, int i1) {
-        return true;
+    public boolean isChildSelectable(int groupPosition, int childPosition) {
+        return ((Reroute)getGroup(groupPosition)).getInstructions().size() > 0;
     }
 }
