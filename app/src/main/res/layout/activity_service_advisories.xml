@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context="com.kieran.winnipegbus.Activities.ServiceAdvisoriesActivity">
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <com.kieran.winnipegbus.Views.StyledSwipeRefresh
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:id="@+id/service_advisories_swipe_refresh">
@@ -19,6 +19,6 @@
             android:layout_alignParentTop="true"
             xmlns:android="http://schemas.android.com/apk/res/android"/>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </com.kieran.winnipegbus.Views.StyledSwipeRefresh>
 
 </RelativeLayout>

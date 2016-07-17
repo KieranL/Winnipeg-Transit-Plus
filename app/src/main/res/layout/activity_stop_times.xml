@@ -6,7 +6,7 @@
 
 
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <com.kieran.winnipegbus.Views.StyledSwipeRefresh
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:layout_above="@+id/stopTimesAdView"
@@ -20,7 +20,7 @@
         android:divider="@null"
         android:layout_alignParentTop="true"/>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </com.kieran.winnipegbus.Views.StyledSwipeRefresh>
 
     <com.google.android.gms.ads.AdView
         android:paddingTop="2dp"

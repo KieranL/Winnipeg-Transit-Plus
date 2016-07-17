@@ -23,6 +23,7 @@ import com.kieran.winnipegbus.Adapters.StopTimeAdapter;
 import com.kieran.winnipegbus.LoadXMLAsyncTask;
 import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbus.ShakeDetector;
+import com.kieran.winnipegbus.Views.StyledSwipeRefresh;
 import com.kieran.winnipegbusbackend.BusUtilities;
 import com.kieran.winnipegbusbackend.FavouriteStop;
 import com.kieran.winnipegbusbackend.FavouriteStopsList;
@@ -66,7 +67,7 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
     private Sensor accelerometer;
     private ShakeDetector shakeDetector;
     private boolean hasFilterChanged;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    private StyledSwipeRefresh swipeRefreshLayout;
     private TextView lastUpdated;
 
     @Override
@@ -89,9 +90,9 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
 
         ListView listView = (ListView) findViewById(R.id.stop_times_listview);
 
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.stop_times_swipe_refresh);
+        swipeRefreshLayout = (StyledSwipeRefresh) findViewById(R.id.stop_times_swipe_refresh);
         swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.setColorSchemeResources(R.color.rt_blue, R.color.rt_red);
+
 
         listView.setOnItemClickListener(this);
 

@@ -12,6 +12,7 @@ import android.widget.ListView;
 
 import com.kieran.winnipegbus.Adapters.ServiceAdvisoriesAdapter;
 import com.kieran.winnipegbus.R;
+import com.kieran.winnipegbus.Views.StyledSwipeRefresh;
 import com.kieran.winnipegbusbackend.BusUtilities;
 import com.kieran.winnipegbusbackend.LoadResult;
 import com.kieran.winnipegbusbackend.ServiceAdvisories.ServiceAdvisoriesParser;
@@ -25,7 +26,7 @@ import java.util.List;
 public class ServiceAdvisoriesActivity extends BaseActivity implements BusUtilities.OnLoadResultReceiveListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
     public static final String SERVICE_ADVISORY = "service-advisory";
     private ServiceAdvisoriesAdapter adapter;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    private StyledSwipeRefresh swipeRefreshLayout;
     private boolean loading = false;
     private AsyncTask task;
 
@@ -40,9 +41,8 @@ public class ServiceAdvisoriesActivity extends BaseActivity implements BusUtilit
         adapter = new  ServiceAdvisoriesAdapter(this, R.layout.listview_service_advisories_row, advisories);
         listView.setAdapter(adapter);
 
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.service_advisories_swipe_refresh);
+        swipeRefreshLayout = (StyledSwipeRefresh) findViewById(R.id.service_advisories_swipe_refresh);
         swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.setColorSchemeResources(R.color.rt_blue, R.color.rt_red);
     }
 
     @Override

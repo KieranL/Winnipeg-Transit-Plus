@@ -39,7 +39,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" >
 
-        <android.support.v4.widget.SwipeRefreshLayout
+        <com.kieran.winnipegbus.Views.StyledSwipeRefresh
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:id="@+id/upcoming_stops_swipeRefresh">
@@ -50,7 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/listView_upcoming_stops"/>
-        </android.support.v4.widget.SwipeRefreshLayout>
+        </com.kieran.winnipegbus.Views.StyledSwipeRefresh>
     </FrameLayout>
 
 </RelativeLayout>

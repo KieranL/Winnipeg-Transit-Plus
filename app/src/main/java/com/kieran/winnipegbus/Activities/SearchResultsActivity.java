@@ -19,6 +19,7 @@ import com.google.android.gms.location.LocationServices;
 import com.kieran.winnipegbus.Adapters.StopListAdapter;
 import com.kieran.winnipegbus.LoadXMLAsyncTask;
 import com.kieran.winnipegbus.R;
+import com.kieran.winnipegbus.Views.StyledSwipeRefresh;
 import com.kieran.winnipegbusbackend.BusUtilities;
 import com.kieran.winnipegbusbackend.FavouriteStopsList;
 import com.kieran.winnipegbusbackend.LoadResult;
@@ -36,7 +37,7 @@ public class SearchResultsActivity extends GoogleApiActivity implements AdapterV
     private SearchQuery searchQuery;
     private boolean loading = false;
     private AsyncTask task;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    private StyledSwipeRefresh swipeRefreshLayout;
     public static SearchResults searchResults = new SearchResults();
 
     @Override
@@ -75,9 +76,8 @@ public class SearchResultsActivity extends GoogleApiActivity implements AdapterV
     }
 
     private void setupSwipeRefresh() {
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.search_results_swipeRefresh);
+        swipeRefreshLayout = (StyledSwipeRefresh) findViewById(R.id.search_results_swipeRefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.setColorSchemeResources(R.color.rt_blue, R.color.rt_red);
 
         if(searchQuery.getSearchQueryType() != SearchQueryType.NEARBY) {
             swipeRefreshLayout.setEnabled(false);

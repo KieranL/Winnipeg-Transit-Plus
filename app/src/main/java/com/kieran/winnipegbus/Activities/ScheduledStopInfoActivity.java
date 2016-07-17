@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.kieran.winnipegbus.Adapters.UpcomingStopsAdapter;
 import com.kieran.winnipegbus.LoadXMLAsyncTask;
 import com.kieran.winnipegbus.R;
+import com.kieran.winnipegbus.Views.StyledSwipeRefresh;
 import com.kieran.winnipegbusbackend.BusUtilities;
 import com.kieran.winnipegbusbackend.LoadResult;
 import com.kieran.winnipegbusbackend.ScheduledStop;
@@ -41,7 +42,7 @@ public class ScheduledStopInfoActivity extends BaseActivity implements SwipeRefr
     public static final String STOP_EXTRA = "stop";
     private SearchQuery query;
     private boolean loading = false;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    private StyledSwipeRefresh swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,9 +64,8 @@ public class ScheduledStopInfoActivity extends BaseActivity implements SwipeRefr
             listView.setAdapter(adapter);
             tasks = new ArrayList<>();
 
-            swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.upcoming_stops_swipeRefresh);
+            swipeRefreshLayout = (StyledSwipeRefresh) findViewById(R.id.upcoming_stops_swipeRefresh);
             swipeRefreshLayout.setOnRefreshListener(this);
-            swipeRefreshLayout.setColorSchemeResources(R.color.rt_blue, R.color.rt_red);
 
             fillTextViews();
             query = BusUtilities.generateSearchQuery(scheduledStop.getRouteKey());
