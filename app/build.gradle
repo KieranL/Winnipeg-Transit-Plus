@@ -13,8 +13,8 @@ android {
         applicationId "com.kieran.winnipegbus"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 25
-        versionName "1.6.3"
+        versionCode 26
+        versionName "1.7.1B"
         signingConfig signingConfigs.config
     }
     buildTypes {
@@ -43,4 +43,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:7.8.0'
     compile 'com.google.android.gms:play-services-location:7.8.0'
     testCompile 'junit:junit:4.12'
+    testCompile 'org.json:json:20140107'
 }

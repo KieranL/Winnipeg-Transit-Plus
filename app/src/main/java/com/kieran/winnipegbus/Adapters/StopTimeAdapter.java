@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import com.kieran.winnipegbus.Activities.BaseActivity;
 import com.kieran.winnipegbus.R;
-import com.kieran.winnipegbusbackend.BusUtilities;
 import com.kieran.winnipegbusbackend.ScheduledStop;
+import com.kieran.winnipegbusbackend.TransitApiManager;
 
 import java.util.List;
 
@@ -55,7 +55,7 @@ public class StopTimeAdapter extends ArrayAdapter<ScheduledStop> {
         BaseActivity.setTextViewColour(context, holder.routeNumber, scheduledStop);
         holder.routeVariantName.setText(scheduledStop.getRouteVariantName());
         holder.timeStatus.setText(scheduledStop.getTimeStatus());
-        holder.departureTime.setText(scheduledStop.getEstimatedDepartureTime().toFormattedString(BusUtilities.lastQueryTime, use24hrTime));
+        holder.departureTime.setText(scheduledStop.getEstimatedDepartureTime().toFormattedString(TransitApiManager.lastQueryTime, use24hrTime));
 
         return row;
     }

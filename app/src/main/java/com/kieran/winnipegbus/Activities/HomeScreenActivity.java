@@ -17,8 +17,8 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.kieran.winnipegbus.AppRater;
 import com.kieran.winnipegbus.R;
-import com.kieran.winnipegbusbackend.BusUtilities;
 import com.kieran.winnipegbusbackend.Stop;
+import com.kieran.winnipegbusbackend.TransitApiManager;
 
 public class HomeScreenActivity extends GoogleApiActivity implements LocationListener {
     public static final String LOCATION_SERVICES_NOT_AVAILABLE = "Location services are not enabled";
@@ -138,7 +138,7 @@ public class HomeScreenActivity extends GoogleApiActivity implements LocationLis
 
     private void startSearchResultsActivity() {
         Intent intent = new Intent(this, SearchResultsActivity.class);
-        intent.putExtra(SearchResultsActivity.SEARCH_QUERY, BusUtilities.generateSearchQuery(searchField.getText().toString().trim()));
+        intent.putExtra(SearchResultsActivity.SEARCH_QUERY, TransitApiManager.generateSearchQuery(searchField.getText().toString().trim()));
         startActivity(intent);
     }
 
@@ -153,7 +153,7 @@ public class HomeScreenActivity extends GoogleApiActivity implements LocationLis
             Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
 
             if (location != null) {
-                intent.putExtra(SearchResultsActivity.SEARCH_QUERY, BusUtilities.generateSearchQuery(location, getNearbyStopsDistance()));
+                intent.putExtra(SearchResultsActivity.SEARCH_QUERY, TransitApiManager.generateSearchQuery(location, getNearbyStopsDistance()));
                 startActivity(intent);
             }else {
                 showShortToaster(ACQUIRING_LOCATION);

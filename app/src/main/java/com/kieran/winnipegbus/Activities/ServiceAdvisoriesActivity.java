@@ -13,17 +13,17 @@ import android.widget.ListView;
 import com.kieran.winnipegbus.Adapters.ServiceAdvisoriesAdapter;
 import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbus.Views.StyledSwipeRefresh;
-import com.kieran.winnipegbusbackend.BusUtilities;
 import com.kieran.winnipegbusbackend.LoadResult;
 import com.kieran.winnipegbusbackend.ServiceAdvisories.ServiceAdvisoriesParser;
 import com.kieran.winnipegbusbackend.ServiceAdvisories.ServiceAdvisory;
+import com.kieran.winnipegbusbackend.TransitApiManager;
 
-import org.w3c.dom.Document;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServiceAdvisoriesActivity extends BaseActivity implements BusUtilities.OnLoadResultReceiveListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class ServiceAdvisoriesActivity extends BaseActivity implements TransitApiManager.OnJsonLoadResultReceiveListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
     public static final String SERVICE_ADVISORY = "service-advisory";
     private ServiceAdvisoriesAdapter adapter;
     private StyledSwipeRefresh swipeRefreshLayout;
@@ -84,7 +84,7 @@ public class ServiceAdvisoriesActivity extends BaseActivity implements BusUtilit
 
                 adapter.loadTimeSetting();
 
-                task = BusUtilities.getXMLAsync(BusUtilities.generateServiceAdvisoriesUrl(), this);
+                task = TransitApiManager.getJsonAsync(TransitApiManager.generateServiceAdvisoriesUrl(), this);
             } else {
                 showLongToaster(R.string.network_error);
             }
@@ -93,9 +93,9 @@ public class ServiceAdvisoriesActivity extends BaseActivity implements BusUtilit
     }
 
     @Override
-    public void OnReceive(LoadResult result) {
+    public void OnReceive(LoadResult<JSONObject> result) {
         adapter.clear();
-        List<ServiceAdvisory> advisories =  ServiceAdvisoriesParser.parseAdvisories((Document) result.getResult());
+        List<ServiceAdvisory> advisories =  ServiceAdvisoriesParser.parseAdvisories(result.getResult());
         adapter.addAll(advisories);
 
         adapter.notifyDataSetChanged();

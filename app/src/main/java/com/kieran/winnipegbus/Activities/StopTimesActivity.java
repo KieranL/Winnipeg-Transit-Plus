@@ -20,11 +20,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.kieran.winnipegbus.Adapters.StopTimeAdapter;
-import com.kieran.winnipegbus.LoadXMLAsyncTask;
 import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbus.ShakeDetector;
 import com.kieran.winnipegbus.Views.StyledSwipeRefresh;
-import com.kieran.winnipegbusbackend.BusUtilities;
 import com.kieran.winnipegbusbackend.FavouriteStop;
 import com.kieran.winnipegbusbackend.FavouriteStopsList;
 import com.kieran.winnipegbusbackend.LoadResult;
@@ -34,12 +32,15 @@ import com.kieran.winnipegbusbackend.ScheduledStop;
 import com.kieran.winnipegbusbackend.Stop;
 import com.kieran.winnipegbusbackend.StopSchedule;
 import com.kieran.winnipegbusbackend.StopTime;
+import com.kieran.winnipegbusbackend.TransitApiManager;
 
-import org.w3c.dom.Document;
+import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, ShakeDetector.OnShakeListener {
 
@@ -112,7 +113,7 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
         title.setText(stopName);
         stopNumber = stop.getNumber();
 
-        setTitle(String.format(ACTIONBAR_TEXT, stopNumber));
+        setTitle(String.format(Locale.CANADA, ACTIONBAR_TEXT, stopNumber));
 
         initializeAdsIfEnabled();
         createShakeListener();
@@ -141,7 +142,7 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
     public void onResume() {
         super.onResume();
 
-        if(sensorManager != null)
+        if (sensorManager != null)
             sensorManager.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_UI);
     }
 
@@ -150,7 +151,7 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
         super.onPause();
         loading = false;
 
-        if(sensorManager != null)
+        if (sensorManager != null)
             sensorManager.unregisterListener(shakeDetector);
     }
 
@@ -169,7 +170,7 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
     }
 
     private void getTimes() {
-        String urlPath = BusUtilities.generateStopNumberURL(stopNumber, routeNumberFilter, null, getScheduleEndTime());
+        String urlPath = TransitApiManager.generateStopNumberURL(stopNumber, routeNumberFilter, null, getScheduleEndTime());
 
         loadStopTimesTask = new LoadStopTimes().execute(urlPath);
     }
@@ -196,7 +197,7 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
         int themeId = getThemeResId();
         int drawableId;
 
-        if(isFavoured)
+        if (isFavoured)
             drawableId = (themeId == R.style.Light) ? R.drawable.ic_favourite_stops_light : R.drawable.ic_favourite_stops_dark;
         else
             drawableId = (themeId == R.style.Light) ? R.drawable.ic_add_to_favourites_light : R.drawable.ic_add_to_favourites_dark;
@@ -337,29 +338,34 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
         refresh();
     }
 
-    private class LoadStopTimes extends LoadXMLAsyncTask {
+    private class LoadStopTimes extends AsyncTask<String, Void, LoadResult<JSONObject>> {
         @Override
         protected LoadResult doInBackground(String... urls) {
-            LoadResult result = super.doInBackground(urls);
+            LoadResult result;
+
+            result = TransitApiManager.getJson(urls[0]);
 
             if (loading && result.getResult() != null) {
                 if (stopSchedule == null) {
-                    stopSchedule = new StopSchedule((Document) result.getResult(), stopNumber);
+                    stopSchedule = new StopSchedule((JSONObject) result.getResult(), stopNumber);
+
                     stopName = stopSchedule.getName();
                 } else {
-                    stopSchedule.refresh((Document) result.getResult());
+                    stopSchedule.refresh((JSONObject) result.getResult());
                 }
+
                 stops.clear();
                 stops.addAll(stopSchedule.getScheduledStopsSorted());
             }
+
             return result;
         }
 
         @Override
         protected void onPostExecute(LoadResult result) {
             if (result.getException() != null && loading) {
-                showLongToaster(R.string.network_error);
-                if (stopSchedule == null)
+                handleException(result.getException());
+                if (stopSchedule == null && result.getException() instanceof IOException)
                     title.setText(R.string.network_error);
             } else if (stops.size() == 0 && loading) {
                 showLongToaster(R.string.no_results_found);

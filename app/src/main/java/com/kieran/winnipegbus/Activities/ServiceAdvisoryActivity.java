@@ -2,8 +2,10 @@ package com.kieran.winnipegbus.Activities;
 
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
-import android.widget.TextView;
+import android.widget.ListView;
 
 import com.kieran.winnipegbus.Adapters.ReroutesAdapter;
 import com.kieran.winnipegbus.R;
@@ -18,16 +20,15 @@ public class ServiceAdvisoryActivity extends BaseActivity {
 
         ServiceAdvisory advisory = (ServiceAdvisory) getIntent().getSerializableExtra(ServiceAdvisoriesActivity.SERVICE_ADVISORY);
 
-        ((TextView)findViewById(R.id.service_advisory_title1)).setText(advisory.getTitle());
-        ((TextView)findViewById(R.id.service_advisory_header)).setText(advisory.getHeader());
-
-        if(advisory.getAffectedStops().size() > 0)
-            ((TextView)findViewById(R.id.service_advisory_affected_stops)).setText(advisory.getAffectedStops().toString());
-
         ExpandableListView expandableListView = (ExpandableListView) findViewById(R.id.service_advisory_reroutes_list);
         expandableListView.setAdapter(new ReroutesAdapter(this, advisory.getReroutes()));
+        View header = getLayoutInflater().inflate(R.layout.expandablelistview_service_advisory_header, null);
+        expandableListView.addHeaderView(header);
 
-        //((TextView)findViewById(R.id.service_advisory_reroutes)).setText(advisory.getReroutes().toString());
+        ListView listView = (ListView) findViewById(R.id.service_advisory_affected_stops);
+        listView.setAdapter(new ArrayAdapter<>(this, R.layout.listview_affected_stop_row, advisory.getAffectedStops()));
+
+        setTextViewText(R.id.service_advisory_header, advisory.getHeader());
     }
 
     @Override

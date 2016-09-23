@@ -17,19 +17,20 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.kieran.winnipegbus.Adapters.StopListAdapter;
-import com.kieran.winnipegbus.LoadXMLAsyncTask;
 import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbus.Views.StyledSwipeRefresh;
-import com.kieran.winnipegbusbackend.BusUtilities;
 import com.kieran.winnipegbusbackend.FavouriteStopsList;
 import com.kieran.winnipegbusbackend.LoadResult;
 import com.kieran.winnipegbusbackend.SearchQuery;
 import com.kieran.winnipegbusbackend.SearchResults;
 import com.kieran.winnipegbusbackend.Stop;
+import com.kieran.winnipegbusbackend.TransitApiManager;
 import com.kieran.winnipegbusbackend.enums.SearchQueryType;
 
+import org.json.JSONObject;
 
-public class SearchResultsActivity extends GoogleApiActivity implements AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, LocationListener {
+
+public class SearchResultsActivity extends GoogleApiActivity implements AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, LocationListener, TransitApiManager.OnJsonLoadResultReceiveListener {
     public static final String SEARCH_QUERY = "search_query";
     public static final String NEARBY_STOPS = "Nearby Stops";
     public static final String STOPS_ON_RTE = "Stops on Rte %s";
@@ -62,7 +63,6 @@ public class SearchResultsActivity extends GoogleApiActivity implements AdapterV
         setupGoogleApi();
         updateTitle();
         initializeAdsIfEnabled();
-
     }
 
     private void setupGoogleApi() {
@@ -95,7 +95,7 @@ public class SearchResultsActivity extends GoogleApiActivity implements AdapterV
             if(isOnline()) {
                 loading = true;
 
-                task = new LoadSearchResults().execute(searchQuery.getQueryUrl());
+                task = TransitApiManager.getJsonAsync(searchQuery.getQueryUrl(), this);
             }else {
                 showLongToaster(R.string.network_error);
             }
@@ -185,28 +185,25 @@ public class SearchResultsActivity extends GoogleApiActivity implements AdapterV
 
     @Override
     public void onLocationChanged(Location location) {
-        searchQuery = BusUtilities.generateSearchQuery(location, getNearbyStopsDistance());
+        searchQuery = TransitApiManager.generateSearchQuery(location, getNearbyStopsDistance());
     }
 
-    private class LoadSearchResults extends LoadXMLAsyncTask {
-        @Override
-        protected void onPostExecute(LoadResult result) {
-            if(loading) {
-                if (result.getResult() != null) {
-                    searchResults.loadStops(result);
+    @Override
+    public void OnReceive(LoadResult<JSONObject> result) {
+        if(loading) {
+            if (result.getResult() != null) {
+                searchResults.loadStops(result);
 
-                    if (searchResults.getLength() <= 0) {
-                        showLongToaster(R.string.no_results_found);
-                    }
-                } else if (result.getException() != null) {
-                    showLongToaster(R.string.network_error);
+                if (searchResults.getLength() <= 0) {
+                    showLongToaster(R.string.no_results_found);
                 }
+            } else if (result.getException() != null) {
+                handleException(result.getException());
             }
-
-            adapter.notifyDataSetChanged();
-            swipeRefreshLayout.setRefreshing(false);
-            loading = false;
         }
-    }
 
+        adapter.notifyDataSetChanged();
+        swipeRefreshLayout.setRefreshing(false);
+        loading = false;
+    }
 }

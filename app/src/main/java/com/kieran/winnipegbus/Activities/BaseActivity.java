@@ -29,6 +29,9 @@ import com.kieran.winnipegbusbackend.ScheduledStop;
 import com.kieran.winnipegbusbackend.Stop;
 import com.kieran.winnipegbusbackend.enums.CoverageTypes;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 public abstract class BaseActivity extends AppCompatActivity {
     public static String filesDir;
     private AdView adView;
@@ -213,5 +216,25 @@ public abstract class BaseActivity extends AppCompatActivity {
             isLocationEnabled =  !TextUtils.isEmpty(locationProviders);
         }
         return isLocationEnabled && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    protected void setTextViewText(int id, String text) {
+        View view = findViewById(id);
+
+        if(view != null)
+        ((TextView)view).setText(text);
+    }
+
+    protected void handleException(Exception ex) {
+        int resId;
+
+        if(ex instanceof FileNotFoundException)
+            resId = R.string.too_many_queries_error;
+        else if(ex instanceof IOException)
+            resId = R.string.network_error;
+        else
+            resId = R.string.unknown_error;
+
+        showLongToaster(resId);
     }
 }

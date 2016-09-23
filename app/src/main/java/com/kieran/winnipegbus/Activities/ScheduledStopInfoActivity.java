@@ -11,27 +11,25 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.kieran.winnipegbus.Adapters.UpcomingStopsAdapter;
-import com.kieran.winnipegbus.LoadXMLAsyncTask;
 import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbus.Views.StyledSwipeRefresh;
-import com.kieran.winnipegbusbackend.BusUtilities;
 import com.kieran.winnipegbusbackend.LoadResult;
 import com.kieran.winnipegbusbackend.ScheduledStop;
-import com.kieran.winnipegbusbackend.SearchQuery;
-import com.kieran.winnipegbusbackend.Stop;
 import com.kieran.winnipegbusbackend.StopSchedule;
 import com.kieran.winnipegbusbackend.StopTime;
+import com.kieran.winnipegbusbackend.TransitApiManager;
 import com.kieran.winnipegbusbackend.UpcomingStop;
+import com.kieran.winnipegbusbackend.UpcomingStops.HttpUpcomingStopsManager;
+import com.kieran.winnipegbusbackend.UpcomingStops.UpcomingStopsManager;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ScheduledStopInfoActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class ScheduledStopInfoActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, TransitApiManager.OnJsonLoadResultReceiveListener, UpcomingStopsManager.OnUpcomingStopsFoundListener {
     public static final String EASY_ACCESS = "Easy access: %s";
     public static final String BIKE_RACK = "Bike rack: %s";
     private List<UpcomingStop> upcomingStops;
@@ -40,15 +38,16 @@ public class ScheduledStopInfoActivity extends BaseActivity implements SwipeRefr
     private UpcomingStopsAdapter adapter;
     private List<AsyncTask> tasks;
     public static final String STOP_EXTRA = "stop";
-    private SearchQuery query;
     private boolean loading = false;
     private StyledSwipeRefresh swipeRefreshLayout;
+    private UpcomingStopsManager upcomingStopsManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scheduled_stop_info);
         scheduledStop = (ScheduledStop) getIntent().getSerializableExtra(STOP_EXTRA);
+        upcomingStopsManager = new HttpUpcomingStopsManager();
 
         if (scheduledStop != null) {
             use24hrTime = getTimeSetting();
@@ -68,7 +67,6 @@ public class ScheduledStopInfoActivity extends BaseActivity implements SwipeRefr
             swipeRefreshLayout.setOnRefreshListener(this);
 
             fillTextViews();
-            query = BusUtilities.generateSearchQuery(scheduledStop.getRouteKey());
         }else {
             finish();
         }
@@ -124,10 +122,6 @@ public class ScheduledStopInfoActivity extends BaseActivity implements SwipeRefr
         return (TextView)findViewById(id);
     }
 
-    private void setTextViewText(int id, String text) {
-        ((TextView)findViewById(id)).setText(text);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_scheduled_stop_info, menu);
@@ -151,7 +145,8 @@ public class ScheduledStopInfoActivity extends BaseActivity implements SwipeRefr
             if (isOnline()) {
                 loading = true;
                 upcomingStops.clear();
-                tasks.add(new LoadStopsForRoute().execute(query.getQueryUrl()));
+
+                upcomingStopsManager.GetUpcomingStopsAsync(scheduledStop.getRouteKey(), scheduledStop.getKey().getStopNumber(), this);
             } else {
                 showLongToaster(R.string.network_error);
             }
@@ -164,54 +159,75 @@ public class ScheduledStopInfoActivity extends BaseActivity implements SwipeRefr
         refresh();
     }
 
-    public class LoadStopsForRoute extends LoadXMLAsyncTask {
-        @Override
-        protected void onPostExecute(LoadResult result) {
-            if (result.getResult() != null) {
-                NodeList stops = ((Document)result.getResult()).getElementsByTagName(Stop.STOP_TAG);
-                if(stops.getLength() > 0) {
-                    int stopNumber;
-                    for (int s = 0; s < stops.getLength(); s++) {
-                        Node stop = stops.item(s);
-                        stopNumber = Integer.parseInt(BusUtilities.getValue(Stop.STOP_NUMBER_TAG, stop));
+    @Override
+    public void OnReceive(LoadResult<JSONObject> result) {
+        if (result.getResult() != null) {
+            StopSchedule stopSchedule = new StopSchedule(result.getResult());
+            ScheduledStop scheduledStop1 = stopSchedule.getScheduledStopByKey(scheduledStop.getKey());
 
-                        try {
-                            StopTime latest = scheduledStop.getEstimatedDepartureTime().getMilliseconds() > BusUtilities.lastQueryTime.getMilliseconds() ? scheduledStop.getEstimatedDepartureTime() : BusUtilities.lastQueryTime;
-
-                            tasks.add(new LoadStopTimes().executeOnExecutor(THREAD_POOL_EXECUTOR, BusUtilities.generateStopNumberURL(stopNumber, scheduledStop.getRouteNumber(), latest, null)));
-                        }catch (Exception e) {
-                            Log.e("Task", "task error");
-                        }
-                    }
-                }
-            }else if(result.getException() != null) {
-                showLongToaster(R.string.network_error);
+            if(scheduledStop1 != null) {
+                UpcomingStop upcomingStop = new UpcomingStop(stopSchedule, scheduledStop1.getEstimatedDepartureTime(), scheduledStop1.getKey());
+                upcomingStops.add(upcomingStop);
             }
-            tasks.remove(this);
+        }else if(result.getException() != null) {
+            handleException(result.getException());
+
+            if(result.getException() instanceof FileNotFoundException) {
+                for(AsyncTask task : tasks)
+                    task.cancel(true);
+
+                tasks.clear();
+            }
         }
+
+        if(tasks.size() <= 2) {
+            Collections.sort(upcomingStops);
+            adapter.notifyDataSetChanged();
+            swipeRefreshLayout.setRefreshing(false);
+            loading = false;
+        }
+
+        removeFinishedTasks();
     }
 
-    public class LoadStopTimes extends LoadXMLAsyncTask {
-        @Override
-        protected void onPostExecute(LoadResult result) {
-            if (result.getResult() != null) {
-                StopSchedule stopSchedule = new StopSchedule((Document) result.getResult());
-                ScheduledStop scheduledStop1 = stopSchedule.getScheduledStopByKey(scheduledStop.getKey());
+    private void removeFinishedTasks() {
+        List<AsyncTask> finishedTasks = new ArrayList<>();
 
-                if(scheduledStop1 != null) {
-                    UpcomingStop upcomingStop = new UpcomingStop(stopSchedule, scheduledStop1.getEstimatedDepartureTime(), scheduledStop1.getKey());
-                    upcomingStops.add(upcomingStop);
+        for (AsyncTask task : tasks) {
+            if(task.getStatus() == AsyncTask.Status.FINISHED)
+                finishedTasks.add(task);
+        }
+
+        tasks.removeAll(finishedTasks);
+    }
+
+    @Override
+    public void OnUpcomingStopsFound(LoadResult<ArrayList<Integer>> result) {
+        ScheduledStopInfoActivity instance = this;
+        if (result.getResult() != null) {
+            if (result.getResult().size() > 0) {
+                for (Integer stopNumber : result.getResult()) {
+
+                    try {
+                        StopTime latest = scheduledStop.getEstimatedDepartureTime().getMilliseconds() > TransitApiManager.lastQueryTime.getMilliseconds() ? scheduledStop.getEstimatedDepartureTime() : TransitApiManager.lastQueryTime;
+
+                        AsyncTask task = TransitApiManager.getJsonAsync(TransitApiManager.generateStopNumberURL(stopNumber, scheduledStop.getRouteNumber(), latest, null), instance);
+                        tasks.add(task);
+                    } catch (Exception e) {
+                        Log.e("Task", "task error");
+                    }
                 }
             }
 
-            tasks.remove(this);
 
-            if(tasks.isEmpty()) {
-                Collections.sort(upcomingStops);
-                adapter.notifyDataSetChanged();
-                swipeRefreshLayout.setRefreshing(false);
-                loading = false;
-            }
+        } else if (result.getException() != null) {
+            handleException(result.getException());
+
+            Collections.sort(upcomingStops);
+            adapter.notifyDataSetChanged();
+            swipeRefreshLayout.setRefreshing(false);
+            loading = false;
+            tasks.clear();
         }
     }
 }

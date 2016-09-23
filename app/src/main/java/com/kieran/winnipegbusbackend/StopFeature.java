@@ -1,6 +1,7 @@
 package com.kieran.winnipegbusbackend;
 
-import org.w3c.dom.Node;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 
@@ -15,9 +16,13 @@ public class StopFeature implements Serializable {
         this.name = name;
     }
 
-    public StopFeature(Node featureNode) {
-        name = BusUtilities.getValue(NAME_TAG, featureNode);
-        count = Integer.parseInt(BusUtilities.getValue(COUNT_TAG, featureNode));
+    public StopFeature(JSONObject featureNode) {
+        try {
+            name = featureNode.getString(NAME_TAG);
+            count = featureNode.getInt(COUNT_TAG);
+        } catch (JSONException e) {
+            //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
+        }
     }
 
     public int getCount() {
