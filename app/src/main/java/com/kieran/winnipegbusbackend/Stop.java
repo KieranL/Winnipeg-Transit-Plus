@@ -5,7 +5,9 @@ import java.io.Serializable;
 public class Stop implements Serializable {
     public final static String STOP_NAME_TAG = "name";
     public final static String STOP_NUMBER_TAG = "number";
-    public final static String STOP_TAG = "stop";
+    public final static String STOP_TAG = "stops";
+    public final static String GEOGRAPHIC_TAG = "geographic";
+    public final static String STOP_CENTRE_TAG = "centre";
     protected String stopName;
     protected int stopNumber;
 

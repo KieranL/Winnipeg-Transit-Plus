@@ -1,10 +1,10 @@
 package com.kieran.winnipegbusbackend.ServiceAdvisories;
 
-import com.kieran.winnipegbusbackend.BusUtilities;
+import com.kieran.winnipegbusbackend.TransitApiManager;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,24 +18,30 @@ public class ServiceAdvisoriesParser {
     public static final String REMOVE_ASTERISK_REGEX = "\\*";
     public static final String TITLE_TAG = "title";
     public static final String BODY_TAG = "body";
-    public static final String SERVICE_ADVISORY_TAG = "service-advisory";
+    public static final String SERVICE_ADVISORY_TAG = "service-advisories";
     public static final String AFFECTED_STOP_REGEX = "\\*\\*";
     public static final String REROUTE_REGEX = "\n\\*\\*";
+    public static final String UPDATED_AT_TAG = "updated-at";
 
-    public static List<ServiceAdvisory> parseAdvisories(Document document) {
+    public static List<ServiceAdvisory> parseAdvisories(JSONObject jsonObject) {
         List<ServiceAdvisory> advisories = new ArrayList<>();
-        NodeList nodes =  document.getElementsByTagName(SERVICE_ADVISORY_TAG);
 
-        for (int i = 0; i < nodes.getLength(); i++)
-            advisories.add(getServiceAdvisory(nodes.item(i)));
+        try {
+            JSONArray nodes = jsonObject.getJSONArray(SERVICE_ADVISORY_TAG);
+
+            for (int i = 0; i < nodes.length(); i++)
+                advisories.add(getServiceAdvisory(nodes.getJSONObject(i)));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         Collections.sort(advisories);
         return advisories;
     }
 
-    private static ServiceAdvisory getServiceAdvisory(Node node) {
-        String title = BusUtilities.getValue(TITLE_TAG, node);
-        String body = BusUtilities.getValue(BODY_TAG, node);
+    private static ServiceAdvisory getServiceAdvisory(JSONObject node) throws JSONException {
+        String title = node.getString(TITLE_TAG);
+        String body = node.getString(BODY_TAG);
         String[] bodySections = body.split(BODY_SECTIONS_REGEX);
         String header = bodySections[0];
         String[] affectedStopsData;
@@ -49,7 +55,7 @@ public class ServiceAdvisoriesParser {
             reRoutesData = bodySections[3].split(BODY_SUBSECTION_REGEX);
         }
 
-        return new ServiceAdvisory(title, header, getAffectedStops(affectedStopsData), getReRoutes(reRoutesData), BusUtilities.convertToStopTime(BusUtilities.getValue("updated-at", node)));
+        return new ServiceAdvisory(title, header, getAffectedStops(affectedStopsData), getReRoutes(reRoutesData), TransitApiManager.convertToStopTime(node.getString(UPDATED_AT_TAG)));
     }
 
     private static List<AffectedStop> getAffectedStops(String[] nodes) {

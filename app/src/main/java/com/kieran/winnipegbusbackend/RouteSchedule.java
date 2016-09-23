@@ -1,40 +1,45 @@
 package com.kieran.winnipegbusbackend;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RouteSchedule extends Route implements Serializable {
-    private final static String SCHEDULED_STOPS_TAG = "scheduled-stop";
+    private final static String SCHEDULED_STOPS_TAG = "scheduled-stops";
 
     private List<ScheduledStop> stops;
-
-    public RouteSchedule(Node node) {
-        super(node);
-        stops = new ArrayList<>();
-
-        loadScheduledStops(node);
-    }
 
     public RouteSchedule(RouteSchedule routeSchedule) {
         super(routeSchedule);
     }
 
-    public void loadScheduledStops(Node routeNode) {
-        NodeList scheduledStops = ((Element) routeNode).getElementsByTagName(SCHEDULED_STOPS_TAG);
+    public RouteSchedule(JSONObject jsonObject) {
+        super(jsonObject);
 
-        for (int s = 0; s < scheduledStops.getLength(); s++) {
-            Node stop = scheduledStops.item(s);
-            try {
-                stops.add(new ScheduledStop(stop, this));
-            }catch (Exception e) {
-                //blank
+        stops = new ArrayList<>();
+
+        loadScheduledStops(jsonObject);
+    }
+
+    private void loadScheduledStops(JSONObject jsonObject) {
+        try {
+            JSONArray scheduledStops = jsonObject.getJSONArray(SCHEDULED_STOPS_TAG);
+
+            for (int s = 0; s < scheduledStops.length(); s++) {
+                JSONObject stop = scheduledStops.getJSONObject(s);
+                try {
+                    stops.add(new ScheduledStop(stop, this));
+                }catch (Exception e) {
+                    //blank
+                }
             }
 
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 

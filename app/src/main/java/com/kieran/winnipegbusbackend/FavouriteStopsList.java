@@ -6,6 +6,7 @@ import com.kieran.winnipegbus.Activities.BaseActivity;
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xmlpull.v1.XmlSerializer;
@@ -13,10 +14,14 @@ import org.xmlpull.v1.XmlSerializer;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 public class FavouriteStopsList {
     private final static String FILES_DIR = BaseActivity.filesDir + "/favourites.xml";
@@ -68,15 +73,15 @@ public class FavouriteStopsList {
            isLoadNeeded = true;
        if(isLoadNeeded) {
            try {
-               Document XMLDocument = (Document)BusUtilities.getXML(new FileInputStream(FILES_DIR)).getResult();
+               Document XMLDocument = getXML(new FileInputStream(FILES_DIR)).getResult();
                NodeList favouriteStops = XMLDocument.getElementsByTagName(FAVOURITE_STOP_TAG);
 
                for (int r = 0; r < favouriteStops.getLength(); r++) {
                    Node curr = favouriteStops.item(r);
-                   int stopNumber = Integer.parseInt(BusUtilities.getValue(STOP_NUMBER_TAG, curr));
-                   String stopName = BusUtilities.getValue(STOP_NAME_TAG, favouriteStops.item(r));
-                   int timesUsed = Integer.parseInt(BusUtilities.getValue(TIMES_USED_TAG, curr));
-                   String alias = BusUtilities.getValue(ALIAS_TAG, favouriteStops.item(r));
+                   int stopNumber = Integer.parseInt(getValue(STOP_NUMBER_TAG, curr));
+                   String stopName = getValue(STOP_NAME_TAG, favouriteStops.item(r));
+                   int timesUsed = Integer.parseInt(getValue(TIMES_USED_TAG, curr));
+                   String alias = getValue(ALIAS_TAG, favouriteStops.item(r));
 
                    FavouriteStop favouriteStop = new FavouriteStop(stopName, stopNumber, timesUsed);
                     if(alias != null)
@@ -169,5 +174,26 @@ public class FavouriteStopsList {
 
     public static FavouriteStop get(int position) {
         return favouritesList.get(position);
+    }
+
+    private static String getValue(String tag, Node originalNode) {
+        try {
+            Node node = ((Element)originalNode).getElementsByTagName(tag).item(0).getFirstChild();
+            return node.getNodeValue();
+        }catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static LoadResult<Document> getXML(InputStream inputStream)  {
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document XMLDocument = db.parse(inputStream);
+
+            return new LoadResult<>(XMLDocument, null);
+        } catch (Exception e) {
+            return new LoadResult<>(null, e);
+        }
     }
 }

@@ -3,9 +3,9 @@ package com.kieran.winnipegbusbackend;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,19 +17,24 @@ public class SearchResults {
         stops = new ArrayList<>();
     }
 
-    public SearchResults loadStops(LoadResult result) {
+    public SearchResults loadStops(LoadResult<JSONObject> result) {
         if (result.getResult() != null) {
             stops.clear();
-            NodeList stops = ((Document) result.getResult()).getElementsByTagName(Stop.STOP_TAG);
 
-            if (stops.getLength() > 0)
-                for (int s = 0; s < stops.getLength(); s++) {
-                    Node stop = stops.item(s);
-                    FavouriteStop favouriteStop = new FavouriteStop(BusUtilities.getValue(Stop.STOP_NAME_TAG, stop), Integer.parseInt(BusUtilities.getValue(Stop.STOP_NUMBER_TAG, stop)));
-                    this.stops.add(favouriteStop);
+            try {
+                JSONArray stops = result.getResult().getJSONArray(Stop.STOP_TAG);
 
-                    favouriteStop.setLatLng(getLatLng(stop));
-                }
+                if (stops.length() > 0)
+                    for (int s = 0; s < stops.length(); s++) {
+                        JSONObject stop = stops.getJSONObject(s);
+                        FavouriteStop favouriteStop = new FavouriteStop(stop.getString(Stop.STOP_NAME_TAG), stop.getInt(Stop.STOP_NUMBER_TAG));
+                        this.stops.add(favouriteStop);
+
+                        favouriteStop.setLatLng(getLatLng(stop));
+                    }
+            } catch (JSONException e) {
+
+            }
         }
 
         return this;
@@ -39,9 +44,13 @@ public class SearchResults {
         return stops;
     }
 
-
-    private LatLng getLatLng(Node stop) {
-        return new LatLng(Double.parseDouble(BusUtilities.getValue(StopSchedule.LATITUDE_TAG, stop)), Double.parseDouble(BusUtilities.getValue(StopSchedule.LONGITUDE_TAG, stop)));
+    private LatLng getLatLng(JSONObject stop) {
+        try {
+            JSONObject geographic = stop.getJSONObject(Stop.STOP_CENTRE_TAG).getJSONObject(Stop.GEOGRAPHIC_TAG);
+            return new LatLng(geographic.getDouble(StopSchedule.LATITUDE_TAG), geographic.getDouble(StopSchedule.LONGITUDE_TAG));
+        } catch (JSONException e) {
+            return null;
+        }
     }
 
     public void clear() {

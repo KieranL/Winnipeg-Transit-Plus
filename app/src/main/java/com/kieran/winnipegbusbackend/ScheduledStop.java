@@ -2,21 +2,24 @@ package com.kieran.winnipegbusbackend;
 
 import com.kieran.winnipegbusbackend.enums.CoverageTypes;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 
 public class ScheduledStop implements Serializable {
     private final static String ARRIVAL_TAG = "arrival";
     private final static String DEPARTURE_TAG = "departure";
+    private final static String STOP_TIMES_TAG = "times";
     private final static String ESTIMATED_TAG = "estimated";
     private final static String SCHEDULED_TAG = "scheduled";
+    private final static String BUS_INFO_TAG = "bus";
     private final static String BIKE_RACK_TAG = "bike-rack";
     private final static String EASY_ACCESS_TAG = "easy-access";
     private final static String STOP_KEY_TAG = "key";
     private final static String VARIANT_NAME_TAG = "name";
-    private final static String VARIANT_TAG= "variant";
+    private final static String VARIANT_TAG = "variant";
+    private final static String VARIANT_KEY_TAG = "key";
 
     private String routeVariantName;
     private StopTime estimatedArrivalTime;
@@ -29,52 +32,63 @@ public class ScheduledStop implements Serializable {
     private RouteSchedule parentRoute;
     private RouteKey routeKey;
 
-    public ScheduledStop(Node stopNode, RouteSchedule parentRoute) {
+     public ScheduledStop(JSONObject stop, RouteSchedule parentRoute) {
         this.routeVariantName = parentRoute.getRouteName();
         this.parentRoute = parentRoute;
 
-        loadVariantName(stopNode);
-        loadDepartureTimes(stopNode);
-        loadAdditionalInfo(stopNode);
-        routeKey = new RouteKey(((Element) stopNode).getElementsByTagName(VARIANT_TAG).item(0));
+        loadTimes(stop);
+        loadVariantInfo(stop);
+        loadBusInfo(stop);
+        loadKey(stop);
     }
 
-    public void loadAdditionalInfo(Node stopNode) {
-        loadArrivalTimes(stopNode);
-        loadBusInfo(stopNode);
-        loadKey(stopNode);
-    }
-
-    private void loadKey(Node stopNode) {
-        key = new ScheduledStopKey(BusUtilities.getValue(STOP_KEY_TAG, stopNode));
-    }
-
-    public void loadArrivalTimes(Node stopNode) {
-        Node arrivalStopNode = ((Element) stopNode).getElementsByTagName(ARRIVAL_TAG).item(0);
+    private void loadKey(JSONObject stop) {
         try {
-            estimatedArrivalTime = BusUtilities.convertToStopTime(BusUtilities.getValue(ESTIMATED_TAG, arrivalStopNode));
-            scheduledArrivalTime = BusUtilities.convertToStopTime(BusUtilities.getValue(SCHEDULED_TAG, arrivalStopNode));
-        } catch (Exception e) {
-            //TODO what to do here?
+            key = new ScheduledStopKey(stop.getString(STOP_KEY_TAG));
+        } catch (JSONException ex) {
+            //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
         }
     }
 
-    private void loadDepartureTimes(Node stopNode) {
-        Node departureStopNode = ((Element) stopNode).getElementsByTagName(DEPARTURE_TAG).item(0);
+    private void loadBusInfo(JSONObject stop) {
+        try {
+            JSONObject bus = stop.getJSONObject(BUS_INFO_TAG);
 
-        estimatedDepartureTime = BusUtilities.convertToStopTime(BusUtilities.getValue(ESTIMATED_TAG, departureStopNode));
-        scheduledDepartureTime = BusUtilities.convertToStopTime(BusUtilities.getValue(SCHEDULED_TAG, departureStopNode));
+            hasEasyAccess = bus.getBoolean(EASY_ACCESS_TAG);
+            hasBikeRack = bus.getBoolean(BIKE_RACK_TAG);
+        } catch (JSONException ex) {
+            //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
+        }
     }
 
-    private void loadVariantName(Node stopNode) {
-        String name = BusUtilities.getValue(VARIANT_NAME_TAG, stopNode);
-        if(name != null)
-            routeVariantName = name;
+    private void loadVariantInfo(JSONObject stop) {
+        try {
+            JSONObject variant = stop.getJSONObject(VARIANT_TAG);
+            routeVariantName = variant.getString(VARIANT_NAME_TAG);
+            routeKey = new RouteKey(variant.getString(VARIANT_KEY_TAG));
+        }catch (JSONException ex) {
+            //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
+        }
     }
 
-    public void loadBusInfo(Node stopNode) {
-        hasEasyAccess = Boolean.parseBoolean(BusUtilities.getValue(EASY_ACCESS_TAG, stopNode));
-        hasBikeRack = Boolean.parseBoolean(BusUtilities.getValue(BIKE_RACK_TAG, stopNode));
+    private void loadTimes(JSONObject stop) {
+        try {
+            JSONObject times = stop.getJSONObject(STOP_TIMES_TAG);
+
+            JSONObject departure = times.getJSONObject(DEPARTURE_TAG);
+
+            estimatedDepartureTime = StopTime.convertStringToStopTime(departure.getString(ESTIMATED_TAG));
+            scheduledDepartureTime = StopTime.convertStringToStopTime(departure.getString(SCHEDULED_TAG));
+
+
+            if (times.has(ARRIVAL_TAG)) {
+                JSONObject arrival = times.getJSONObject(ARRIVAL_TAG);
+                scheduledArrivalTime = StopTime.convertStringToStopTime(arrival.getString(ESTIMATED_TAG));
+                estimatedArrivalTime = StopTime.convertStringToStopTime(arrival.getString(SCHEDULED_TAG));
+            }
+        }catch (JSONException ex) {
+            //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
+        }
     }
 
     public String getTimeStatus() {

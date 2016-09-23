@@ -3,6 +3,7 @@ package com.kieran.winnipegbusbackend.ServiceAdvisories;
 import com.kieran.winnipegbusbackend.StopTime;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ServiceAdvisory implements Serializable, Comparable {
@@ -38,6 +39,16 @@ public class ServiceAdvisory implements Serializable, Comparable {
 
     public List<AffectedStop> getAffectedStops() {
         return affectedStops;
+    }
+
+    public List<String> getAffectedStopsStrings() {
+        List<String> strings = new ArrayList<>();
+
+        for (AffectedStop stop: affectedStops) {
+            strings.add(stop.getAffectedStop());
+        }
+
+        return strings;
     }
 
     @Override

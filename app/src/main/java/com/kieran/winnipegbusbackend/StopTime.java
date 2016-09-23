@@ -1,13 +1,17 @@
 package com.kieran.winnipegbusbackend;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 public class StopTime implements Comparable, Serializable {
+    private final static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
     private static final double DUE_TIME = 0.5;
     private static final String DUE_STRING = "Due";
     private static final double EARLY_TIME = -0.5;
@@ -145,5 +149,16 @@ public class StopTime implements Comparable, Serializable {
 
     public void increaseMinute(int minutes) {
         milliseconds += minutes * 1000 * 60;
+    }
+
+    public static StopTime convertStringToStopTime(String s) {
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+
+        try {
+            return new StopTime(dateFormat.parse(s));
+        } catch (ParseException e) {
+            return null;
+        }
     }
 }

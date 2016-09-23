@@ -1,7 +1,5 @@
 package com.kieran.winnipegbusbackend;
 
-import org.w3c.dom.Node;
-
 import java.io.Serializable;
 
 public class RouteKey implements Serializable {
@@ -10,8 +8,8 @@ public class RouteKey implements Serializable {
     private int routeDirection;
     private char variant = 0;
 
-    public RouteKey(Node node) {
-        String[] elements = BusUtilities.getValue(ROUTE_KEY_TAG, node).split("-");
+    public RouteKey(String key) {
+        String[] elements = key.split("-");
         routeNumber = Integer.parseInt(elements[0]);
         routeDirection = Integer.parseInt(elements[1]);
 

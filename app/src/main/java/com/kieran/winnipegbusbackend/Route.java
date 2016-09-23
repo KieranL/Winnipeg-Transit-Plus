@@ -4,13 +4,15 @@ import android.support.annotation.NonNull;
 
 import com.kieran.winnipegbusbackend.enums.CoverageTypes;
 
-import org.w3c.dom.Node;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 
 public class Route implements Comparable, Serializable {
+    private final static String ROUTE_TAG = "route";
     private final static String ROUTE_COVERAGE_TAG = "coverage";
-    private final static String ROUTE_NUMBER_TAG = "key";
+    private final static String ROUTE_NUMBER_TAG = "number";
     private final static String ROUTE_NAME_TAG = "name";
     public static final int DT_SPIRIT_MAX_RT_NUM = 10;
 
@@ -18,15 +20,21 @@ public class Route implements Comparable, Serializable {
     protected String routeName;
     protected CoverageTypes coverageType;
 
-    public Route(Node routeNode) {
-        coverageType = CoverageTypes.getEnum(BusUtilities.getValue(ROUTE_COVERAGE_TAG, routeNode));
-        routeName = BusUtilities.getValue(ROUTE_NAME_TAG, routeNode);
-        routeNumber = Integer.parseInt(BusUtilities.getValue(ROUTE_NUMBER_TAG, routeNode));
-    }
-
-    public Route(Route route) {
+        public Route(Route route) {
         routeNumber = route.getRouteNumber();
         routeName =  route.getRouteName();
+    }
+
+    public Route(JSONObject jsonObject) {
+        try {
+            jsonObject = jsonObject.getJSONObject(ROUTE_TAG);
+
+            coverageType = CoverageTypes.getEnum(jsonObject.getString(ROUTE_COVERAGE_TAG));
+            routeName = jsonObject.getString(ROUTE_NAME_TAG);
+            routeNumber = jsonObject.getInt(ROUTE_NUMBER_TAG);
+        } catch (JSONException e) {
+            //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
+        }
     }
 
     public int getRouteNumber() {
