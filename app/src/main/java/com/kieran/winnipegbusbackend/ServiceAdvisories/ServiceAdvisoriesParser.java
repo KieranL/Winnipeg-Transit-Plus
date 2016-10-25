@@ -1,6 +1,6 @@
 package com.kieran.winnipegbusbackend.ServiceAdvisories;
 
-import com.kieran.winnipegbusbackend.TransitApiManager;
+import com.kieran.winnipegbusbackend.StopTime;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,7 +55,7 @@ public class ServiceAdvisoriesParser {
             reRoutesData = bodySections[3].split(BODY_SUBSECTION_REGEX);
         }
 
-        return new ServiceAdvisory(title, header, getAffectedStops(affectedStopsData), getReRoutes(reRoutesData), TransitApiManager.convertToStopTime(node.getString(UPDATED_AT_TAG)));
+        return new ServiceAdvisory(title, header, getAffectedStops(affectedStopsData), getReRoutes(reRoutesData), StopTime.convertStringToStopTime(node.getString(UPDATED_AT_TAG)));
     }
 
     private static List<AffectedStop> getAffectedStops(String[] nodes) {
