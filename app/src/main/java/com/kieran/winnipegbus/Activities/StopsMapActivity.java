@@ -47,6 +47,7 @@ public class StopsMapActivity extends MapActivity {
             }
         }
 
+        map.setTrafficEnabled(true);
         map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {

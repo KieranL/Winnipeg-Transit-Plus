@@ -75,8 +75,6 @@ public abstract class GoogleApiActivity extends BaseActivity implements GoogleAp
         return Integer.parseInt(prefs.getString(getString(R.string.pref_key_nearby_distance), "200"));
     }
 
-
-
     protected void requestLocation() {
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             validatedLocationRequest();

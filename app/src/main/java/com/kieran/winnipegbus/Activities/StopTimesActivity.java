@@ -340,18 +340,18 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
 
     private class LoadStopTimes extends AsyncTask<String, Void, LoadResult<JSONObject>> {
         @Override
-        protected LoadResult doInBackground(String... urls) {
-            LoadResult result;
+        protected LoadResult<JSONObject> doInBackground(String... urls) {
+            LoadResult<JSONObject> result;
 
             result = TransitApiManager.getJson(urls[0]);
 
             if (loading && result.getResult() != null) {
                 if (stopSchedule == null) {
-                    stopSchedule = new StopSchedule((JSONObject) result.getResult(), stopNumber);
+                    stopSchedule = new StopSchedule(result.getResult(), stopNumber);
 
                     stopName = stopSchedule.getName();
                 } else {
-                    stopSchedule.refresh((JSONObject) result.getResult());
+                    stopSchedule.refresh(result.getResult());
                 }
 
                 stops.clear();

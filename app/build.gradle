@@ -13,8 +13,8 @@ android {
         applicationId "com.kieran.winnipegbus"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 26
-        versionName "1.7.1B"
+        versionCode 27
+        versionName "1.7.1"
         signingConfig signingConfigs.config
     }
     buildTypes {
