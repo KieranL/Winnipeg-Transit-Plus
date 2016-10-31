@@ -83,8 +83,8 @@ public class ScheduledStop implements Serializable {
 
             if (times.has(ARRIVAL_TAG)) {
                 JSONObject arrival = times.getJSONObject(ARRIVAL_TAG);
-                scheduledArrivalTime = StopTime.convertStringToStopTime(arrival.getString(ESTIMATED_TAG));
-                estimatedArrivalTime = StopTime.convertStringToStopTime(arrival.getString(SCHEDULED_TAG));
+                scheduledArrivalTime = StopTime.convertStringToStopTime(arrival.getString(SCHEDULED_TAG));
+                estimatedArrivalTime = StopTime.convertStringToStopTime(arrival.getString(ESTIMATED_TAG));
             }
         }catch (JSONException ex) {
             //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields

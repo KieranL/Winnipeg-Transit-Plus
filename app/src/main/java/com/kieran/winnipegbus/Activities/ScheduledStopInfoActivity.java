@@ -152,6 +152,7 @@ public class ScheduledStopInfoActivity extends BaseActivity implements SwipeRefr
             }
         }
         swipeRefreshLayout.setRefreshing(loading);
+        fillTextViews();
     }
 
     @Override
@@ -166,6 +167,10 @@ public class ScheduledStopInfoActivity extends BaseActivity implements SwipeRefr
             ScheduledStop scheduledStop1 = stopSchedule.getScheduledStopByKey(scheduledStop.getKey());
 
             if(scheduledStop1 != null) {
+                if(scheduledStop1.getKey().getStopNumber() == scheduledStop.getKey().getStopNumber()) {
+                    scheduledStop = scheduledStop1;
+                }
+
                 UpcomingStop upcomingStop = new UpcomingStop(stopSchedule, scheduledStop1.getEstimatedDepartureTime(), scheduledStop1.getKey());
                 upcomingStops.add(upcomingStop);
             }
