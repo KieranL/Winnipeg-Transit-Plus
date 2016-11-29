@@ -112,9 +112,17 @@ public class HomeScreenActivity extends GoogleApiActivity implements LocationLis
             case R.id.service_advisories:
                 startServiceAdvisoriesActivity();
                 return true;
+            case R.id.trip_planner:
+                startTripPlannerActivity();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void startTripPlannerActivity() {
+        Intent intent = new Intent(this, TripPlannerActivity.class);
+        startActivity(intent);
     }
 
     private void startServiceAdvisoriesActivity() {

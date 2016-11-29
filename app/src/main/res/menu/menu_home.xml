@@ -17,7 +17,13 @@
         android:orderInCategory="100"
         android:title="@string/title_activity_service_advisories"
         app:showAsAction="never"
-        android:visible="false"/>
+        android:visible="true"/>
+    <item
+        android:id="@+id/trip_planner"
+        android:orderInCategory="100"
+        android:title="@string/title_activity_trip_planner"
+        app:showAsAction="never"
+        android:visible="true"/>
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

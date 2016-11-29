@@ -90,9 +90,14 @@
             android:name=".Activities.ServiceAdvisoriesActivity"
             android:label="@string/title_activity_service_advisories"
             android:parentActivityName=".Activities.HomeScreenActivity" />
-        <activity android:name=".Activities.ServiceAdvisoryActivity"
+        <activity
+            android:name=".Activities.ServiceAdvisoryActivity"
             android:label="@string/title_activity_service_advisory"
-            android:parentActivityName=".Activities.ServiceAdvisoriesActivity"/>
+            android:parentActivityName=".Activities.ServiceAdvisoriesActivity" />
+        <activity
+            android:name=".Activities.TripPlannerActivity"
+            android:label="@string/title_activity_trip_planner"
+            android:parentActivityName=".Activities.HomeScreenActivity" />
     </application>
 
 </manifest>
