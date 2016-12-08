@@ -74,9 +74,9 @@ public class StopTime implements Comparable, Serializable {
         String timeString;
         int hours = getHours();
 
-        if(hours == 0)
+        if (hours == 0)
             timeString = "12" + ":" + getMinutesString();
-        else if(hours <= 12)
+        else if (hours <= 12)
             timeString = getHoursString() + ":" + getMinutesString();
         else
             timeString = (hours - 12) + ":" + getMinutesString();
@@ -87,7 +87,7 @@ public class StopTime implements Comparable, Serializable {
     }
 
     public String toFormattedString(StopTime currentTime, boolean use24hrTime) {
-        if(currentTime != null) {
+        if (currentTime != null) {
             double remainingTime = timeBehindMinutes(this, currentTime);
 
             if (remainingTime < DUE_TIME)
@@ -96,14 +96,15 @@ public class StopTime implements Comparable, Serializable {
                 return Math.round(remainingTime) + " min";
         }
 
-        if(use24hrTime)
+        if (use24hrTime)
             return this.to24hrTimeString();
         else
             return this.to12hrTimeString();
     }
 
     public String toFormattedDateString(boolean use24hrTime) {
-        return  calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.CANADA) + " " + calendar.get(Calendar.DAY_OF_MONTH) + " " +  toFormattedString(null, use24hrTime);
+        calendar.setTimeInMillis(milliseconds);
+        return calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.CANADA) + " " + calendar.get(Calendar.DAY_OF_MONTH) + " " + toFormattedString(null, use24hrTime);
     }
 
     public String toDateString() {
@@ -130,21 +131,21 @@ public class StopTime implements Comparable, Serializable {
 
     @Override
     public int compareTo(@NonNull Object another) {
-        return (int)(milliseconds - ((StopTime)another).getMilliseconds());
+        return (int) (milliseconds - ((StopTime) another).getMilliseconds());
     }
 
     public void decreaseMilliSeconds(long time) {
         milliseconds -= time;
     }
 
-    private int getMinutes() {
+    public int getMinutes() {
         calendar.setTimeInMillis(milliseconds);
-        return  calendar.get(Calendar.MINUTE);
+        return calendar.get(Calendar.MINUTE);
     }
 
-    private int getHours() {
+    public int getHours() {
         calendar.setTimeInMillis(milliseconds);
-        return  calendar.get(Calendar.HOUR_OF_DAY);
+        return calendar.get(Calendar.HOUR_OF_DAY);
     }
 
     public void increaseMinute(int minutes) {
@@ -160,5 +161,20 @@ public class StopTime implements Comparable, Serializable {
         } catch (ParseException e) {
             return null;
         }
+    }
+
+    public int getYear() {
+        calendar.setTimeInMillis(milliseconds);
+        return calendar.get(Calendar.YEAR);
+    }
+
+    public int getMonth() {
+        calendar.setTimeInMillis(milliseconds);
+        return calendar.get(Calendar.MONTH);
+    }
+
+    public int getDayOfMonth() {
+        calendar.setTimeInMillis(milliseconds);
+        return calendar.get(Calendar.DAY_OF_MONTH);
     }
 }
