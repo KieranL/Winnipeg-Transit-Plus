@@ -5,6 +5,7 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
@@ -84,10 +85,10 @@ public abstract class GoogleApiActivity extends BaseActivity implements GoogleAp
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
             case FINE_LOCATION:
-                if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                if(grantResults.length > 0 &&  grantResults[0] == PackageManager.PERMISSION_GRANTED)
                     validatedLocationRequest();
         }
     }
