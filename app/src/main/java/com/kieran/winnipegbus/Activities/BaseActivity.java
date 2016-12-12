@@ -24,10 +24,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.kieran.winnipegbus.ActivityManager;
 import com.kieran.winnipegbus.R;
-import com.kieran.winnipegbusbackend.Route;
-import com.kieran.winnipegbusbackend.ScheduledStop;
 import com.kieran.winnipegbusbackend.Stop;
-import com.kieran.winnipegbusbackend.enums.CoverageTypes;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -40,7 +37,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(getThemeResId());
-        if(filesDir == null)
+        if (filesDir == null)
             filesDir = getFilesDir().getPath();
         ActivityManager.addActivity(this);
         super.onCreate(savedInstanceState);
@@ -54,14 +51,14 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if(adView != null)
+        if (adView != null)
             adView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(adView != null)
+        if (adView != null)
             adView.resume();
     }
 
@@ -97,7 +94,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void initializeAdsIfEnabled() {
-        if(adView == null && adViewResId != 0)
+        if (adView == null && adViewResId != 0)
             adView = (AdView) findViewById(adViewResId);
 
         if (adView != null && !adView.isLoading() && !adsDisabled()) {
@@ -111,12 +108,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void createAd() {
         AdRequest.Builder adRequest = new AdRequest.Builder();
         adRequest.addTestDevice(getString(R.string.test_device_id_gs6e));
-        adRequest.addTestDevice(getString(R.string.test_device_id_gs5));
         adView.loadAd(adRequest.build());
     }
 
     public void destroyAdView() {
-        if(adView != null) {
+        if (adView != null) {
             adView.setVisibility(View.GONE);
             adView.destroy();
         }
@@ -135,10 +131,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int themeId = Integer.parseInt(prefs.getString(getString(R.string.pref_key_theme), "0"));
         switch (themeId) {
-            case 0: return R.style.Dark;
-            case 1: return R.style.Light;
-            case 2: return R.style.Rt;
-            default: return R.style.Dark;
+            case 0:
+                return R.style.Dark;
+            case 1:
+                return R.style.Light;
+            case 2:
+                return R.style.Rt;
+            default:
+                return R.style.Dark;
         }
     }
 
@@ -164,30 +164,13 @@ public abstract class BaseActivity extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
+    protected void showShortToaster(@StringRes int resId) {
+        Toast.makeText(this, getString(resId), Toast.LENGTH_SHORT).show();
+    }
+
     public static boolean getTimeSetting(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean("pref_use_24hr_time", false);
-    }
-
-    public static void setTextViewColour(Context context, TextView textView, ScheduledStop scheduledStop) {
-        setTextViewColour(context, textView, scheduledStop.getCoverageType(), scheduledStop.getRouteNumber());
-    }
-
-    @SuppressWarnings("deprecation")
-    public static void setTextViewColour(Context context, TextView textView, CoverageTypes coverageType, int routeNumber) {
-        if(Route.isDownTownSpirit(routeNumber)) {
-            textView.setTextColor(context.getResources().getColor(R.color.white));
-            textView.setBackgroundResource(R.drawable.route_number_background_dt_spirit);
-        }else if(coverageType == CoverageTypes.REGULAR) {
-            textView.setTextColor(context.getResources().getColor(R.color.black));
-            textView.setBackgroundResource(R.drawable.route_number_background_regular);
-        } else if(coverageType == CoverageTypes.EXPRESS || coverageType == CoverageTypes.SUPER_EXPRESS) {
-            textView.setTextColor(context.getResources().getColor(R.color.black));
-            textView.setBackgroundResource(R.drawable.route_number_background_express);
-        } else if (coverageType == CoverageTypes.RAPID_TRANSIT) {
-            textView.setTextColor(context.getResources().getColor(R.color.white));
-            textView.setBackgroundResource(R.drawable.route_number_background_rt);
-        }
     }
 
     public boolean isOnline() {
@@ -201,7 +184,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         String locationProviders;
         boolean isLocationEnabled;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             try {
                 locationMode = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
 
@@ -209,11 +192,11 @@ public abstract class BaseActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            isLocationEnabled =  locationMode != Settings.Secure.LOCATION_MODE_OFF;
+            isLocationEnabled = locationMode != Settings.Secure.LOCATION_MODE_OFF;
 
-        }else{
+        } else {
             locationProviders = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-            isLocationEnabled =  !TextUtils.isEmpty(locationProviders);
+            isLocationEnabled = !TextUtils.isEmpty(locationProviders);
         }
         return isLocationEnabled && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
@@ -221,20 +204,20 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void setTextViewText(int id, String text) {
         View view = findViewById(id);
 
-        if(view != null)
-        ((TextView)view).setText(text);
+        if (view != null)
+            ((TextView) view).setText(text);
     }
 
     protected void handleException(Exception ex) {
         int resId;
 
-        if(ex instanceof FileNotFoundException)
+        if (ex instanceof FileNotFoundException)
             resId = R.string.too_many_queries_error;
-        else if(ex instanceof IOException)
+        else if (ex instanceof IOException)
             resId = R.string.network_error;
         else
             resId = R.string.unknown_error;
 
-        showLongToaster(resId);
+        showShortToaster(resId);
     }
 }

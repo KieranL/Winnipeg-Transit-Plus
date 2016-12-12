@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.kieran.winnipegbus.Adapters.UpcomingStopsAdapter;
 import com.kieran.winnipegbus.R;
+import com.kieran.winnipegbus.Views.RouteNumberTextView;
 import com.kieran.winnipegbus.Views.StyledSwipeRefresh;
 import com.kieran.winnipegbusbackend.LoadResult;
 import com.kieran.winnipegbusbackend.ScheduledStop;
@@ -88,9 +89,9 @@ public class ScheduledStopInfoActivity extends BaseActivity implements SwipeRefr
 
     private void fillTextViews() {
         if(scheduledStop != null) {
-            TextView routeNumber = getTextView(R.id.bus_number);
+            RouteNumberTextView routeNumber = (RouteNumberTextView) getTextView(R.id.bus_number);
             routeNumber.setText(Integer.toString(scheduledStop.getRouteNumber()));
-            BaseActivity.setTextViewColour(this, routeNumber, scheduledStop);
+            routeNumber.setColour(scheduledStop);
 
             setTextViewText(R.id.bus_name, scheduledStop.getRouteVariantName());
 

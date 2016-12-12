@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.kieran.winnipegbus.Activities.BaseActivity;
 import com.kieran.winnipegbus.R;
+import com.kieran.winnipegbus.Views.RouteNumberTextView;
 import com.kieran.winnipegbusbackend.ScheduledStop;
 import com.kieran.winnipegbusbackend.TransitApiManager;
 
@@ -27,7 +28,7 @@ public class StopTimeAdapter extends ArrayAdapter<ScheduledStop> {
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.scheduledStops = scheduledStops;
-        inflater = ((Activity)context).getLayoutInflater();
+        inflater = ((Activity) context).getLayoutInflater();
 
         loadTimeSetting();
     }
@@ -36,23 +37,23 @@ public class StopTimeAdapter extends ArrayAdapter<ScheduledStop> {
     public View getView(int position, View row, ViewGroup parent) {
         StopTimeHolder holder;
 
-        if(row == null) {
+        if (row == null) {
             row = inflater.inflate(layoutResourceId, parent, false);
 
             holder = new StopTimeHolder();
-            holder.routeNumber = (TextView)row.findViewById(R.id.route_number_text);
-            holder.routeVariantName = (TextView)row.findViewById(R.id.route_name_text);
-            holder.timeStatus = (TextView)row.findViewById(R.id.time_status_text);
-            holder.departureTime = (TextView)row.findViewById(R.id.departure_time_text);
+            holder.routeNumber = (RouteNumberTextView) row.findViewById(R.id.route_number_text);
+            holder.routeVariantName = (TextView) row.findViewById(R.id.route_name_text);
+            holder.timeStatus = (TextView) row.findViewById(R.id.time_status_text);
+            holder.departureTime = (TextView) row.findViewById(R.id.departure_time_text);
 
             row.setTag(holder);
         } else {
-            holder = (StopTimeHolder)row.getTag();
+            holder = (StopTimeHolder) row.getTag();
         }
 
         ScheduledStop scheduledStop = scheduledStops.get(position);
         holder.routeNumber.setText(Integer.toString(scheduledStop.getRouteNumber()));
-        BaseActivity.setTextViewColour(context, holder.routeNumber, scheduledStop);
+        holder.routeNumber.setColour(scheduledStop);
         holder.routeVariantName.setText(scheduledStop.getRouteVariantName());
         holder.timeStatus.setText(scheduledStop.getTimeStatus());
         holder.departureTime.setText(scheduledStop.getEstimatedDepartureTime().toFormattedString(TransitApiManager.lastQueryTime, use24hrTime));
@@ -65,7 +66,7 @@ public class StopTimeAdapter extends ArrayAdapter<ScheduledStop> {
     }
 
     private static class StopTimeHolder {
-        TextView routeNumber;
+        com.kieran.winnipegbus.Views.RouteNumberTextView routeNumber;
         TextView routeVariantName;
         TextView timeStatus;
         TextView departureTime;
