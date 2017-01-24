@@ -1,18 +1,19 @@
 package com.kieran.winnipegbusbackend.TripPlanner.classes;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Stop extends Location {
-    public Stop(String title) {
-        super(title);
-    }
+    int stopNumber;
 
     public Stop(JSONObject location) {
         super(location);
-    }
 
-    @Override
-    public String getURLString() {
-        return null;
+        try {
+            stopNumber = location.getInt("key");
+            title = location.getString("name");
+        } catch (JSONException e) {
+
+        }
     }
 }

@@ -11,11 +11,6 @@ import org.json.JSONObject;
 public class SegmentFactory {
     public static Segment createSegment(JSONObject segment) {
         try {
-            if(segment.has("origin"))
-                segment = segment.getJSONObject("origin");
-            else if(segment.has("destination"))
-                segment = segment.getJSONObject("destination");
-
             switch (segment.getString("type")) {
                 default: return null;
                 case "walk": return new WalkSegment(segment);

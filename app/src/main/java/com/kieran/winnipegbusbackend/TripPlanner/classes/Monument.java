@@ -1,18 +1,21 @@
 package com.kieran.winnipegbusbackend.TripPlanner.classes;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Monument extends Location {
-    public Monument(String title) {
-        super(title);
-    }
+import java.util.Locale;
 
-    public Monument(JSONObject location) {
-        super(location);
+public class Monument extends Address {
+    int key;
+    public Monument(JSONObject location) throws JSONException {
+        super(location.getJSONObject("address"));
+
+        key = location.getInt("key");
+        title = location.getString("name");
     }
 
     @Override
     public String getURLString() {
-        return null;
+        return String.format(Locale.CANADA, "monuments/%d", key);
     }
 }

@@ -1,14 +1,16 @@
 package com.kieran.winnipegbusbackend.TripPlanner;
 
-enum TimeMode {
-    ARRIVE_BEFORE("Arrive Before"),
-    ARRIVE_AFTER("Arrive After"),
-    DEPART_BEFORE("Depart Before"),
-    DEPART_AFTER("Depart After");
+public enum TimeMode {
+    ARRIVE_BEFORE("Arrive Before", "arrive-before"),
+    ARRIVE_AFTER("Arrive After", "arrive-after"),
+    DEPART_BEFORE("Depart Before", "depart-before"),
+    DEPART_AFTER("Depart After", "depart-after");
 
-    String name;
+    public String name;
+    public String urlParameter;
 
-    TimeMode(String name) {
+    TimeMode(String name, String urlParameter) {
         this.name = name;
+        this.urlParameter = urlParameter;
     }
 }
