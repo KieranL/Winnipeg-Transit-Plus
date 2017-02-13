@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -21,6 +22,7 @@ public class StopTime implements Comparable, Serializable {
     private static final String OK_TEXT = "Ok";
     private static transient Calendar calendar = Calendar.getInstance();
     private long milliseconds;
+    static DateFormat datePickerDateFormat = new SimpleDateFormat("EEE, MMM dd, yyyy");
 
     public StopTime() {
         milliseconds = System.currentTimeMillis();
@@ -176,5 +178,9 @@ public class StopTime implements Comparable, Serializable {
     public int getDayOfMonth() {
         calendar.setTimeInMillis(milliseconds);
         return calendar.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public String toDatePickerDateFormat() {
+        return datePickerDateFormat.format(new Date(milliseconds));
     }
 }

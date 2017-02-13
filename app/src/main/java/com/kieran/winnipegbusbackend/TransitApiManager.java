@@ -34,6 +34,7 @@ public class TransitApiManager {
     private static final String LONGITUDE_PARAMETER = "lon=";
     private static final String SERVICE_ADVISORIES_PARAMETER = "service-advisories";
     private static final String JSON_PARAMETER = ".json";
+    private static final String LOCATIONS_PARAMETER = "locations";
     public static StopTime lastQueryTime = new StopTime();
 
     public static LoadResult<JSONObject> getJson(String path) {
@@ -145,6 +146,10 @@ public class TransitApiManager {
         int totalRadius = Math.round(location.getAccuracy()) + radius;
         String url = API_URL + STOPS_PARAMETER + JSON_PARAMETER + QUESTION_MARK + DISTANCE_PARAMETER + totalRadius + AMPERSAND + LATITUDE_PARAMETER + location.getLatitude() + AMPERSAND + LONGITUDE_PARAMETER + location.getLongitude() + AMPERSAND + USAGE + API_KEY;
         return new SearchQuery("NearbyStops", url, SearchQueryType.NEARBY);
+    }
+
+    public static String generateLocationQueryUrl(String query) {
+        return API_URL + LOCATIONS_PARAMETER + COLON + createURLFriendlyString(query) + JSON_PARAMETER + QUESTION_MARK + USAGE + AMPERSAND + API_KEY_PARAMETER + API_KEY;
     }
 
     public interface OnJsonLoadResultReceiveListener {

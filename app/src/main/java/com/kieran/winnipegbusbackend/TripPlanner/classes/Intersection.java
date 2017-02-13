@@ -14,7 +14,7 @@ public class Intersection extends Location {
         super(location);
         try {
             JSONObject street = location.getJSONObject("street");
-            JSONObject crossStreet = location.getJSONObject("street");
+            JSONObject crossStreet = location.getJSONObject("cross-street");
 
             key = location.getString("key");
             streetName = street.getString("name");

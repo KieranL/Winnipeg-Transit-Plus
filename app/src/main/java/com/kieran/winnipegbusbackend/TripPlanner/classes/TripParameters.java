@@ -14,6 +14,7 @@ public class TripParameters implements Serializable{
 
     public TripParameters() {
         time = new StopTime();
+        timeMode = TimeMode.DEPART_AFTER;
     }
 
     public Location getDestination() {
@@ -42,6 +43,18 @@ public class TripParameters implements Serializable{
 
     public String getURL() {
 //        return "https://api.winnipegtransit.com/v2/trip-planner.json?origin=addresses/136590&destination=intersections/123172:378@954&api-key=FTy2QN8ts293ZlhYP1t";
-        return String.format(Locale.CANADA, "https://api.winnipegtransit.com/v2/trip-planner.json?origin=%s&destination=%s&mode=%s&time=%s&api-key=FTy2QN8ts293ZlhYP1t", origin.getURLString(), destination.getURLString(), timeMode.urlParameter, time.toURLTimeString());
+        return String.format(Locale.CANADA, "https://api.winnipegtransit.com/v2/trip-planner.json?origin=%s&destination=%s&mode=%s&time=%s&date=%s&api-key=FTy2QN8ts293ZlhYP1t", origin.getURLString(), destination.getURLString(), timeMode.urlParameter, time.toURLTimeString().split("T")[1], time.toURLTimeString().split("T")[0]);
+    }
+
+    public TimeMode getTimeMode() {
+        return timeMode;
+    }
+
+    public void setTimeMode(TimeMode timeMode) {
+        this.timeMode = timeMode;
+    }
+
+    public boolean hasValidParameters() {
+        return origin != null && destination != null && timeMode != null && time != null;
     }
 }
