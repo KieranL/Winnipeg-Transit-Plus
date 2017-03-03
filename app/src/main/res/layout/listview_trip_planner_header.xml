@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:text="Origin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/origin_textView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/time_mode_spinner"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:onClick="pickDate"
+        android:id="@+id/trip_time_date"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:paddingRight="8dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/time_mode_spinner"
+        android:layout_toRightOf="@+id/trip_time_date"
+        android:onClick="pickTime"
+        android:id="@+id/trip_time_hour_minute"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <Button
+        android:text="Get Directions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button"
+        android:onClick="getDirections"
+        android:layout_below="@+id/trip_time_date"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:text="Time Mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/time_mode_textView"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:layout_above="@+id/trip_time_date"
+        android:layout_alignRight="@+id/destination_textView"
+        android:layout_alignEnd="@+id/destination_textView" />
+
+    <SearchView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/destination_textView"
+        android:id="@+id/origin_searchView"
+        android:layout_toRightOf="@+id/destination_textView" />
+
+    <SearchView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/origin_searchView"
+        android:layout_toEndOf="@+id/destination_textView"
+        android:id="@+id/destination_searchView"
+        android:layout_toRightOf="@+id/destination_textView" />
+
+
+    <ListView
+        android:id="@+id/trip_data"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/button"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="Destination"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/destination_textView"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:layout_below="@+id/origin_searchView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:entries="@array/time_mode_options"
+        android:id="@+id/time_mode_spinner"
+        android:spinnerMode="dialog"
+        android:layout_marginLeft="27dp"
+        android:layout_marginStart="27dp"
+        android:layout_below="@+id/destination_searchView"
+        android:layout_toRightOf="@+id/time_mode_textView"
+        android:layout_toEndOf="@+id/time_mode_textView" />
+
+    <View
+        android:layout_below="@+id/button"
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="?attr/headerDivider"/>
+</RelativeLayout>

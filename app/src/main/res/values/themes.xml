@@ -13,6 +13,7 @@
         <item name="headerDivider">@drawable/divider_background</item>
         <item name="nearbyStopsIcon">@drawable/ic_nearby_dark</item>
         <item name="mapIcon">@drawable/ic_map_dark</item>
+        <item name="clockIcon">@drawable/ic_clock_dark</item>
     </style>
     <style name="Light" parent="Base.Theme.AppCompat.Light">
         <item name="stopTimesHeaderBackground">@drawable/header_background_light</item>
@@ -26,6 +27,7 @@
         <item name="headerDivider">@drawable/divider_background</item>
         <item name="nearbyStopsIcon">@drawable/ic_nearby_light</item>
         <item name="mapIcon">@drawable/ic_map_light</item>
+        <item name="clockIcon">@drawable/ic_clock_light</item>
     </style>
     <style name="Rt" parent="Dark">
         <item name="android:colorBackground">@color/dark_rt_red</item>

@@ -27,6 +27,6 @@ public class Address extends Location {
 
     @Override
     public String getURLString() {
-        return String.format(Locale.CANADA, "address/%d", key);
+        return String.format(Locale.CANADA, "addresses/%d", key);
     }
 }

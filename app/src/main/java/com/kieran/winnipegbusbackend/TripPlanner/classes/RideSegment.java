@@ -12,4 +12,9 @@ public class RideSegment extends Segment {
 
         route = new Route(segment);
     }
+
+    @Override
+    public String toString() {
+        return route.getRouteName();
+    }
 }

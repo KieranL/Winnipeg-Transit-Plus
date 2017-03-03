@@ -11,13 +11,13 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 
+import com.kieran.winnipegbus.Adapters.TripPlannerAdapter;
 import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbusbackend.LoadResult;
 import com.kieran.winnipegbusbackend.StopTime;
@@ -25,6 +25,7 @@ import com.kieran.winnipegbusbackend.TransitApiManager;
 import com.kieran.winnipegbusbackend.TripPlanner.LocationFactory;
 import com.kieran.winnipegbusbackend.TripPlanner.TimeMode;
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Location;
+import com.kieran.winnipegbusbackend.TripPlanner.classes.Trip;
 import com.kieran.winnipegbusbackend.TripPlanner.classes.TripParameters;
 
 import org.json.JSONArray;
@@ -39,6 +40,8 @@ import java.util.List;
 public class TripPlannerActivity extends BaseActivity implements TransitApiManager.OnJsonLoadResultReceiveListener {
     private static final String PARAMETERS = "parameters";
     private TripParameters tripParameters = new TripParameters();
+    private List<Trip> trips;
+    private TripPlannerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +53,13 @@ public class TripPlannerActivity extends BaseActivity implements TransitApiManag
 
         if(tripParameters == null)
             tripParameters = new TripParameters();
+
+        trips = new ArrayList<>();
+        ExpandableListView listView = (ExpandableListView) findViewById(R.id.trip_planner_listview);
+        listView.addHeaderView(getLayoutInflater().inflate(R.layout.listview_trip_planner_header, null));
+        adapter = new TripPlannerAdapter(this, trips);
+        listView.setAdapter(adapter);
+
 
         initializeFields();
     }
@@ -185,6 +195,7 @@ public class TripPlannerActivity extends BaseActivity implements TransitApiManag
     }
 
     public void getDirections(View view) {
+        trips.clear();
         TransitApiManager.getJsonAsync(tripParameters.getURL(), this);
     }
 
@@ -230,14 +241,14 @@ public class TripPlannerActivity extends BaseActivity implements TransitApiManag
         JSONObject jsonObject = result.getResult();
         try {
             JSONArray plans = jsonObject.getJSONArray("plans");
-            plans.length();
-            List<String> strings = new ArrayList<>();
+
+
 
             for(int i = 0; i < plans.length(); i++) {
-                strings.add(plans.getJSONObject(i).toString());
+                trips.add(new Trip(plans.getJSONObject(i)));
             }
-            ListView view = (ListView) findViewById(R.id.trip_data);
-            view.setAdapter(new ArrayAdapter<>(this, R.layout.simplerow, strings));
+
+            adapter.notifyDataSetChanged();
         } catch (JSONException e) {
             e.printStackTrace();
         }

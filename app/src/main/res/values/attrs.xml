@@ -10,4 +10,5 @@
     <attr name="buttonSelector" format="reference"/>
     <attr name="nearbyStopsIcon" format="reference"/>
     <attr name="mapIcon" format="reference"/>
+    <attr name="clockIcon" format="reference"/>
 </resources>
