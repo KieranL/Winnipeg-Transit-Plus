@@ -14,31 +14,25 @@ import java.util.List;
 public class TransitApiManager {
     private static final int START_TIME_DECREASE = 10000;
     private static final String QUERY_TIME = "query-time";
-    private final static String API_KEY = "FTy2QN8ts293ZlhYP1t";
-    private final static String API_URL = "http://api.winnipegtransit.com/v2/";
-    private final static String USAGE = "usage=short&api-key=";
-    private final static String ROUTE_PARAMETER = "route=";
-    private final static String END_TIME_PARAMETER = "end=";
-    private static final String START_TIME_PARAMETER = "start=";
+    private final static String ROUTE_PARAMETER = "route";
+    private final static String END_TIME_PARAMETER = "end";
+    private static final String START_TIME_PARAMETER = "start";
     private static final String STOP_FEATURE_PARAMETER = "features";
-    private static final String VARIANT_PARAMETER = "variant=";
-    private static final String API_KEY_PARAMETER = "api-key=";
+    private static final String VARIANT_PARAMETER = "variant";
     private static final String STOPS_PARAMETER = "stops";
-    private static final String AMPERSAND = "&";
     private static final String FORWARD_SLASH = "/";
     private static final String COLON = ":";
-    private static final String QUESTION_MARK = "?";
     private static final String SCHEDULE_PARAMETER = "schedule";
-    private static final String DISTANCE_PARAMETER = "distance=";
-    private static final String LATITUDE_PARAMETER = "lat=";
-    private static final String LONGITUDE_PARAMETER = "lon=";
+    private static final String DISTANCE_PARAMETER = "distance";
+    private static final String LATITUDE_PARAMETER = "lat";
+    private static final String LONGITUDE_PARAMETER = "lon";
     private static final String SERVICE_ADVISORIES_PARAMETER = "service-advisories";
-    private static final String JSON_PARAMETER = ".json";
     private static final String LOCATIONS_PARAMETER = "locations";
+    private static final String URL_FORMAT = "http://api.winnipegtransit.com/v2/%s.json?usage=short&api-key=FTy2QN8ts293ZlhYP1t%s";
     public static StopTime lastQueryTime = new StopTime();
 
     public static LoadResult<JSONObject> getJson(String path) {
-        try{
+        try {
             URL url = new URL(path);
             java.util.Scanner s = new java.util.Scanner(url.openStream()).useDelimiter("\\A");
             String myString = s.hasNext() ? s.next() : "";
@@ -47,7 +41,7 @@ public class TransitApiManager {
             lastQueryTime = StopTime.convertStringToStopTime(obj.getString(QUERY_TIME));
 
             return new LoadResult<>(obj, null);
-        }catch(Exception ex) {
+        } catch (Exception ex) {
             return new LoadResult<>(null, ex);
         }
     }
@@ -67,37 +61,22 @@ public class TransitApiManager {
     }
 
     public static String generateStopNumberURL(int stopNumber, List<Integer> routeNumbers, StopTime startTime, StopTime endTime) {
-        String routeFilter = "";
-        String startTimeFilter = "";
-        String endTimeFilter = "";
+        URLParameter[] parameters = new URLParameter[3];
 
-        if (routeNumbers != null) {
-            String routes = "";
-            for (int i = 0; i < routeNumbers.size(); i++) {
-                routes += Integer.toString(routeNumbers.get(i));
-                if (i < routeNumbers.size() - 1)
-                    routes += ",";
-            }
-            routeFilter = (ROUTE_PARAMETER + routes + AMPERSAND);
-        }
+        if (routeNumbers != null)
+            parameters[0] = new URLParameter(ROUTE_PARAMETER, routeNumbers);
 
-        if(startTime != null) {
+        if (startTime != null) {
             startTime.decreaseMilliSeconds(START_TIME_DECREASE); //decrease start time for API inconsistency? not sure what the reason this is for
-            startTimeFilter += START_TIME_PARAMETER + startTime.toURLTimeString();
-            startTimeFilter += AMPERSAND;
+
+            parameters[1] = new URLParameter(START_TIME_PARAMETER, startTime.toURLTimeString());
             startTime.decreaseMilliSeconds(-START_TIME_DECREASE);
         }
 
-        if(endTime != null) {
-            endTimeFilter += END_TIME_PARAMETER + endTime.toURLTimeString();
-            endTimeFilter += AMPERSAND;
-        }
-        String url = API_URL + STOPS_PARAMETER + FORWARD_SLASH + stopNumber + FORWARD_SLASH + SCHEDULE_PARAMETER;
+        if (endTime != null)
+            parameters[2] = new URLParameter(END_TIME_PARAMETER, endTime.toURLTimeString());
 
-        url += JSON_PARAMETER;
-        url += QUESTION_MARK + startTimeFilter + endTimeFilter + routeFilter + USAGE + API_KEY;
-
-        return  url;
+        return createUrl(STOPS_PARAMETER + FORWARD_SLASH + stopNumber + FORWARD_SLASH + SCHEDULE_PARAMETER, parameters);
     }
 
     public static String generateStopNumberURL(int stopNumber, int routeNumber, StopTime startTime, StopTime endTime) {
@@ -108,48 +87,62 @@ public class TransitApiManager {
     }
 
     public static SearchQuery generateSearchQuery(String search) {
-        try{
+        try {
             int routeNumber = Integer.parseInt(search);
             return generateSearchQuery(routeNumber);
-        }catch (Exception e) {
-            return new SearchQuery(search, API_URL + STOPS_PARAMETER + COLON + createURLFriendlyString(search) + JSON_PARAMETER + QUESTION_MARK + USAGE + API_KEY, SearchQueryType.GENERAL);
+        } catch (Exception e) {
+            return new SearchQuery(search, createUrl(STOPS_PARAMETER + COLON + createURLFriendlyString(search), null), SearchQueryType.GENERAL);
         }
     }
 
     public static SearchQuery generateSearchQuery(int routeNumber) {
-        return new SearchQuery(Integer.toString(routeNumber), API_URL + STOPS_PARAMETER + JSON_PARAMETER + QUESTION_MARK + ROUTE_PARAMETER + routeNumber + AMPERSAND + USAGE + API_KEY, SearchQueryType.ROUTE_NUMBER);
+        URLParameter[] parameters = new URLParameter[]{new URLParameter(ROUTE_PARAMETER, Integer.toString(routeNumber))};
+        String url = createUrl(STOPS_PARAMETER, parameters);
+
+        return new SearchQuery(Integer.toString(routeNumber), url, SearchQueryType.ROUTE_NUMBER);
     }
 
     public static SearchQuery generateSearchQuery(RouteKey key) {
-        return new SearchQuery(key.getKeyString(), API_URL + STOPS_PARAMETER + JSON_PARAMETER + QUESTION_MARK + VARIANT_PARAMETER + key.getKeyString() + AMPERSAND + USAGE + API_KEY, SearchQueryType.ROUTE_NUMBER);
+        URLParameter[] parameters = new URLParameter[]{new URLParameter(VARIANT_PARAMETER, key.getKeyString())};
+        String url = createUrl(STOPS_PARAMETER, parameters);
+
+        return new SearchQuery(key.getKeyString(), url, SearchQueryType.ROUTE_NUMBER);
     }
 
     public static String generateStopFeaturesUrl(int stopNumber) {
-        return API_URL + STOPS_PARAMETER + FORWARD_SLASH + Integer.toString(stopNumber) + FORWARD_SLASH + STOP_FEATURE_PARAMETER + JSON_PARAMETER + QUESTION_MARK + USAGE + API_KEY;
+        return createUrl(STOPS_PARAMETER + FORWARD_SLASH + Integer.toString(stopNumber) + FORWARD_SLASH + STOP_FEATURE_PARAMETER, null);
     }
 
     public static String generateServiceAdvisoriesUrl() {
-        return API_URL + SERVICE_ADVISORIES_PARAMETER + JSON_PARAMETER + QUESTION_MARK + API_KEY_PARAMETER + API_KEY;
+        return createUrl(SERVICE_ADVISORIES_PARAMETER, null);
     }
 
     private static String createURLFriendlyString(String s) {
-        String[] words = s.split("\\s+");
-        String urlFriendlyString = words[0];
-
-        for(int i = 1; i < words.length; i++)
-            urlFriendlyString += "+" + words[i];
-
-        return urlFriendlyString;
+        return s.replaceAll("\\s+", "+");
     }
 
     public static SearchQuery generateSearchQuery(Location location, int radius) {
         int totalRadius = Math.round(location.getAccuracy()) + radius;
-        String url = API_URL + STOPS_PARAMETER + JSON_PARAMETER + QUESTION_MARK + DISTANCE_PARAMETER + totalRadius + AMPERSAND + LATITUDE_PARAMETER + location.getLatitude() + AMPERSAND + LONGITUDE_PARAMETER + location.getLongitude() + AMPERSAND + USAGE + API_KEY;
+        URLParameter[] parameters = new URLParameter[]{new URLParameter(DISTANCE_PARAMETER, Integer.toString(totalRadius)), new URLParameter(LATITUDE_PARAMETER, Double.toString(location.getLatitude())), new URLParameter(LONGITUDE_PARAMETER, Double.toString(location.getLongitude()))};
+        String url = createUrl(STOPS_PARAMETER, parameters);
         return new SearchQuery("NearbyStops", url, SearchQueryType.NEARBY);
     }
 
     public static String generateLocationQueryUrl(String query) {
-        return API_URL + LOCATIONS_PARAMETER + COLON + createURLFriendlyString(query) + JSON_PARAMETER + QUESTION_MARK + USAGE + AMPERSAND + API_KEY_PARAMETER + API_KEY;
+        return createUrl(LOCATIONS_PARAMETER + COLON + createURLFriendlyString(query), null);
+    }
+
+    private static String createUrl(String path, URLParameter[] parameters) {
+        String parameterString = "";
+
+        if (parameters != null) {
+            for (URLParameter p : parameters) {
+                if(p != null)
+                    parameterString += "&" + p.toString();
+            }
+        }
+
+        return String.format(URL_FORMAT, path, parameterString);
     }
 
     public interface OnJsonLoadResultReceiveListener {
