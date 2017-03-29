@@ -1,28 +1,27 @@
 package com.kieran.winnipegbus.Activities;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ExpandableListView;
-import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.kieran.winnipegbus.Adapters.TripPlannerAdapter;
+import com.kieran.winnipegbus.LocationPickerDialog;
 import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbusbackend.LoadResult;
 import com.kieran.winnipegbusbackend.StopTime;
 import com.kieran.winnipegbusbackend.TransitApiManager;
-import com.kieran.winnipegbusbackend.TripPlanner.LocationFactory;
 import com.kieran.winnipegbusbackend.TripPlanner.TimeMode;
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Location;
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Trip;
@@ -37,11 +36,12 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-public class TripPlannerActivity extends BaseActivity implements TransitApiManager.OnJsonLoadResultReceiveListener {
+public class TripPlannerActivity extends GoogleApiActivity implements TransitApiManager.OnJsonLoadResultReceiveListener {
     private static final String PARAMETERS = "parameters";
     private TripParameters tripParameters = new TripParameters();
     private List<Trip> trips;
     private TripPlannerAdapter adapter;
+    private Button getDirectionsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,15 +60,22 @@ public class TripPlannerActivity extends BaseActivity implements TransitApiManag
         adapter = new TripPlannerAdapter(this, trips);
         listView.setAdapter(adapter);
 
+        getDirectionsButton = (Button) findViewById(R.id.get_directions_button);
 
         initializeFields();
+
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this).build();
+        connectClient();
     }
 
     private void initializeFields() {
         if (tripParameters.getOrigin() != null)
-            ((SearchView)findViewById(R.id.origin_searchView)).setQuery(tripParameters.getOrigin().getTitle(), false);
+            ((Button)findViewById(R.id.origin_select_button)).setText(tripParameters.getOrigin().getTitle());
         if (tripParameters.getDestination() != null)
-            ((SearchView)findViewById(R.id.destination_searchView)).setQuery(tripParameters.getDestination().getTitle(), false);
+            ((Button)findViewById(R.id.destination_select_button)).setText(tripParameters.getDestination().getTitle());
 
         setTextViewText(R.id.trip_time_hour_minute, tripParameters.getTime().toFormattedString(null, getTimeSetting()));
         setTextViewText(R.id.trip_time_date, tripParameters.getTime().toDatePickerDateFormat());
@@ -93,99 +100,8 @@ public class TripPlannerActivity extends BaseActivity implements TransitApiManag
 
             }
         });
-        final Context self = this;
-        SearchView originSearchView = (SearchView) findViewById(R.id.origin_searchView);
-        originSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                String url = TransitApiManager.generateLocationQueryUrl(query);
-                TransitApiManager.getJsonAsync(url, new TransitApiManager.OnJsonLoadResultReceiveListener() {
-                    @Override
-                    public void OnReceive(LoadResult<JSONObject> result) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(self);
 
-                        try {
-                            JSONArray locationNodes = result.getResult().getJSONArray("locations");
-                            final List<Location> locations = new ArrayList<>();
-                            for(int i = 0; i < locationNodes.length(); i++) {
-                                locations.add(LocationFactory.createLocation(locationNodes.getJSONObject(i)));
-                            }
-
-
-                            CharSequence charSequence[] = new CharSequence[locations.size()];
-
-                            for (int i = 0; i < charSequence.length; i++)
-                                charSequence[i] = locations.get(i).getTitle();
-
-                            builder.setItems(charSequence, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    tripParameters.setOrigin(locations.get(which));
-                                    initializeFields();
-                                }
-                            });
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        builder.create().show();
-                    }
-                });
-
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-            SearchView destinationSearchView = (SearchView) findViewById(R.id.destination_searchView);
-            destinationSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String query) {
-                    String url = TransitApiManager.generateLocationQueryUrl(query);
-                    TransitApiManager.getJsonAsync(url, new TransitApiManager.OnJsonLoadResultReceiveListener() {
-                        @Override
-                        public void OnReceive(LoadResult<JSONObject> result) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(self);
-
-                            try {
-                                JSONArray locationNodes = result.getResult().getJSONArray("locations");
-                                final List<Location> locations = new ArrayList<>();
-                                for(int i = 0; i < locationNodes.length(); i++) {
-                                    locations.add(LocationFactory.createLocation(locationNodes.getJSONObject(i)));
-                                }
-
-
-                                CharSequence charSequence[] = new CharSequence[locations.size()];
-
-                                for (int i = 0; i < charSequence.length; i++)
-                                    charSequence[i] = locations.get(i).getTitle();
-
-                                builder.setItems(charSequence, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        tripParameters.setDestination(locations.get(which));
-                                        initializeFields();
-                                    }
-                                });
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                            builder.create().show();
-                        }
-                    });
-
-                    return false;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    return false;
-                }
-        });
+        getDirectionsButton.setEnabled(tripParameters.isValid());
     }
 
     @Override
@@ -252,5 +168,35 @@ public class TripPlannerActivity extends BaseActivity implements TransitApiManag
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        requestLocation();
+    }
+
+    public void selectOrigin(View view) {
+        new LocationPickerDialog(this, new LocationPickerDialog.OnLocationPickedListener() {
+            @Override
+            public void OnLocationPickedListener(Location location) {
+                tripParameters.setOrigin(location);
+                initializeFields();
+            }
+        }).show();
+    }
+
+    public void selectDestination(View view) {
+        new LocationPickerDialog(this, new LocationPickerDialog.OnLocationPickedListener() {
+            @Override
+            public void OnLocationPickedListener(Location location) {
+                tripParameters.setDestination(location);
+                initializeFields();
+            }
+        }).show();
+    }
+
+    public void swapLocations(View view) {
+        tripParameters.swapLocations();
+        initializeFields();
     }
 }

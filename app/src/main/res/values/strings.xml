@@ -44,6 +44,6 @@
     <string name="title_activity_service_advisory">Service Advisory</string>
     <string name="unknown_error">Unknown error occurred</string>
     <string name="too_many_queries_error">Winnipeg Transit\'s maximum query limit has been reached. Please wait a few seconds and try again</string>
-    <string name="title_activity_trip_planner">TripPlanner</string>
+    <string name="title_activity_trip_planner">Trip Planner</string>
 
 </resources>

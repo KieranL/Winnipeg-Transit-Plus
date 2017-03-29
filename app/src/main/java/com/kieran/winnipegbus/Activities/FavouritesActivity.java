@@ -3,9 +3,7 @@ package com.kieran.winnipegbus.Activities;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,7 +16,6 @@ import com.kieran.winnipegbus.Adapters.StopListAdapter;
 import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbusbackend.FavouriteStop;
 import com.kieran.winnipegbusbackend.FavouriteStopsList;
-import com.kieran.winnipegbusbackend.enums.FavouritesListSortType;
 
 public class FavouritesActivity extends BaseActivity implements AdapterView.OnItemClickListener, OnItemLongClickListener {
     private StopListAdapter adapter;
@@ -60,11 +57,6 @@ public class FavouritesActivity extends BaseActivity implements AdapterView.OnIt
 
         adapter = new StopListAdapter(this, R.layout.listview_stops_row);
         listView.setAdapter(adapter);
-    }
-
-    private FavouritesListSortType getSortPreference() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        return FavouritesListSortType.getEnum(prefs.getString(getString(R.string.pref_favourites_sort), "0"));
     }
 
     private void getFavouritesList() {

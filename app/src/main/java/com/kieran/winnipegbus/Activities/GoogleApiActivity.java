@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -23,6 +24,8 @@ public abstract class GoogleApiActivity extends BaseActivity implements GoogleAp
     protected GoogleApiClient googleApiClient;
     protected final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     public static final int LOCATION_REFRESH_INTERVAL = 30000;
+    public static final String LOCATION_SERVICES_NOT_AVAILABLE = "Location services are not enabled";
+    public static final String ACQUIRING_LOCATION = "Acquiring Location...";
 
     protected void connectClient() {
         if (isGooglePlayServicesAvailable() && googleApiClient != null) {
@@ -103,5 +106,9 @@ public abstract class GoogleApiActivity extends BaseActivity implements GoogleAp
         }catch (Exception e) {
             return null;
         }
+    }
+
+    public Location getLatestLocation() {
+        return LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
     }
 }

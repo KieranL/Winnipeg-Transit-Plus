@@ -25,6 +25,7 @@ import com.google.android.gms.ads.AdView;
 import com.kieran.winnipegbus.ActivityManager;
 import com.kieran.winnipegbus.R;
 import com.kieran.winnipegbusbackend.Stop;
+import com.kieran.winnipegbusbackend.enums.FavouritesListSortType;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -152,7 +153,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    protected void showLongToaster(String message) {
+    public void showLongToaster(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
@@ -160,7 +161,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         Toast.makeText(this, getString(resId), Toast.LENGTH_LONG).show();
     }
 
-    protected void showShortToaster(String message) {
+    public void showShortToaster(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
@@ -219,5 +220,10 @@ public abstract class BaseActivity extends AppCompatActivity {
             resId = R.string.unknown_error;
 
         showShortToaster(resId);
+    }
+
+    public FavouritesListSortType getSortPreference() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return FavouritesListSortType.getEnum(prefs.getString(getString(R.string.pref_favourites_sort), "0"));
     }
 }

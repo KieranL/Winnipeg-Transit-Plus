@@ -22,6 +22,11 @@ public class Location implements Serializable {
         this.title = title;
     }
 
+    public Location(android.location.Location location, String title) {
+        this.title = title;
+        point = new LatLng(location.getLatitude(), location.getLongitude());
+    }
+
     private void getLatLngFromLocation(JSONObject location) {
         try{
             JSONObject centre = location.getJSONObject("centre");

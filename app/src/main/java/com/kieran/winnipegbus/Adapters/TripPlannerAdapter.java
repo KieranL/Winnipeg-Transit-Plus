@@ -72,6 +72,7 @@ public class TripPlannerAdapter extends BaseExpandableListAdapter {
 
             holder = new TripHolder();
             holder.timeRange = (TextView)row.findViewById(R.id.trip_time_range);
+            holder.totalTime = (TextView)row.findViewById(R.id.trip_time);
 
             row.setTag(holder);
         } else {
@@ -81,6 +82,7 @@ public class TripPlannerAdapter extends BaseExpandableListAdapter {
         Trip trip = trips.get(groupPosition);
         Times times = trip.getTimes();
         holder.timeRange.setText(times.startTime.toFormattedString(null, use24hrTime) + " - " + times.endTime.toFormattedString(null, use24hrTime));
+        holder.totalTime.setText(Integer.toString(trip.getTimes().totalTime));
 
         return row;
     }
@@ -117,6 +119,7 @@ public class TripPlannerAdapter extends BaseExpandableListAdapter {
 
     private static class TripHolder {
         TextView timeRange;
+        TextView totalTime;
     }
 
     private static class SegmentHolder {

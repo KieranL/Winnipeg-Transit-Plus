@@ -11,4 +11,6 @@
     <attr name="nearbyStopsIcon" format="reference"/>
     <attr name="mapIcon" format="reference"/>
     <attr name="clockIcon" format="reference"/>
+    <attr name="swapIcon" format="reference"/>
+    <attr name="tripPlannerIcon" format="reference"/>
 </resources>

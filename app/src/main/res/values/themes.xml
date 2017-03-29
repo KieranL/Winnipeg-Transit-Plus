@@ -14,6 +14,8 @@
         <item name="nearbyStopsIcon">@drawable/ic_nearby_dark</item>
         <item name="mapIcon">@drawable/ic_map_dark</item>
         <item name="clockIcon">@drawable/ic_clock_dark</item>
+        <item name="swapIcon">@drawable/ic_swap_dark</item>
+        <item name="tripPlannerIcon">@drawable/ic_trip_planner_dark</item>
     </style>
     <style name="Light" parent="Base.Theme.AppCompat.Light">
         <item name="stopTimesHeaderBackground">@drawable/header_background_light</item>
@@ -28,6 +30,8 @@
         <item name="nearbyStopsIcon">@drawable/ic_nearby_light</item>
         <item name="mapIcon">@drawable/ic_map_light</item>
         <item name="clockIcon">@drawable/ic_clock_light</item>
+        <item name="swapIcon">@drawable/ic_swap_light</item>
+        <item name="tripPlannerIcon">@drawable/ic_trip_planner_light</item>
     </style>
     <style name="Rt" parent="Dark">
         <item name="android:colorBackground">@color/dark_rt_red</item>

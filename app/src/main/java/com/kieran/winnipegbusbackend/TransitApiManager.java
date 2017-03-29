@@ -132,6 +132,10 @@ public class TransitApiManager {
         return createUrl(LOCATIONS_PARAMETER + COLON + createURLFriendlyString(query), null);
     }
 
+    public static String generateFindStopUrl(int stopNumber) {
+        return createUrl(STOPS_PARAMETER + FORWARD_SLASH + Integer.toString(stopNumber), null);
+    }
+
     private static String createUrl(String path, URLParameter[] parameters) {
         String parameterString = "";
 

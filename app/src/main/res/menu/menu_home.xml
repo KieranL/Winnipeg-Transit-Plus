@@ -13,15 +13,15 @@
         android:title="@string/favourites"
         app:showAsAction="always" />
     <item
+        android:id="@+id/trip_planner"
+        android:icon="?tripPlannerIcon"
+        android:title="@string/title_activity_trip_planner"
+        app:showAsAction="ifRoom"
+        android:visible="true"/>
+    <item
         android:id="@+id/service_advisories"
         android:orderInCategory="100"
         android:title="@string/title_activity_service_advisories"
-        app:showAsAction="never"
-        android:visible="true"/>
-    <item
-        android:id="@+id/trip_planner"
-        android:orderInCategory="100"
-        android:title="@string/title_activity_trip_planner"
         app:showAsAction="never"
         android:visible="true"/>
     <item

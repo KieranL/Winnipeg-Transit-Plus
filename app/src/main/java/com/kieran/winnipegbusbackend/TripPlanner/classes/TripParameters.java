@@ -54,7 +54,13 @@ public class TripParameters implements Serializable{
         this.timeMode = timeMode;
     }
 
-    public boolean hasValidParameters() {
+    public boolean isValid() {
         return origin != null && destination != null && timeMode != null && time != null;
+    }
+
+    public void swapLocations() {
+        Location temp = origin;
+        origin = destination;
+        destination = temp;
     }
 }
