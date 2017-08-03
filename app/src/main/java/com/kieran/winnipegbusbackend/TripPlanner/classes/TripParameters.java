@@ -55,7 +55,11 @@ public class TripParameters implements Serializable{
     }
 
     public boolean isValid() {
-        return origin != null && destination != null && timeMode != null && time != null;
+        return origin != null
+                && destination != null
+                && timeMode != null
+                && time != null
+                && !origin.equals(destination);
     }
 
     public void swapLocations() {

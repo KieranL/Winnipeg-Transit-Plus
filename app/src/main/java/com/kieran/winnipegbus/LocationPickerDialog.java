@@ -2,11 +2,9 @@ package com.kieran.winnipegbus;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 
 import com.kieran.winnipegbus.Activities.GoogleApiActivity;
@@ -44,7 +42,7 @@ public class LocationPickerDialog extends Dialog implements View.OnClickListener
         findViewById(R.id.from_favourites_button).setOnClickListener(this);
 
         final Dialog self = this;
-                final SearchView originSearchView = (SearchView) findViewById(R.id.location_searchView);
+        final SearchView originSearchView = (SearchView) findViewById(R.id.location_searchView);
         originSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -57,7 +55,7 @@ public class LocationPickerDialog extends Dialog implements View.OnClickListener
                         try {
                             JSONArray locationNodes = result.getResult().getJSONArray("locations");
                             final List<Location> locations = new ArrayList<>();
-                            for(int i = 0; i < locationNodes.length(); i++) {
+                            for (int i = 0; i < locationNodes.length(); i++) {
                                 locations.add(LocationFactory.createLocation(locationNodes.getJSONObject(i)));
                             }
 
@@ -70,7 +68,7 @@ public class LocationPickerDialog extends Dialog implements View.OnClickListener
                             builder.setItems(charSequence, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    listener.OnLocationPickedListener(locations.get(which));
+                                    listener.OnLocationPicked(locations.get(which));
                                     self.dismiss();
                                     dismiss();
                                 }
@@ -80,9 +78,6 @@ public class LocationPickerDialog extends Dialog implements View.OnClickListener
                         }
 
                         builder.create().show();
-
-                        InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(originSearchView.getWindowToken(), 0);
                     }
                 });
 
@@ -102,17 +97,17 @@ public class LocationPickerDialog extends Dialog implements View.OnClickListener
         final Dialog self = this;
         switch (v.getId()) {
             case R.id.current_location_button:
-                if(context.isLocationEnabled() && context.isGooglePlayServicesAvailable()) {
+                if (context.isLocationEnabled() && context.isGooglePlayServicesAvailable()) {
                     android.location.Location deviceLocation = context.getLatestLocation();
 
                     if (deviceLocation != null) {
-                        Location location = new Location(deviceLocation, "Current Location");
-                        listener.OnLocationPickedListener(location);
+                        Location location = new Location(deviceLocation, context.getString(R.string.current_location));
+                        listener.OnLocationPicked(location);
                         dismiss();
-                    }else {
+                    } else {
                         context.showShortToaster(GoogleApiActivity.ACQUIRING_LOCATION);
                     }
-                }else {
+                } else {
                     context.showLongToaster(GoogleApiActivity.LOCATION_SERVICES_NOT_AVAILABLE);
                 }
                 break;
@@ -129,15 +124,15 @@ public class LocationPickerDialog extends Dialog implements View.OnClickListener
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         FavouriteStop favouriteStop = favouriteStops.get(which);
+                        self.dismiss();
+                        dismiss();
                         TransitApiManager.getJsonAsync(TransitApiManager.generateFindStopUrl(favouriteStop.getNumber()), new TransitApiManager.OnJsonLoadResultReceiveListener() {
                             @Override
                             public void OnReceive(LoadResult<JSONObject> result) {
                                 try {
                                     JSONObject stopNode = result.getResult().getJSONObject("stop");
                                     Stop stop = new Stop(stopNode);
-                                    listener.OnLocationPickedListener(stop);
-                                    self.dismiss();
-                                    dismiss();
+                                    listener.OnLocationPicked(stop);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -153,6 +148,6 @@ public class LocationPickerDialog extends Dialog implements View.OnClickListener
     }
 
     public interface OnLocationPickedListener {
-        void OnLocationPickedListener(Location location);
+        void OnLocationPicked(Location location);
     }
 }

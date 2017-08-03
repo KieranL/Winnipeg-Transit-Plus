@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Adapter;
@@ -19,6 +20,7 @@ import com.google.android.gms.location.LocationServices;
 import com.kieran.winnipegbus.Adapters.TripPlannerAdapter;
 import com.kieran.winnipegbus.LocationPickerDialog;
 import com.kieran.winnipegbus.R;
+import com.kieran.winnipegbus.Views.StyledSwipeRefresh;
 import com.kieran.winnipegbusbackend.LoadResult;
 import com.kieran.winnipegbusbackend.StopTime;
 import com.kieran.winnipegbusbackend.TransitApiManager;
@@ -36,12 +38,13 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-public class TripPlannerActivity extends GoogleApiActivity implements TransitApiManager.OnJsonLoadResultReceiveListener {
+public class TripPlannerActivity extends GoogleApiActivity implements TransitApiManager.OnJsonLoadResultReceiveListener, SwipeRefreshLayout.OnRefreshListener {
     private static final String PARAMETERS = "parameters";
     private TripParameters tripParameters = new TripParameters();
     private List<Trip> trips;
     private TripPlannerAdapter adapter;
     private Button getDirectionsButton;
+    private StyledSwipeRefresh swipeRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +64,8 @@ public class TripPlannerActivity extends GoogleApiActivity implements TransitApi
         listView.setAdapter(adapter);
 
         getDirectionsButton = (Button) findViewById(R.id.get_directions_button);
-
+        swipeRefresh = (StyledSwipeRefresh) findViewById(R.id.trip_planner_swipe_refresh);
+        swipeRefresh.setOnRefreshListener(this);
         initializeFields();
 
         googleApiClient = new GoogleApiClient.Builder(this)
@@ -72,10 +76,18 @@ public class TripPlannerActivity extends GoogleApiActivity implements TransitApi
     }
 
     private void initializeFields() {
+        Button originButton = (Button)findViewById(R.id.origin_select_button);
+        Button destinationButton = (Button)findViewById(R.id.destination_select_button);
+
         if (tripParameters.getOrigin() != null)
-            ((Button)findViewById(R.id.origin_select_button)).setText(tripParameters.getOrigin().getTitle());
+            originButton.setText(tripParameters.getOrigin().getTitle());
+        else
+            originButton.setText("Select");
+
         if (tripParameters.getDestination() != null)
-            ((Button)findViewById(R.id.destination_select_button)).setText(tripParameters.getDestination().getTitle());
+            destinationButton.setText(tripParameters.getDestination().getTitle());
+        else
+            destinationButton.setText("Select");
 
         setTextViewText(R.id.trip_time_hour_minute, tripParameters.getTime().toFormattedString(null, getTimeSetting()));
         setTextViewText(R.id.trip_time_date, tripParameters.getTime().toDatePickerDateFormat());
@@ -111,6 +123,11 @@ public class TripPlannerActivity extends GoogleApiActivity implements TransitApi
     }
 
     public void getDirections(View view) {
+        swipeRefresh.setRefreshing(true);
+        getDirections();
+    }
+
+    public void getDirections() {
         trips.clear();
         TransitApiManager.getJsonAsync(tripParameters.getURL(), this);
     }
@@ -158,15 +175,14 @@ public class TripPlannerActivity extends GoogleApiActivity implements TransitApi
         try {
             JSONArray plans = jsonObject.getJSONArray("plans");
 
-
-
             for(int i = 0; i < plans.length(); i++) {
                 trips.add(new Trip(plans.getJSONObject(i)));
             }
 
             adapter.notifyDataSetChanged();
+            swipeRefresh.setRefreshing(false);
         } catch (JSONException e) {
-            e.printStackTrace();
+
         }
     }
 
@@ -178,7 +194,7 @@ public class TripPlannerActivity extends GoogleApiActivity implements TransitApi
     public void selectOrigin(View view) {
         new LocationPickerDialog(this, new LocationPickerDialog.OnLocationPickedListener() {
             @Override
-            public void OnLocationPickedListener(Location location) {
+            public void OnLocationPicked(Location location) {
                 tripParameters.setOrigin(location);
                 initializeFields();
             }
@@ -188,7 +204,7 @@ public class TripPlannerActivity extends GoogleApiActivity implements TransitApi
     public void selectDestination(View view) {
         new LocationPickerDialog(this, new LocationPickerDialog.OnLocationPickedListener() {
             @Override
-            public void OnLocationPickedListener(Location location) {
+            public void OnLocationPicked(Location location) {
                 tripParameters.setDestination(location);
                 initializeFields();
             }
@@ -198,5 +214,10 @@ public class TripPlannerActivity extends GoogleApiActivity implements TransitApi
     public void swapLocations(View view) {
         tripParameters.swapLocations();
         initializeFields();
+    }
+
+    @Override
+    public void onRefresh() {
+        getDirections();
     }
 }

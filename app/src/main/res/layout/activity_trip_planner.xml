@@ -6,15 +6,20 @@
     android:layout_height="match_parent"
     tools:context="com.kieran.winnipegbus.Activities.TripPlannerActivity">
 
-    <ExpandableListView
-        android:padding="4dp"
+    <com.kieran.winnipegbus.Views.StyledSwipeRefresh
+        android:id="@+id/trip_planner_swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/trip_planner_listview"
-        android:divider="@null"
-        android:groupIndicator="@null"/>
+        android:layout_height="fill_parent">
 
+        <ExpandableListView
+            android:id="@+id/trip_planner_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:divider="@null"
+            android:groupIndicator="@null"
+            android:padding="4dp" />
+    </com.kieran.winnipegbus.Views.StyledSwipeRefresh>
 </RelativeLayout>

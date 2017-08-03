@@ -22,7 +22,7 @@ public class StopTime implements Comparable, Serializable {
     private static final String OK_TEXT = "Ok";
     private static transient Calendar calendar = Calendar.getInstance();
     private long milliseconds;
-    static DateFormat datePickerDateFormat = new SimpleDateFormat("EEE, MMM dd, yyyy");
+    private static DateFormat datePickerDateFormat = new SimpleDateFormat("EEE, MMM dd", Locale.CANADA);
 
     public StopTime() {
         milliseconds = System.currentTimeMillis();

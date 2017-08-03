@@ -44,4 +44,10 @@ public class Location implements Serializable {
     public String getTitle() {
         return title;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        Location otherLocation = (Location)other;
+        return otherLocation != null && otherLocation.point.latitude == point.latitude && otherLocation.point.longitude == point.longitude;
+    }
 }

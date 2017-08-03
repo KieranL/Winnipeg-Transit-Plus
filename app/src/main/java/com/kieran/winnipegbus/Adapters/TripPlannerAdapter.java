@@ -9,9 +9,12 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 import com.kieran.winnipegbus.R;
+import com.kieran.winnipegbusbackend.TripPlanner.classes.RideSegment;
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Segment;
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Times;
+import com.kieran.winnipegbusbackend.TripPlanner.classes.TransferSegment;
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Trip;
+import com.kieran.winnipegbusbackend.TripPlanner.classes.WalkSegment;
 
 import java.util.List;
 
@@ -105,11 +108,27 @@ public class TripPlannerAdapter extends BaseExpandableListAdapter {
         }
 
         Trip trip = trips.get(groupPosition);
-        Segment segment = trip.getSegments().get(childPosition);
-        holder.string.setText(trips.get(groupPosition).getSegments().get(childPosition).toString());
-        holder.time.setText(Integer.toString(segment.getTimes().totalTime));
+        if(trip != null) {
+            Segment segment = trip.getSegments().get(childPosition);
+            if(segment != null) {
+                holder.string.setText(trips.get(groupPosition).getSegments().get(childPosition).toString());
+                holder.time.setText(Integer.toString(segment.getTimes().totalTime));
+                holder.time.setCompoundDrawablesWithIntrinsicBounds(getDrawableIconResId(segment), 0, 0, 0);
+            }
+        }
 
         return row;
+    }
+
+    private int getDrawableIconResId(Segment segment) {
+        if(segment instanceof RideSegment)
+            return R.drawable.ic_bus_dark;
+        else if(segment instanceof WalkSegment)
+            return R.drawable.ic_walk_dark;
+        else if(segment instanceof TransferSegment)
+            return R.drawable.ic_clock_dark;
+        else
+            return R.drawable.ic_clock_dark;
     }
 
     @Override

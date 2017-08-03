@@ -66,7 +66,7 @@ public class StopTimeAdapter extends ArrayAdapter<ScheduledStop> {
     }
 
     private static class StopTimeHolder {
-        com.kieran.winnipegbus.Views.RouteNumberTextView routeNumber;
+        RouteNumberTextView routeNumber;
         TextView routeVariantName;
         TextView timeStatus;
         TextView departureTime;
