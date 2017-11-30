@@ -121,11 +121,12 @@ public class TripPlannerAdapter extends BaseExpandableListAdapter {
     }
 
     private int getDrawableIconResId(Segment segment) {
-        if(segment instanceof RideSegment)
-            return R.drawable.ic_bus_dark;
-        else if(segment instanceof WalkSegment)
-            return R.drawable.ic_walk_dark;
-        else if(segment instanceof TransferSegment)
+//        if(segment instanceof RideSegment)
+//            return R.drawable.ic_bus_dark;
+//        else if(segment instanceof WalkSegment)
+//            return R.drawable.ic_walk_dark;
+//        else
+            if(segment instanceof TransferSegment)
             return R.drawable.ic_clock_dark;
         else
             return R.drawable.ic_clock_dark;

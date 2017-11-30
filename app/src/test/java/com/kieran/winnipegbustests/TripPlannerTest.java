@@ -58,6 +58,6 @@ public class TripPlannerTest {
         Location location = LocationFactory.createLocation(locations.getJSONObject(0));
 
         Assert.assertNotNull(location);
-        Assert.assertTrue(location.getTitle().equals("MTS Centre"));
+        Assert.assertTrue(location.getTitle().equals("Bell MTS Place"));
     }
 }
