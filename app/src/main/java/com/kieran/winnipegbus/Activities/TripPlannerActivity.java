@@ -26,6 +26,7 @@ import com.kieran.winnipegbusbackend.StopTime;
 import com.kieran.winnipegbusbackend.TransitApiManager;
 import com.kieran.winnipegbusbackend.TripPlanner.TimeMode;
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Location;
+import com.kieran.winnipegbusbackend.TripPlanner.classes.Segment;
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Trip;
 import com.kieran.winnipegbusbackend.TripPlanner.classes.TripParameters;
 
@@ -176,7 +177,8 @@ public class TripPlannerActivity extends GoogleApiActivity implements TransitApi
             JSONArray plans = jsonObject.getJSONArray("plans");
 
             for(int i = 0; i < plans.length(); i++) {
-                trips.add(new Trip(plans.getJSONObject(i)));
+//                trips.add(new Trip(plans.getJSONObject(i), tripParameters.getOrigin().getTitle(), tripParameters.getDestination().getTitle()));
+                trips.add(new Trip(plans.getJSONObject(i), "Origin", "Destination"));
             }
 
             adapter.notifyDataSetChanged();

@@ -56,7 +56,7 @@ public class LocationPickerDialog extends Dialog implements View.OnClickListener
                             JSONArray locationNodes = result.getResult().getJSONArray("locations");
                             final List<Location> locations = new ArrayList<>();
                             for (int i = 0; i < locationNodes.length(); i++) {
-                                locations.add(LocationFactory.createLocation(locationNodes.getJSONObject(i)));
+                                locations.add(LocationFactory.createLocation(locationNodes.getJSONObject(i), null));
                             }
 
 

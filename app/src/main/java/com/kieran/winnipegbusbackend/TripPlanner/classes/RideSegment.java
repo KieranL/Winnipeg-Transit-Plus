@@ -7,8 +7,8 @@ import org.json.JSONObject;
 public class RideSegment extends Segment {
     Route route;
 
-    public RideSegment(JSONObject segment) {
-        super(segment);
+    public RideSegment(JSONObject segment, String fromTitle, String toTitle) {
+        super(segment, fromTitle, toTitle);
 
         route = new Route(segment);
     }

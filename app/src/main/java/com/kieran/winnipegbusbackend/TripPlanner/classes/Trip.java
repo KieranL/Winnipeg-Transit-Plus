@@ -12,12 +12,12 @@ public class Trip {
     private Times times;
     ArrayList<Segment> segments;
 
-    public Trip(JSONObject trip) {
+    public Trip(JSONObject trip, String fromTitle, String toTitle) {
         segments = new ArrayList<>();
-        getSegments(trip);
+        getSegments(trip, fromTitle, toTitle);
     }
 
-    private void getSegments(JSONObject trip) {
+    private void getSegments(JSONObject trip, String fromTitle, String toTitle) {
         try {
             JSONObject times = trip.getJSONObject("times");
             this.times = new Times(times);
@@ -25,11 +25,8 @@ public class Trip {
 
             for(int i = 0; i < segmentNodes.length(); i++) {
                 JSONObject segment = segmentNodes.getJSONObject(i);
-                segments.add(SegmentFactory.createSegment(segment));
+                segments.add(SegmentFactory.createSegment(segment, fromTitle, toTitle));
             }
-
-
-
         } catch (JSONException e) {
 
         }

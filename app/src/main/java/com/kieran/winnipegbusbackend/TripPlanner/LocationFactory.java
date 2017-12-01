@@ -17,12 +17,14 @@ public class LocationFactory {
     public static final String POINT = "point";
     public static final String STOP = "stop";
 
-    public static Location createLocation(JSONObject location) {
+    public static Location createLocation(JSONObject location, String title) {
         try {
-            if(location.has("origin"))
+            if(location.has("origin")) {
                 location = location.getJSONObject("origin");
-            else if(location.has("destination"))
+            }
+            else if(location.has("destination")) {
                 location = location.getJSONObject("destination");
+            }
 
             if(location.has("type")) {
                 String type = location.getString("type");
@@ -35,7 +37,7 @@ public class LocationFactory {
                 else if (type.equals(INTERSECTION))
                     return new Intersection(location);
                 else if (type.equals(POINT))
-                    return new Location(location);
+                    return new Location(location, title);
             }
 
             if (location.has(STOP))
@@ -47,7 +49,7 @@ public class LocationFactory {
             else if (location.has(INTERSECTION))
                 return new Intersection(location.getJSONObject(INTERSECTION));
             else if (location.has(POINT))
-                return new Location(location.getJSONObject(POINT));
+                return new Location(location.getJSONObject(POINT), title);
         } catch (JSONException e) {
 
         }
