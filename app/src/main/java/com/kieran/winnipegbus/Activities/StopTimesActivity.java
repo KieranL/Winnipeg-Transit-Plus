@@ -89,9 +89,9 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
 
         FavouriteStopsList.loadFavourites();
 
-        ListView listView = (ListView) findViewById(R.id.stop_times_listview);
+        ListView listView = findViewById(R.id.stop_times_listview);
 
-        swipeRefreshLayout = (StyledSwipeRefresh) findViewById(R.id.stop_times_swipe_refresh);
+        swipeRefreshLayout = findViewById(R.id.stop_times_swipe_refresh);
         swipeRefreshLayout.setOnRefreshListener(this);
 
 
@@ -104,8 +104,8 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
         Intent intent = getIntent();
 
         if (title == null) {
-            title = ((TextView) findViewById(R.id.listView_stop_times_header_text));
-            lastUpdated = (TextView) findViewById(R.id.stop_times_header_last_updated);
+            title = findViewById(R.id.listView_stop_times_header_text);
+            lastUpdated = findViewById(R.id.stop_times_header_last_updated);
         }
 
         Stop stop = (Stop) intent.getSerializableExtra(STOP);
@@ -353,9 +353,6 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
                 } else {
                     stopSchedule.refresh(result.getResult());
                 }
-
-                stops.clear();
-                stops.addAll(stopSchedule.getScheduledStopsSorted());
             }
 
             return result;
@@ -363,6 +360,11 @@ public class StopTimesActivity extends BaseActivity implements SwipeRefreshLayou
 
         @Override
         protected void onPostExecute(LoadResult result) {
+            if (loading && result.getResult() != null) {
+                stops.clear();
+                stops.addAll(stopSchedule.getScheduledStopsSorted());
+            }
+
             if (result.getException() != null && loading) {
                 handleException(result.getException());
                 if (stopSchedule == null && result.getException() instanceof IOException)
