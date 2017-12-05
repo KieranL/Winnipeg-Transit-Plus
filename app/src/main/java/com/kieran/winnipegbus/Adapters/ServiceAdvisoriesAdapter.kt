@@ -12,7 +12,7 @@ import com.kieran.winnipegbus.Activities.BaseActivity
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbusbackend.ServiceAdvisories.ServiceAdvisory
 
-class ServiceAdvisoriesAdapter(private val context: Context, private val layoutResourceId: Int, private val advisories: List<ServiceAdvisory>) : ArrayAdapter<ServiceAdvisory>(context, layoutResourceId, advisories) {
+class ServiceAdvisoriesAdapter(context: Context, private val layoutResourceId: Int, private val advisories: List<ServiceAdvisory>) : ArrayAdapter<ServiceAdvisory>(context, layoutResourceId, advisories) {
     private val inflater: LayoutInflater
     private var use24hrTime: Boolean = false
 

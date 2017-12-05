@@ -39,7 +39,7 @@ import java.util.GregorianCalendar
 
 class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadResultReceiveListener, SwipeRefreshLayout.OnRefreshListener {
     private var tripParameters: TripParameters? = TripParameters()
-    private var trips: MutableList<Trip>? = null
+    private var trips: ArrayList<Trip>? = null
     private var adapter: TripPlannerAdapter? = null
     private var getDirectionsButton: Button? = null
     private var swipeRefresh: StyledSwipeRefresh? = null
@@ -57,7 +57,7 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
         trips = ArrayList()
         val listView = findViewById<View>(R.id.trip_planner_listview) as ExpandableListView
         listView.addHeaderView(layoutInflater.inflate(R.layout.listview_trip_planner_header, null))
-        adapter = TripPlannerAdapter(this, trips)
+        adapter = TripPlannerAdapter(this, trips!!)
         listView.setAdapter(adapter)
 
         getDirectionsButton = findViewById<View>(R.id.get_directions_button) as Button
@@ -178,17 +178,22 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
         requestLocation()
     }
 
+
     fun selectOrigin(view: View) {
-        LocationPickerDialog(this, LocationPickerDialog.OnLocationPickedListener { location ->
-            tripParameters!!.origin = location
-            initializeFields()
+        LocationPickerDialog(this, object : LocationPickerDialog.OnLocationPickedListener {
+            override fun OnLocationPicked(location: Location) {
+                tripParameters!!.origin = location
+                initializeFields()
+            }
         }).show()
     }
 
     fun selectDestination(view: View) {
-        LocationPickerDialog(this, LocationPickerDialog.OnLocationPickedListener { location ->
-            tripParameters!!.destination = location
-            initializeFields()
+        LocationPickerDialog(this, object : LocationPickerDialog.OnLocationPickedListener {
+            override fun OnLocationPicked(location: Location) {
+                tripParameters!!.destination = location
+                initializeFields()
+            }
         }).show()
     }
 
@@ -205,3 +210,4 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
         private val PARAMETERS = "parameters"
     }
 }
+

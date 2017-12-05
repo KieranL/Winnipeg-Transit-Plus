@@ -6,7 +6,7 @@ import org.json.JSONException
 import org.json.JSONObject
 
 abstract class Segment(`object`: JSONObject) {
-    var times: Times
+    lateinit var times: Times
         internal set
     internal var from: Location? = null
     internal var to: Location? = null

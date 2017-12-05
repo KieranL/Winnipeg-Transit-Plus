@@ -1,17 +1,18 @@
 package com.kieran.winnipegbusbackend
 
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-
 import java.io.Serializable
-import java.util.ArrayList
+import java.util.*
 
 class RouteSchedule : Route, Serializable {
+    fun compareTo(other: Nothing): Int {
+        return super.compareTo(other)
+    }
 
-    private val stops: MutableList<ScheduledStop>
+    private var stops: ArrayList<ScheduledStop>? = null
 
-    val scheduledStops: List<ScheduledStop>
+    val scheduledStops: List<ScheduledStop>?
         get() = stops
 
     constructor(routeSchedule: RouteSchedule) : super(routeSchedule) {}
@@ -30,7 +31,7 @@ class RouteSchedule : Route, Serializable {
             for (s in 0 until scheduledStops.length()) {
                 val stop = scheduledStops.getJSONObject(s)
                 try {
-                    stops.add(ScheduledStop(stop, this))
+                    stops?.add(ScheduledStop(stop, this))
                 } catch (e: Exception) {
                     //blank
                 }

@@ -59,7 +59,7 @@ class AppRater
  * @param context the Activity reference to use for this instance (usually the Activity you called this from)
  * @param packageName your application's package name that will be used to open the ratings page
  */
-@JvmOverloads constructor(private val mContext: Context?, private val mPackageName: String = mContext.getPackageName()) {
+@JvmOverloads constructor(private val mContext: Context?, private val mPackageName: String = mContext!!.getPackageName()) {
     private var mDaysBeforePrompt: Int = 0
     private var mLaunchesBeforePrompt: Int = 0
     private var mTargetUri: String? = null
@@ -147,31 +147,31 @@ class AppRater
      */
     fun setPhrases(title: Int, explanation: Int, buttonNow: Int, buttonLater: Int, buttonNever: Int) {
         try {
-            mText_title = mContext.getString(title)
+            mText_title = mContext?.getString(title)
         } catch (e: Exception) {
             mText_title = DEFAULT_TEXT_TITLE
         }
 
         try {
-            mText_explanation = mContext.getString(explanation)
+            mText_explanation = mContext?.getString(explanation)
         } catch (e: Exception) {
             mText_explanation = DEFAULT_TEXT_EXPLANATION
         }
 
         try {
-            mText_buttonNow = mContext.getString(buttonNow)
+            mText_buttonNow = mContext?.getString(buttonNow)
         } catch (e: Exception) {
             mText_buttonNow = DEFAULT_TEXT_NOW
         }
 
         try {
-            mText_buttonLater = mContext.getString(buttonLater)
+            mText_buttonLater = mContext?.getString(buttonLater)
         } catch (e: Exception) {
             mText_buttonLater = DEFAULT_TEXT_LATER
         }
 
         try {
-            mText_buttonNever = mContext.getString(buttonNever)
+            mText_buttonNever = mContext?.getString(buttonNever)
         } catch (e: Exception) {
             mText_buttonNever = DEFAULT_TEXT_NEVER
         }
@@ -204,25 +204,25 @@ class AppRater
     @SuppressLint("CommitPrefEdits")
     fun show(): AlertDialog? {
         createTargetIntent()
-        if (mContext.getPackageManager().queryIntentActivities(mTargetIntent, 0).size <= 0) {
+        if (mContext?.getPackageManager()?.queryIntentActivities(mTargetIntent, 0)!!.size <= 0) {
             return null // no app available to handle the intent
         }
 
-        val prefs = mContext.getSharedPreferences(mPrefGroup, 0)
-        val editor = prefs.edit()
+        val prefs = mContext?.getSharedPreferences(mPrefGroup, 0)
+        val editor = prefs?.edit()
 
-        if (prefs.getBoolean(mPreference_dontShow, false)) { // if user opted not to rate the app
+        if (prefs?.getBoolean(mPreference_dontShow, false)!!) { // if user opted not to rate the app
             return null // do not show anything
         }
 
-        var launch_count = prefs.getLong(mPreference_launchCount, 0) // get launch counter
+        var launch_count = prefs!!.getLong(mPreference_launchCount, 0) // get launch counter
         launch_count++ // increase number of launches by one
-        editor.putLong(mPreference_launchCount, launch_count) // write new counter back to preference
+        editor?.putLong(mPreference_launchCount, launch_count) // write new counter back to preference
 
         var firstLaunchTime = prefs.getLong(mPreference_firstLaunch, 0) // get date of first launch
         if (firstLaunchTime == 0L) { // if not set yet
             firstLaunchTime = System.currentTimeMillis() // set to current time
-            editor.putLong(mPreference_firstLaunch, firstLaunchTime)
+            editor?.putLong(mPreference_firstLaunch, firstLaunchTime)
         }
 
         savePreferences(editor)
@@ -230,7 +230,7 @@ class AppRater
         return if (launch_count >= mLaunchesBeforePrompt) { // wait at least x app launches
             if (System.currentTimeMillis() >= firstLaunchTime + mDaysBeforePrompt * DateUtils.DAY_IN_MILLIS) { // wait at least x days
                 try {
-                    showDialog(mContext, editor, firstLaunchTime)
+                    showDialog(mContext!!, editor!!, firstLaunchTime)
                 } catch (e: Exception) {
                     null
                 }
@@ -251,7 +251,7 @@ class AppRater
     @Deprecated("you should remove any reference to this method before deploying a production version")
     fun demo(): AlertDialog {
         createTargetIntent()
-        return showDialog(mContext, mContext.getSharedPreferences(mPrefGroup, 0).edit(), System.currentTimeMillis())
+        return showDialog(mContext!!, mContext.getSharedPreferences(mPrefGroup, 0).edit(), System.currentTimeMillis())
     }
 
     private fun setDontShow(editor: SharedPreferences.Editor?) {

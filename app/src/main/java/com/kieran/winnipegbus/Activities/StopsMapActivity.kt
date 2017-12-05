@@ -30,7 +30,7 @@ class StopsMapActivity : MapActivity() {
 
     override fun onConnected(dataBundle: Bundle) {
         if (SearchResultsActivity.searchResults != null) {
-            for (favouriteStop in SearchResultsActivity.searchResults.stops) {
+            for (favouriteStop in SearchResultsActivity.searchResults.getStops()) {
                 val markerOptions = MarkerOptions()
                 markerOptions.position(favouriteStop.latLng)
                 markerOptions.title(Integer.toString(favouriteStop.number))
@@ -53,7 +53,7 @@ class StopsMapActivity : MapActivity() {
         var minLng = 0.0
 
         if (cameraUpdate == null) {
-            for (favouriteStop in SearchResultsActivity.searchResults.stops) {
+            for (favouriteStop in SearchResultsActivity.searchResults.getStops()) {
                 if (maxLat == 0.0 || favouriteStop.latLng!!.latitude > maxLat)
                     maxLat = favouriteStop.latLng!!.latitude
                 if (maxLng == 0.0 || favouriteStop.latLng!!.longitude > maxLng)

@@ -47,7 +47,7 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
 
         listView.onItemClickListener = this
 
-        adapter = StopListAdapter(this, R.layout.listview_stops_row, searchResults.stops)
+        adapter = StopListAdapter(this, R.layout.listview_stops_row, searchResults.getStops())
         listView.adapter = adapter
 
         listView.onItemLongClickListener = this
@@ -168,7 +168,7 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
         refresh()
     }
 
-    override fun onConnected(bundle: Bundle) {
+    override fun onConnected(bundle: Bundle?) {
         requestLocation()
     }
 
@@ -185,7 +185,7 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
                     showLongToaster(R.string.no_results_found)
                 }
             } else if (result.exception != null) {
-                handleException(result.exception)
+                handleException(result.exception!!)
             }
         }
 

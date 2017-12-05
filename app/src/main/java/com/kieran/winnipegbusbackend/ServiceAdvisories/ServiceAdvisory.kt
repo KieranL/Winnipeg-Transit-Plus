@@ -5,7 +5,7 @@ import com.kieran.winnipegbusbackend.StopTime
 import java.io.Serializable
 import java.util.ArrayList
 
-class ServiceAdvisory(val title: String, val header: String, val affectedStops: List<AffectedStop>, val reroutes: List<Reroute>, val updatedAt: StopTime) : Serializable, Comparable<*> {
+class ServiceAdvisory(val title: String, val header: String, val affectedStops: List<AffectedStop>, val reroutes: List<Reroute>, val updatedAt: StopTime) : Serializable, Comparable<Any> {
 
     val affectedStopsStrings: List<String>
         get() {

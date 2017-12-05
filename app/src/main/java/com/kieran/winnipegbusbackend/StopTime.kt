@@ -3,14 +3,13 @@ package com.kieran.winnipegbusbackend
 import android.annotation.SuppressLint
 
 import java.io.Serializable
-import java.text.DateFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class StopTime : Comparable<*>, Serializable {
+class StopTime : Comparable<Any>, Serializable {
     var milliseconds: Long = 0
         private set
 
@@ -132,8 +131,8 @@ class StopTime : Comparable<*>, Serializable {
         return (if (hours < 10) "0" + hoursString else hoursString) + ":" + minutesString
     }
 
-    override operator fun compareTo(another: Any): Int {
-        return (milliseconds - (another as StopTime).milliseconds).toInt()
+    override operator fun compareTo(other: Any): Int {
+        return (milliseconds - (other as StopTime).milliseconds).toInt()
     }
 
     fun decreaseMilliSeconds(time: Long) {

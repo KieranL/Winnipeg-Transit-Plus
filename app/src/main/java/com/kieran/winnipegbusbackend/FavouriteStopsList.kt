@@ -23,7 +23,7 @@ import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
 object FavouriteStopsList {
-    private val FILES_DIR = BaseActivity.filesDir!! + "/favourites.xml"
+    private val FILES_DIR = BaseActivity.filesDirPath!! + "/favourites.xml"
 
     private val FAVOURITE_STOPS_TAG = "favouriteStops"
     private val FAVOURITE_STOP_TAG = "favouriteStop"
@@ -82,7 +82,7 @@ object FavouriteStopsList {
                     val timesUsed = Integer.parseInt(getValue(TIMES_USED_TAG, curr))
                     val alias = getValue(ALIAS_TAG, favouriteStops.item(r))
 
-                    val favouriteStop = FavouriteStop(stopName, stopNumber, timesUsed)
+                    val favouriteStop = FavouriteStop(stopName!!, stopNumber, timesUsed)
                     if (alias != null)
                         favouriteStop.alias = alias
 

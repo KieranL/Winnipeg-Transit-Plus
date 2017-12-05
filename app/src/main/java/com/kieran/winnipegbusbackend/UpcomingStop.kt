@@ -1,6 +1,6 @@
 package com.kieran.winnipegbusbackend
 
-class UpcomingStop : Stop, Comparable<*> {
+class UpcomingStop : Stop, Comparable<Any> {
     var time: StopTime? = null
         private set
     var key: ScheduledStopKey? = null

@@ -9,7 +9,7 @@ import java.io.Serializable
 import java.util.Locale
 
 open class Location : Serializable {
-    internal var point: LatLng
+    private lateinit var point: LatLng
     var title: String
         internal set
 

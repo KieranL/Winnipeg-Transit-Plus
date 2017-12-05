@@ -17,7 +17,6 @@ import com.kieran.winnipegbus.Views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.LoadResult
 import com.kieran.winnipegbusbackend.ScheduledStop
 import com.kieran.winnipegbusbackend.StopSchedule
-import com.kieran.winnipegbusbackend.StopTime
 import com.kieran.winnipegbusbackend.TransitApiManager
 import com.kieran.winnipegbusbackend.UpcomingStop
 import com.kieran.winnipegbusbackend.UpcomingStops.HttpUpcomingStopsManager
@@ -30,11 +29,11 @@ import java.util.ArrayList
 import java.util.Collections
 
 class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, TransitApiManager.OnJsonLoadResultReceiveListener, UpcomingStopsManager.OnUpcomingStopsFoundListener {
-    private var upcomingStops: MutableList<UpcomingStop>? = null
+    private var upcomingStops: ArrayList<UpcomingStop>? = null
     private var scheduledStop: ScheduledStop? = null
     private var use24hrTime: Boolean = false
     private var adapter: UpcomingStopsAdapter? = null
-    private var tasks: MutableList<AsyncTask<*, *, *>>? = null
+    private var tasks: ArrayList<AsyncTask<*, *, *>>? = null
     private var loading = false
     private var swipeRefreshLayout: StyledSwipeRefresh? = null
     private var upcomingStopsManager: UpcomingStopsManager? = null
@@ -55,9 +54,9 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
             headerView.isClickable = false
             listView.addHeaderView(headerView)
 
-            adapter = UpcomingStopsAdapter(this, R.layout.upcoming_stops_row, upcomingStops, use24hrTime)
+            adapter = UpcomingStopsAdapter(this, R.layout.upcoming_stops_row, upcomingStops!!, use24hrTime)
             listView.adapter = adapter
-            tasks = ArrayList<AsyncTask>()
+            tasks = ArrayList()
 
             swipeRefreshLayout = findViewById<View>(R.id.upcoming_stops_swipeRefresh) as StyledSwipeRefresh
             swipeRefreshLayout!!.setOnRefreshListener(this)
@@ -86,9 +85,9 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
         if (scheduledStop != null) {
             val routeNumber = getTextView(R.id.bus_number) as RouteNumberTextView
             routeNumber.text = Integer.toString(scheduledStop!!.routeNumber)
-            routeNumber.setColour(scheduledStop)
+            routeNumber.setColour(scheduledStop!!)
 
-            setTextViewText(R.id.bus_name, scheduledStop!!.routeVariantName)
+            setTextViewText(R.id.bus_name, scheduledStop!!.routeVariantName!!)
 
             if (scheduledStop!!.hasArrivalTime()) {
                 findViewById<View>(R.id.arrival_times_header).visibility = View.VISIBLE
@@ -141,7 +140,7 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
                 loading = true
                 upcomingStops!!.clear()
 
-                upcomingStopsManager!!.GetUpcomingStopsAsync(scheduledStop!!.routeKey, scheduledStop!!.key!!.stopNumber, this)
+                upcomingStopsManager!!.GetUpcomingStopsAsync(scheduledStop!!.routeKey!!, scheduledStop!!.key!!.stopNumber, this)
             } else {
                 showLongToaster(R.string.network_error)
             }
@@ -156,19 +155,19 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
 
     override fun OnReceive(result: LoadResult<JSONObject>) {
         if (result.result != null) {
-            val stopSchedule = StopSchedule(result.result)
-            val scheduledStop1 = stopSchedule.getScheduledStopByKey(scheduledStop!!.key)
+            val stopSchedule = StopSchedule(result.result!!)
+            val scheduledStop1 = stopSchedule.getScheduledStopByKey(scheduledStop!!.key!!)
 
             if (scheduledStop1 != null) {
                 if (scheduledStop1.key!!.stopNumber == scheduledStop!!.key!!.stopNumber) {
                     scheduledStop = scheduledStop1
                 }
 
-                val upcomingStop = UpcomingStop(stopSchedule, scheduledStop1.estimatedDepartureTime, scheduledStop1.key)
+                val upcomingStop = UpcomingStop(stopSchedule, scheduledStop1.estimatedDepartureTime!!, scheduledStop1.key!!)
                 upcomingStops!!.add(upcomingStop)
             }
         } else if (result.exception != null) {
-            handleException(result.exception)
+            handleException(result.exception!!)
 
             if (result.exception is FileNotFoundException) {
                 for (task in tasks!!)
@@ -189,12 +188,7 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
     }
 
     private fun removeFinishedTasks() {
-        val finishedTasks = ArrayList<AsyncTask<*, *, *>>()
-
-        for (task in tasks!!) {
-            if (task.status == AsyncTask.Status.FINISHED)
-                finishedTasks.add(task)
-        }
+        val finishedTasks = tasks!!.filterTo(ArrayList()) { it.status == AsyncTask.Status.FINISHED }
 
         tasks!!.removeAll(finishedTasks)
     }
@@ -208,7 +202,7 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
                     try {
                         val latest = if (scheduledStop!!.estimatedDepartureTime!!.milliseconds > TransitApiManager.lastQueryTime!!.milliseconds) scheduledStop!!.estimatedDepartureTime else TransitApiManager.lastQueryTime
 
-                        val task = TransitApiManager.getJsonAsync(TransitApiManager.generateStopNumberURL(stopNumber, scheduledStop!!.routeNumber, latest, null), instance)
+                        val task = TransitApiManager.getJsonAsync(TransitApiManager.generateStopNumberURL(stopNumber, scheduledStop!!.routeNumber, latest!!, null), instance)
                         tasks!!.add(task)
                     } catch (e: Exception) {
                         Log.e("Task", "task error")
@@ -219,7 +213,7 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
 
 
         } else if (result.exception != null) {
-            handleException(result.exception)
+            handleException(result.exception!!)
 
             Collections.sort(upcomingStops!!)
             adapter!!.notifyDataSetChanged()

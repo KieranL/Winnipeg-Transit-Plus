@@ -2,7 +2,6 @@ package com.kieran.winnipegbusbackend
 
 import com.google.android.gms.maps.model.LatLng
 
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -10,13 +9,8 @@ import java.io.Serializable
 import java.util.ArrayList
 
 class StopFeatures(stopNumber: Int, stopName: String, latLng: LatLng) : Stop(stopName, stopNumber), Serializable {
-    private val stopFeatures: MutableList<StopFeature>
-    private val latLng: SerializableLatLng
-
-    init {
-        this.latLng = SerializableLatLng(latLng)
-        stopFeatures = ArrayList()
-    }
+    private val stopFeatures: ArrayList<StopFeature> = ArrayList()
+    private val latLng: SerializableLatLng = SerializableLatLng(latLng)
 
     fun loadFeatures(document: JSONObject) {
         try {

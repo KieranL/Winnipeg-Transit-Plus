@@ -15,10 +15,10 @@ import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
 
 class StopListAdapter : ArrayAdapter<FavouriteStop> {
     private var layoutResourceId: Int = 0
-    private val stops: List<FavouriteStop>?
+    private var stops: List<FavouriteStop>? = null
     private var inflater: LayoutInflater? = null
 
-    constructor(context: Context, layoutResourceId: Int) : super(context, layoutResourceId, FavouriteStopsList.getFavouriteStopsSorted(sortPreference)) {
+    constructor(context: Context, layoutResourceId: Int) : super(context, layoutResourceId, FavouriteStopsList.getFavouriteStopsSorted(sortPreference!!)) {
         this.layoutResourceId = layoutResourceId
         inflater = (context as Activity).layoutInflater
     }
@@ -48,7 +48,7 @@ class StopListAdapter : ArrayAdapter<FavouriteStop> {
         val favouriteStop: FavouriteStop
 
         if (stops != null)
-            favouriteStop = stops[position]
+            favouriteStop = stops!![position]
         else
             favouriteStop = FavouriteStopsList.get(position)
 

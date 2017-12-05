@@ -6,9 +6,9 @@ import org.json.JSONObject
 import java.util.Locale
 
 class Intersection(location: JSONObject) : Location(location) {
-    internal var key: String
-    internal var streetName: String
-    internal var crossStreetName: String
+    internal lateinit var key: String
+    internal lateinit var streetName: String
+    internal lateinit var crossStreetName: String
 
     override val urlString: String
         get() = String.format(Locale.CANADA, "intersections/%s", key)

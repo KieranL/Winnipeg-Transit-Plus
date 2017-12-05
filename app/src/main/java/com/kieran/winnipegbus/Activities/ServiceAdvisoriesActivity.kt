@@ -88,7 +88,7 @@ class ServiceAdvisoriesActivity : BaseActivity(), TransitApiManager.OnJsonLoadRe
 
     override fun OnReceive(result: LoadResult<JSONObject>) {
         adapter!!.clear()
-        val advisories = ServiceAdvisoriesParser.parseAdvisories(result.result)
+        val advisories = ServiceAdvisoriesParser.parseAdvisories(result.result!!)
         adapter!!.addAll(advisories)
 
         adapter!!.notifyDataSetChanged()

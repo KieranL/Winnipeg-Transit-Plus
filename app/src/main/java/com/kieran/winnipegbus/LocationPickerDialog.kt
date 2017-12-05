@@ -36,33 +36,35 @@ class LocationPickerDialog(private val context: GoogleApiActivity, private val l
         originSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 val url = TransitApiManager.generateLocationQueryUrl(query)
-                TransitApiManager.getJsonAsync(url) { result ->
-                    val builder = AlertDialog.Builder(context)
+                TransitApiManager.getJsonAsync(url, object : TransitApiManager.OnJsonLoadResultReceiveListener {
+                    override fun OnReceive(result: LoadResult<JSONObject>) {
+                        val builder = AlertDialog.Builder(context)
 
-                    try {
-                        val locationNodes = result.result!!.getJSONArray("locations")
-                        val locations = ArrayList<Location>()
-                        for (i in 0 until locationNodes.length()) {
-                            locations.add(LocationFactory.createLocation(locationNodes.getJSONObject(i)))
+                        try {
+                            val locationNodes = result.result!!.getJSONArray("locations")
+                            val locations = ArrayList<Location>()
+                            for (i in 0 until locationNodes.length()) {
+                                locations.add(LocationFactory.createLocation(locationNodes.getJSONObject(i))!!)
+                            }
+
+
+                            val charSequence = arrayOfNulls<CharSequence>(locations.size)
+
+                            for (i in charSequence.indices)
+                                charSequence[i] = locations[i].title
+
+                            builder.setItems(charSequence) { dialog, which ->
+                                listener.OnLocationPicked(locations[which])
+                                self.dismiss()
+                                dismiss()
+                            }
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
                         }
 
-
-                        val charSequence = arrayOfNulls<CharSequence>(locations.size)
-
-                        for (i in charSequence.indices)
-                            charSequence[i] = locations[i].title
-
-                        builder.setItems(charSequence) { dialog, which ->
-                            listener.OnLocationPicked(locations[which])
-                            self.dismiss()
-                            dismiss()
-                        }
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
+                        builder.create().show()
                     }
-
-                    builder.create().show()
-                }
+                })
 
                 return false
             }
@@ -103,15 +105,17 @@ class LocationPickerDialog(private val context: GoogleApiActivity, private val l
                     val favouriteStop = favouriteStops[which]
                     self.dismiss()
                     dismiss()
-                    TransitApiManager.getJsonAsync(TransitApiManager.generateFindStopUrl(favouriteStop.number)) { result ->
-                        try {
-                            val stopNode = result.result!!.getJSONObject("stop")
-                            val stop = Stop(stopNode)
-                            listener.OnLocationPicked(stop)
-                        } catch (e: JSONException) {
-                            e.printStackTrace()
+                    TransitApiManager.getJsonAsync(TransitApiManager.generateFindStopUrl(favouriteStop.number), object : TransitApiManager.OnJsonLoadResultReceiveListener {
+                        override fun OnReceive(result: LoadResult<JSONObject>) {
+                            try {
+                                val stopNode = result.result!!.getJSONObject("stop")
+                                val stop = Stop(stopNode)
+                                listener.OnLocationPicked(stop)
+                            } catch (e: JSONException) {
+                                e.printStackTrace()
+                            }
                         }
-                    }
+                    })
                 }
 
                 builder.create().show()

@@ -7,13 +7,13 @@ import org.json.JSONObject
 
 import java.io.Serializable
 
-open class Route : Comparable<*>, Serializable {
+open class Route : Comparable<Any>, Serializable {
 
     var routeNumber: Int = 0
         protected set
     var routeName: String? = null
         protected set
-    var coverageType: CoverageTypes
+    lateinit var coverageType: CoverageTypes
         protected set
 
     val isDownTownSpirit: Boolean

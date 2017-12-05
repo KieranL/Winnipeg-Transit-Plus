@@ -1,6 +1,7 @@
 package com.kieran.winnipegbus.Activities
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
@@ -229,7 +230,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         if (FavouriteStopsList.contains(stopNumber)) {
             openDeleteFavouriteDialog(item)
         } else if (stopName != null && stopName != "") {
-            FavouriteStopsList.addToFavourites(FavouriteStop(stopName, stopNumber))
+            FavouriteStopsList.addToFavourites(FavouriteStop(stopName!!, stopNumber))
             item.icon = getFavouritesButtonDrawable(true)
         } else {
             showLongToaster(R.string.wait_for_load)
@@ -258,7 +259,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
             if (routeFilterRoutes.size == 0)
                 getFilterRoutes()
 
-            if (routeFilterRoutes.size < stopSchedule!!.routeList.size) {
+            if (routeFilterRoutes.size < stopSchedule!!.getRouteList().size) {
                 routeFilterRoutes.clear()
                 getFilterRoutes()
             }
@@ -271,17 +272,15 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
             for (i in charSequence.indices)
                 charSequence[i] = routeFilterRoutes[i].toString()
 
-            filterDialog.setMultiChoiceItems(charSequence, selectedRoutes, object : AlertDialog.OnMultiChoiceClickListener {
-                override fun onClick(dialog: DialogInterface, which: Int, isChecked: Boolean) {
-                    hasFilterChanged = true
-                    val routeNumber = routeFilterRoutes[which].routeNumber
-                    selectedRoutes[which] = isChecked
-                    if (isChecked)
-                        routeNumberFilter.add(routeNumber)
-                    else
-                        routeNumberFilter.remove(Integer.valueOf(routeNumber))
-                }
-            })
+            filterDialog.setMultiChoiceItems(charSequence, selectedRoutes) { dialog, which, isChecked ->
+                hasFilterChanged = true
+                val routeNumber = routeFilterRoutes[which].routeNumber
+                selectedRoutes!![which] = isChecked
+                if (isChecked)
+                    routeNumberFilter.add(routeNumber)
+                else
+                    routeNumberFilter.remove(Integer.valueOf(routeNumber))
+            }
 
             filterDialog.setPositiveButton(FILTER_POSITIVE) { dialog, which ->
                 if (hasFilterChanged) {
@@ -296,7 +295,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
     }
 
     fun getFilterRoutes() {
-        for (routeSchedule in stopSchedule!!.routeList)
+        for (routeSchedule in stopSchedule!!.getRouteList())
             routeFilterRoutes.add(Route(routeSchedule))
 
         Collections.sort(routeFilterRoutes)
@@ -316,31 +315,29 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
 
     private inner class LoadStopTimes : AsyncTask<String, Void, LoadResult<JSONObject>>() {
         override fun doInBackground(vararg urls: String): LoadResult<JSONObject> {
-            val result: LoadResult<JSONObject>
-
-            result = TransitApiManager.getJson(urls[0])
+            val result: LoadResult<JSONObject> = TransitApiManager.getJson(urls[0])
 
             if (loading && result.result != null) {
                 if (stopSchedule == null) {
-                    stopSchedule = StopSchedule(result.result, stopNumber)
+                    stopSchedule = StopSchedule(result.result!!, stopNumber)
 
                     stopName = stopSchedule!!.name
                 } else {
-                    stopSchedule!!.refresh(result.result)
+                    stopSchedule!!.refresh(result.result!!)
                 }
             }
 
             return result
         }
 
-        protected override fun onPostExecute(result: LoadResult<*>) {
+        override fun onPostExecute(result: LoadResult<JSONObject>) {
             if (loading && result.result != null) {
                 stops.clear()
                 stops.addAll(stopSchedule!!.scheduledStopsSorted)
             }
 
             if (result.exception != null && loading) {
-                handleException(result.exception)
+                handleException(result.exception!!)
                 if (stopSchedule == null && result.exception is IOException)
                     title!!.setText(R.string.network_error)
             } else if (stops.size == 0 && loading) {

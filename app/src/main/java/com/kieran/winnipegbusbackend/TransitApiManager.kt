@@ -59,25 +59,25 @@ object TransitApiManager {
     }
 
     fun generateStopNumberURL(stopNumber: Int, routeNumbers: List<Int>?, startTime: StopTime?, endTime: StopTime?): String {
-        val parameters = arrayOfNulls<URLParameter>(3)
+        val parameters = ArrayList<URLParameter>()
 
         if (routeNumbers != null)
-            parameters[0] = URLParameter(ROUTE_PARAMETER, routeNumbers)
+            parameters.add(URLParameter(ROUTE_PARAMETER, routeNumbers))
 
         if (startTime != null) {
             startTime.decreaseMilliSeconds(START_TIME_DECREASE.toLong()) //decrease start time for API inconsistency? not sure what the reason this is for
 
-            parameters[1] = URLParameter(START_TIME_PARAMETER, startTime.toURLTimeString())
+            parameters.add(URLParameter(START_TIME_PARAMETER, startTime.toURLTimeString()))
             startTime.decreaseMilliSeconds((-START_TIME_DECREASE).toLong())
         }
 
         if (endTime != null)
-            parameters[2] = URLParameter(END_TIME_PARAMETER, endTime.toURLTimeString())
+            parameters.add(URLParameter(END_TIME_PARAMETER, endTime.toURLTimeString()))
 
         return createUrl(STOPS_PARAMETER + FORWARD_SLASH + stopNumber + FORWARD_SLASH + SCHEDULE_PARAMETER, parameters)
     }
 
-    fun generateStopNumberURL(stopNumber: Int, routeNumber: Int, startTime: StopTime, endTime: StopTime): String {
+    fun generateStopNumberURL(stopNumber: Int, routeNumber: Int, startTime: StopTime, endTime: StopTime?): String {
         val routeFilter = ArrayList<Int>()
         routeFilter.add(routeNumber)
 
@@ -95,14 +95,14 @@ object TransitApiManager {
     }
 
     fun generateSearchQuery(routeNumber: Int): SearchQuery {
-        val parameters = arrayOf(URLParameter(ROUTE_PARAMETER, Integer.toString(routeNumber)))
+        val parameters = arrayOf(URLParameter(ROUTE_PARAMETER, Integer.toString(routeNumber))).toList()
         val url = createUrl(STOPS_PARAMETER, parameters)
 
         return SearchQuery(Integer.toString(routeNumber), url, SearchQueryType.ROUTE_NUMBER)
     }
 
     fun generateSearchQuery(key: RouteKey): SearchQuery {
-        val parameters = arrayOf(URLParameter(VARIANT_PARAMETER, key.keyString))
+        val parameters = arrayOf(URLParameter(VARIANT_PARAMETER, key.keyString)).toList()
         val url = createUrl(STOPS_PARAMETER, parameters)
 
         return SearchQuery(key.keyString, url, SearchQueryType.ROUTE_NUMBER)
@@ -122,7 +122,7 @@ object TransitApiManager {
 
     fun generateSearchQuery(location: Location, radius: Int): SearchQuery {
         val totalRadius = Math.round(location.accuracy) + radius
-        val parameters = arrayOf(URLParameter(DISTANCE_PARAMETER, Integer.toString(totalRadius)), URLParameter(LATITUDE_PARAMETER, java.lang.Double.toString(location.latitude)), URLParameter(LONGITUDE_PARAMETER, java.lang.Double.toString(location.longitude)))
+        val parameters = arrayOf(URLParameter(DISTANCE_PARAMETER, Integer.toString(totalRadius)), URLParameter(LATITUDE_PARAMETER, java.lang.Double.toString(location.latitude)), URLParameter(LONGITUDE_PARAMETER, java.lang.Double.toString(location.longitude))).toList()
         val url = createUrl(STOPS_PARAMETER, parameters)
         return SearchQuery("NearbyStops", url, SearchQueryType.NEARBY)
     }
@@ -135,15 +135,10 @@ object TransitApiManager {
         return createUrl(STOPS_PARAMETER + FORWARD_SLASH + Integer.toString(stopNumber), null)
     }
 
-    private fun createUrl(path: String, parameters: Array<URLParameter>?): String {
+    private fun createUrl(path: String, parameters: List<URLParameter>?): String {
         var parameterString = ""
 
-        if (parameters != null) {
-            for (p in parameters) {
-                if (p != null)
-                    parameterString += "&" + p.toString()
-            }
-        }
+        parameters?.forEach { parameterString += "&" + it.toString() }
 
         return String.format(URL_FORMAT, path, parameterString)
     }

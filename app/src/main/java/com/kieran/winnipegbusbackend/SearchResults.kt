@@ -9,14 +9,10 @@ import org.json.JSONObject
 import java.util.ArrayList
 
 class SearchResults {
-    private val stops: MutableList<FavouriteStop>
+    private val stops: ArrayList<FavouriteStop> = ArrayList()
 
     val length: Int
         get() = stops.size
-
-    init {
-        stops = ArrayList()
-    }
 
     fun loadStops(result: LoadResult<JSONObject>): SearchResults {
         if (result.result != null) {

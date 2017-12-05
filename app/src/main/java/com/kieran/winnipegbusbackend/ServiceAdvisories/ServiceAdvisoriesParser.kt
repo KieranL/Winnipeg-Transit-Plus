@@ -55,7 +55,7 @@ object ServiceAdvisoriesParser {
             reRoutesData = bodySections[3].split(BODY_SUBSECTION_REGEX.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         }
 
-        return ServiceAdvisory(title, header, getAffectedStops(affectedStopsData), getReRoutes(reRoutesData), StopTime.convertStringToStopTime(node.getString(UPDATED_AT_TAG)))
+        return ServiceAdvisory(title, header, getAffectedStops(affectedStopsData), getReRoutes(reRoutesData), StopTime.convertStringToStopTime(node.getString(UPDATED_AT_TAG))!!)
     }
 
     private fun getAffectedStops(nodes: Array<String>): List<AffectedStop> {
@@ -67,7 +67,7 @@ object ServiceAdvisoriesParser {
             if (s.size > 1)
                 stops.add(AffectedStop(s[0].replace(REMOVE_ASTERISK_REGEX.toRegex(), "").trim { it <= ' ' }, s[1]))
             else
-                stops.add(AffectedStop(s[0].replace(REMOVE_ASTERISK_REGEX.toRegex(), "").trim { it <= ' ' }, null))
+                stops.add(AffectedStop(s[0].replace(REMOVE_ASTERISK_REGEX.toRegex(), "").trim { it <= ' ' }, ""))
         }
 
         return stops

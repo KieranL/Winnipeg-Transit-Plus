@@ -16,7 +16,7 @@ class FavouriteStop : Stop, Serializable {
             field = alias
 
     val displayName: String
-        get() = if (this.alias == null) name else this.alias
+        get() = if (this.alias == null) name else this.alias!!
 
     constructor(stopName: String, stopNumber: Int, timesUsed: Int) : super(stopName, stopNumber) {
         this.timesUsed = timesUsed

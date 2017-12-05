@@ -6,9 +6,9 @@ import org.json.JSONObject
 import java.util.Locale
 
 open class Address(location: JSONObject) : Location(location) {
-    internal var key: Int = 0
+    internal open var key: Int = 0
     internal var streetNumber: Int = 0
-    internal var streetName: String
+    internal lateinit var streetName: String
 
     override val urlString: String
         get() = String.format(Locale.CANADA, "addresses/%d", key)

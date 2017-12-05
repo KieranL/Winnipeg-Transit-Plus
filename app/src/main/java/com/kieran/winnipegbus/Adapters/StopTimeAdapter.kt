@@ -14,7 +14,7 @@ import com.kieran.winnipegbus.Views.RouteNumberTextView
 import com.kieran.winnipegbusbackend.ScheduledStop
 import com.kieran.winnipegbusbackend.TransitApiManager
 
-class StopTimeAdapter(private val context: Context, private val layoutResourceId: Int, private val scheduledStops: List<ScheduledStop>) : ArrayAdapter<ScheduledStop>(context, layoutResourceId, scheduledStops) {
+class StopTimeAdapter(context: Context, private val layoutResourceId: Int, private val scheduledStops: List<ScheduledStop>) : ArrayAdapter<ScheduledStop>(context, layoutResourceId, scheduledStops) {
     private var use24hrTime: Boolean = false
     private val inflater: LayoutInflater
 

@@ -34,7 +34,7 @@ class StopInfoActivity : MapActivity(), TransitApiManager.OnJsonLoadResultReceiv
         setTextViewText(R.id.stop_features_title, stopFeatures!!.name)
 
         val listView = findViewById<View>(R.id.listView_stop_features) as ListView
-        adapter = StopFeaturesAdapter(this, R.layout.listview_stop_features_row, stopFeatures!!.stopFeatures)
+        adapter = StopFeaturesAdapter(this, R.layout.listview_stop_features_row, stopFeatures!!.getStopFeatures())
         listView.adapter = adapter
 
         task = TransitApiManager.getJsonAsync(TransitApiManager.generateStopFeaturesUrl(stopFeatures!!.number), this)
@@ -57,11 +57,11 @@ class StopInfoActivity : MapActivity(), TransitApiManager.OnJsonLoadResultReceiv
         return true
     }
 
-    override fun onConnected(dataBundle: Bundle) {
-        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(stopFeatures!!.latLng, 17f)
+    override fun onConnected(dataBundle: Bundle?) {
+        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(stopFeatures!!.getLatLng(), 17f)
         map!!.moveCamera(cameraUpdate)
         val markerOptions = MarkerOptions()
-        markerOptions.position(stopFeatures!!.latLng)
+        markerOptions.position(stopFeatures!!.getLatLng())
         map!!.addMarker(markerOptions)
         map!!.isTrafficEnabled = true
 
@@ -78,10 +78,10 @@ class StopInfoActivity : MapActivity(), TransitApiManager.OnJsonLoadResultReceiv
 
     override fun OnReceive(result: LoadResult<JSONObject>) {
         if (result.result != null) {
-            stopFeatures!!.loadFeatures(result.result)
+            stopFeatures!!.loadFeatures(result.result!!)
             showStopFeatures()
         } else if (result.exception != null) {
-            handleException(result.exception)
+            handleException(result.exception!!)
         }
     }
 

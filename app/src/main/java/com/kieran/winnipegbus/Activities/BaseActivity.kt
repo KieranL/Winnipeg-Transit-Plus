@@ -90,8 +90,8 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(themeResId)
-        if (filesDir == null)
-            filesDir = filesDir.path
+        if (filesDirPath == null)
+            filesDirPath = filesDir.path
         ActivityManager.addActivity(this)
         super.onCreate(savedInstanceState)
     }
@@ -217,7 +217,7 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     companion object {
-        var filesDir: String? = null
+        var filesDirPath: String? = null
 
         fun getTimeSetting(context: Context): Boolean {
             val prefs = PreferenceManager.getDefaultSharedPreferences(context)

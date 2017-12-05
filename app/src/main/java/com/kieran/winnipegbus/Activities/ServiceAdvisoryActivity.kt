@@ -9,6 +9,7 @@ import android.widget.ListView
 
 import com.kieran.winnipegbus.Adapters.ReroutesAdapter
 import com.kieran.winnipegbus.R
+import com.kieran.winnipegbusbackend.ServiceAdvisories.AffectedStop
 import com.kieran.winnipegbusbackend.ServiceAdvisories.ServiceAdvisory
 
 class ServiceAdvisoryActivity : BaseActivity() {

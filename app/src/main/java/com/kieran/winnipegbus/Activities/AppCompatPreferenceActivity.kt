@@ -21,9 +21,9 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
     private var mDelegate: AppCompatDelegate? = null
 
     val supportActionBar: ActionBar?
-        get() = delegate.supportActionBar
+        get() = delegate?.supportActionBar
 
-    private val delegate: AppCompatDelegate
+    private val delegate: AppCompatDelegate?
         get() {
             if (mDelegate == null) {
                 mDelegate = AppCompatDelegate.create(this, null)
@@ -32,14 +32,14 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        delegate.installViewFactory()
-        delegate.onCreate(savedInstanceState)
+        delegate?.installViewFactory()
+        delegate?.onCreate(savedInstanceState)
         super.onCreate(savedInstanceState)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        delegate.onPostCreate(savedInstanceState)
+        delegate?.onPostCreate(savedInstanceState)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -54,55 +54,55 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
     }
 
     fun setSupportActionBar(toolbar: Toolbar?) {
-        delegate.setSupportActionBar(toolbar)
+        delegate?.setSupportActionBar(toolbar)
     }
 
-    override fun getMenuInflater(): MenuInflater {
-        return delegate.menuInflater
+    override fun getMenuInflater(): MenuInflater? {
+        return delegate?.menuInflater
     }
 
     override fun setContentView(@LayoutRes layoutResID: Int) {
-        delegate.setContentView(layoutResID)
+        delegate?.setContentView(layoutResID)
     }
 
     override fun setContentView(view: View) {
-        delegate.setContentView(view)
+        delegate?.setContentView(view)
     }
 
     override fun setContentView(view: View, params: ViewGroup.LayoutParams) {
-        delegate.setContentView(view, params)
+        delegate?.setContentView(view, params)
     }
 
     override fun addContentView(view: View, params: ViewGroup.LayoutParams) {
-        delegate.addContentView(view, params)
+        delegate?.addContentView(view, params)
     }
 
     override fun onPostResume() {
         super.onPostResume()
-        delegate.onPostResume()
+        delegate?.onPostResume()
     }
 
     override fun onTitleChanged(title: CharSequence, color: Int) {
         super.onTitleChanged(title, color)
-        delegate.setTitle(title)
+        delegate?.setTitle(title)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        delegate.onConfigurationChanged(newConfig)
+        delegate?.onConfigurationChanged(newConfig)
     }
 
     override fun onStop() {
         super.onStop()
-        delegate.onStop()
+        delegate?.onStop()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        delegate.onDestroy()
+        delegate?.onDestroy()
     }
 
     override fun invalidateOptionsMenu() {
-        delegate.invalidateOptionsMenu()
+        delegate?.invalidateOptionsMenu()
     }
 }

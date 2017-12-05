@@ -27,7 +27,7 @@ class ScheduledStop(stop: JSONObject, private val parentRoute: RouteSchedule) : 
         private set
 
     val timeStatus: String
-        get() = StopTime.getTimeStatus(estimatedDepartureTime, scheduledDepartureTime)
+        get() = StopTime.getTimeStatus(estimatedDepartureTime!!, scheduledDepartureTime!!)
 
     val routeNumber: Int
         get() = parentRoute.routeNumber

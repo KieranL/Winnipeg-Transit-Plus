@@ -1,6 +1,5 @@
 package com.kieran.winnipegbustests
 
-import com.kieran.winnipegbusbackend.LoadResult
 import com.kieran.winnipegbusbackend.RouteKey
 import com.kieran.winnipegbusbackend.StopSchedule
 import com.kieran.winnipegbusbackend.StopTime
@@ -8,7 +7,6 @@ import com.kieran.winnipegbusbackend.TransitApiManager
 
 import junit.framework.Assert
 
-import org.json.JSONObject
 import org.junit.Test
 
 class AppTests {

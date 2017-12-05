@@ -27,7 +27,7 @@ class Trip(trip: JSONObject) {
 
             for (i in 0 until segmentNodes.length()) {
                 val segment = segmentNodes.getJSONObject(i)
-                segments.add(SegmentFactory.createSegment(segment))
+                segments.add(SegmentFactory.createSegment(segment)!!)
             }
 
 

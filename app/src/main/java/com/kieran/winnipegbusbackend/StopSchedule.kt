@@ -3,13 +3,11 @@ package com.kieran.winnipegbusbackend
 
 import com.google.android.gms.maps.model.LatLng
 
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
 import java.util.ArrayList
 import java.util.Collections
-import java.util.Comparator
 
 class StopSchedule : Stop {
 
@@ -21,7 +19,7 @@ class StopSchedule : Stop {
             val scheduledStops = ArrayList<ScheduledStop>()
 
             for (r in routeList)
-                scheduledStops.addAll(r.scheduledStops)
+                scheduledStops.addAll(r.scheduledStops!!)
 
             return scheduledStops
         }
@@ -117,7 +115,7 @@ class StopSchedule : Stop {
     }
 
     fun createStopFeatures(): StopFeatures {
-        return StopFeatures(number, name, latLng)
+        return StopFeatures(number, name, latLng!!)
     }
 
     fun refresh(jsonObject: JSONObject) {

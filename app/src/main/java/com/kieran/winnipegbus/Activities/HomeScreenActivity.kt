@@ -140,7 +140,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
         startActivity(intent)
     }
 
-    override fun onConnected(bundle: Bundle) {
+    override fun onConnected(bundle: Bundle?) {
         requestLocation()
     }
 
