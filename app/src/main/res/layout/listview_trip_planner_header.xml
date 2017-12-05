@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/get_directions_button"
         android:onClick="getDirections"
-        android:layout_below="@+id/trip_time_date"
+        android:layout_below="@+id/time_bar"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
@@ -82,35 +82,46 @@
         android:onClick="swapLocations"
         android:background="@color/transparent" />
 
-    <Button
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/time_mode_spinner"
+        android:id="@+id/time_bar"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="pickTime"
+            android:id="@+id/trip_time_hour_minute"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="pickDate"
+            android:id="@+id/trip_time_date"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/></LinearLayout>
+
+
+    <TextView
+        android:text="Time Mode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="pickTime"
-        android:id="@+id/trip_time_hour_minute"
+        android:id="@+id/time_mode_textView"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:layout_above="@+id/get_directions_button"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="pickDate"
-        android:id="@+id/trip_time_date"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:layout_alignTop="@+id/time_mode_spinner"
-        android:layout_toLeftOf="@+id/trip_time_hour_minute"
-        android:layout_toStartOf="@+id/trip_time_hour_minute" />
-
+        android:layout_alignBaseline="@+id/time_mode_spinner"
+        android:layout_alignBottom="@+id/time_mode_spinner"
+        android:layout_alignParentStart="true" />
     <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:entries="@array/time_mode_options"
         android:id="@+id/time_mode_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
         android:layout_below="@+id/destination_select_button"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_toLeftOf="@+id/trip_time_date"
-        android:layout_toStartOf="@+id/trip_time_date" />
+        android:entries="@array/time_mode_options"
+        android:spinnerMode="dialog"
+        android:layout_alignParentEnd="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
 </RelativeLayout>
