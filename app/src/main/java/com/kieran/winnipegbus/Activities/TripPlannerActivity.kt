@@ -49,7 +49,7 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
         setContentView(R.layout.activity_trip_planner)
         val intent = intent
 
-        tripParameters = intent.getSerializableExtra(PARAMETERS) as TripParameters
+        tripParameters = intent.getSerializableExtra(PARAMETERS) as TripParameters?
 
         if (tripParameters == null)
             tripParameters = TripParameters()
@@ -174,7 +174,7 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
 
     }
 
-    override fun onConnected(bundle: Bundle) {
+    override fun onConnected(bundle: Bundle?) {
         requestLocation()
     }
 

@@ -24,7 +24,7 @@ import java.util.ArrayList
 
 class LocationPickerDialog(private val context: GoogleApiActivity, private val listener: OnLocationPickedListener) : Dialog(context), View.OnClickListener {
 
-    override fun onCreate(savedInstanceState: Bundle) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.location_picker_dialog)
         (findViewById<View>(R.id.location_searchView) as SearchView).isIconified = false

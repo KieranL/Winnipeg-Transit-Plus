@@ -52,7 +52,7 @@ class TripPlannerAdapter(private val context: Context, private val trips: List<T
         return false
     }
 
-    override fun getGroupView(groupPosition: Int, isExpanded: Boolean, convertView: View, parent: ViewGroup): View {
+    override fun getGroupView(groupPosition: Int, isExpanded: Boolean, convertView: View?, parent: ViewGroup): View {
         var row: View? = convertView
         val holder: TripHolder
 
@@ -76,7 +76,7 @@ class TripPlannerAdapter(private val context: Context, private val trips: List<T
         return row
     }
 
-    override fun getChildView(groupPosition: Int, childPosition: Int, isLastChild: Boolean, convertView: View, parent: ViewGroup): View {
+    override fun getChildView(groupPosition: Int, childPosition: Int, isLastChild: Boolean, convertView: View?, parent: ViewGroup): View {
         var row: View? = convertView
         val holder: SegmentHolder
 
