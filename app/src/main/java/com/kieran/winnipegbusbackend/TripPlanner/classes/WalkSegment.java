@@ -3,8 +3,8 @@ package com.kieran.winnipegbusbackend.TripPlanner.classes;
 import org.json.JSONObject;
 
 public class WalkSegment extends Segment {
-    public WalkSegment(JSONObject segment) {
-        super(segment);
+    public WalkSegment(JSONObject segment, String fromTitle, String toTitle) {
+        super(segment, fromTitle, toTitle);
     }
 
     @Override

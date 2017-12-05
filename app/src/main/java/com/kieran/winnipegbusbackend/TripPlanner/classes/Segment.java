@@ -10,13 +10,13 @@ public abstract class Segment {
     Location from;
     Location to;
 
-    public Segment(JSONObject object) {
+    public Segment(JSONObject object, String fromTitle, String toTitle) {
         try {
             JSONObject times = object.getJSONObject("times");
             this.times = new Times(times);
 
-            from = LocationFactory.createLocation(object.getJSONObject("from"));
-            to = LocationFactory.createLocation(object.getJSONObject("to"));
+            from = LocationFactory.createLocation(object.getJSONObject("from"), fromTitle);
+            to = LocationFactory.createLocation(object.getJSONObject("to"), toTitle);
 
         }catch (JSONException ex) {
 

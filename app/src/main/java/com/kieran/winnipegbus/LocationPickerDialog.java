@@ -42,7 +42,7 @@ public class LocationPickerDialog extends Dialog implements View.OnClickListener
         findViewById(R.id.from_favourites_button).setOnClickListener(this);
 
         final Dialog self = this;
-        final SearchView originSearchView = (SearchView) findViewById(R.id.location_searchView);
+        final SearchView originSearchView = findViewById(R.id.location_searchView);
         originSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -56,7 +56,7 @@ public class LocationPickerDialog extends Dialog implements View.OnClickListener
                             JSONArray locationNodes = result.getResult().getJSONArray("locations");
                             final List<Location> locations = new ArrayList<>();
                             for (int i = 0; i < locationNodes.length(); i++) {
-                                locations.add(LocationFactory.createLocation(locationNodes.getJSONObject(i)));
+                                locations.add(LocationFactory.createLocation(locationNodes.getJSONObject(i), null));
                             }
 
 

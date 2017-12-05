@@ -27,7 +27,7 @@ public class TripPlannerAdapter extends BaseExpandableListAdapter {
     public TripPlannerAdapter(Context context, List<Trip> trips) {
         this.context = context;
         this.trips = trips;
-        inflater = ((Activity)context).getLayoutInflater();
+        inflater = ((Activity) context).getLayoutInflater();
     }
 
     @Override
@@ -70,16 +70,16 @@ public class TripPlannerAdapter extends BaseExpandableListAdapter {
         View row = convertView;
         TripHolder holder;
 
-        if(row == null) {
+        if (row == null) {
             row = inflater.inflate(R.layout.trip_planner_trip_row, parent, false);
 
             holder = new TripHolder();
-            holder.timeRange = (TextView)row.findViewById(R.id.trip_time_range);
-            holder.totalTime = (TextView)row.findViewById(R.id.trip_time);
+            holder.timeRange = row.findViewById(R.id.trip_time_range);
+            holder.totalTime = row.findViewById(R.id.trip_time);
 
             row.setTag(holder);
         } else {
-            holder = (TripHolder)row.getTag();
+            holder = (TripHolder) row.getTag();
         }
 
         Trip trip = trips.get(groupPosition);
@@ -95,25 +95,25 @@ public class TripPlannerAdapter extends BaseExpandableListAdapter {
         View row = convertView;
         SegmentHolder holder;
 
-        if(row == null) {
+        if (row == null) {
             row = inflater.inflate(R.layout.trip_planner_trip_segment_row, parent, false);
 
             holder = new SegmentHolder();
-            holder.string = (TextView)row.findViewById(R.id.segment_string);
-            holder.time = (TextView)row.findViewById(R.id.segment_time);
+            holder.string = row.findViewById(R.id.segment_string);
+            holder.time = row.findViewById(R.id.segment_time);
 
             row.setTag(holder);
         } else {
-            holder = (SegmentHolder)row.getTag();
+            holder = (SegmentHolder) row.getTag();
         }
 
         Trip trip = trips.get(groupPosition);
-        if(trip != null) {
+        if (trip != null) {
             Segment segment = trip.getSegments().get(childPosition);
-            if(segment != null) {
+            if (segment != null) {
                 holder.string.setText(trips.get(groupPosition).getSegments().get(childPosition).toString());
                 holder.time.setText(Integer.toString(segment.getTimes().totalTime));
-                holder.time.setCompoundDrawablesWithIntrinsicBounds(getDrawableIconResId(segment), 0, 0, 0);
+                holder.time.setCompoundDrawablesWithIntrinsicBounds(0, 0, getDrawableIconResId(segment), 0);
             }
         }
 
@@ -121,12 +121,11 @@ public class TripPlannerAdapter extends BaseExpandableListAdapter {
     }
 
     private int getDrawableIconResId(Segment segment) {
-//        if(segment instanceof RideSegment)
-//            return R.drawable.ic_bus_dark;
-//        else if(segment instanceof WalkSegment)
-//            return R.drawable.ic_walk_dark;
-//        else
-            if(segment instanceof TransferSegment)
+        if (segment instanceof RideSegment)
+            return R.drawable.ic_bus_dark;
+        else if (segment instanceof WalkSegment)
+            return R.drawable.ic_walk_dark;
+        else if (segment instanceof TransferSegment)
             return R.drawable.ic_clock_dark;
         else
             return R.drawable.ic_clock_dark;
