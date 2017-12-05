@@ -74,8 +74,8 @@ public class TripPlannerAdapter extends BaseExpandableListAdapter {
             row = inflater.inflate(R.layout.trip_planner_trip_row, parent, false);
 
             holder = new TripHolder();
-            holder.timeRange = (TextView) row.findViewById(R.id.trip_time_range);
-            holder.totalTime = (TextView) row.findViewById(R.id.trip_time);
+            holder.timeRange = row.findViewById(R.id.trip_time_range);
+            holder.totalTime = row.findViewById(R.id.trip_time);
 
             row.setTag(holder);
         } else {
@@ -99,8 +99,8 @@ public class TripPlannerAdapter extends BaseExpandableListAdapter {
             row = inflater.inflate(R.layout.trip_planner_trip_segment_row, parent, false);
 
             holder = new SegmentHolder();
-            holder.string = (TextView) row.findViewById(R.id.segment_string);
-            holder.time = (TextView) row.findViewById(R.id.segment_time);
+            holder.string = row.findViewById(R.id.segment_string);
+            holder.time = row.findViewById(R.id.segment_time);
 
             row.setTag(holder);
         } else {

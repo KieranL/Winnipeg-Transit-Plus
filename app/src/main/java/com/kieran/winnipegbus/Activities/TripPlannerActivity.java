@@ -59,13 +59,13 @@ public class TripPlannerActivity extends GoogleApiActivity implements TransitApi
             tripParameters = new TripParameters();
 
         trips = new ArrayList<>();
-        ExpandableListView listView = (ExpandableListView) findViewById(R.id.trip_planner_listview);
+        ExpandableListView listView = findViewById(R.id.trip_planner_listview);
         listView.addHeaderView(getLayoutInflater().inflate(R.layout.listview_trip_planner_header, null));
         adapter = new TripPlannerAdapter(this, trips);
         listView.setAdapter(adapter);
 
-        getDirectionsButton = (Button) findViewById(R.id.get_directions_button);
-        swipeRefresh = (StyledSwipeRefresh) findViewById(R.id.trip_planner_swipe_refresh);
+        getDirectionsButton = findViewById(R.id.get_directions_button);
+        swipeRefresh = findViewById(R.id.trip_planner_swipe_refresh);
         swipeRefresh.setOnRefreshListener(this);
         initializeFields();
 
@@ -77,8 +77,8 @@ public class TripPlannerActivity extends GoogleApiActivity implements TransitApi
     }
 
     private void initializeFields() {
-        Button originButton = (Button)findViewById(R.id.origin_select_button);
-        Button destinationButton = (Button)findViewById(R.id.destination_select_button);
+        Button originButton = findViewById(R.id.origin_select_button);
+        Button destinationButton = findViewById(R.id.destination_select_button);
 
         if (tripParameters.getOrigin() != null)
             originButton.setText(tripParameters.getOrigin().getTitle());
@@ -93,11 +93,11 @@ public class TripPlannerActivity extends GoogleApiActivity implements TransitApi
         setTextViewText(R.id.trip_time_hour_minute, tripParameters.getTime().toFormattedString(null, getTimeSetting()));
         setTextViewText(R.id.trip_time_date, tripParameters.getTime().toDatePickerDateFormat());
 
-        Spinner timeModeView = (Spinner) findViewById(R.id.time_mode_spinner);
+        Spinner timeModeView = findViewById(R.id.time_mode_spinner);
         final Adapter adapter = timeModeView.getAdapter();
 
         for(int i = 0; i < adapter.getCount(); i++) {
-            if(((String)adapter.getItem(i)).equals(tripParameters.getTimeMode().name)) {
+            if(adapter.getItem(i).equals(tripParameters.getTimeMode().name)) {
                 timeModeView.setSelection(i);
             }
         }
