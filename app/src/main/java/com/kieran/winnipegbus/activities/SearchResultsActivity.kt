@@ -1,7 +1,6 @@
-package com.kieran.winnipegbus.Activities
+package com.kieran.winnipegbus.activities
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.location.Location
 import android.os.AsyncTask
@@ -16,9 +15,9 @@ import android.widget.ListView
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationServices
-import com.kieran.winnipegbus.Adapters.StopListAdapter
+import com.kieran.winnipegbus.adapters.StopListAdapter
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbus.Views.StyledSwipeRefresh
+import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.FavouriteStopsList
 import com.kieran.winnipegbusbackend.LoadResult
 import com.kieran.winnipegbusbackend.SearchQuery
@@ -176,7 +175,7 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
         searchQuery = TransitApiManager.generateSearchQuery(location, nearbyStopsDistance)
     }
 
-    override fun OnReceive(result: LoadResult<JSONObject>) {
+    override fun onReceive(result: LoadResult<JSONObject>) {
         if (loading) {
             if (result.result != null) {
                 searchResults.loadStops(result)

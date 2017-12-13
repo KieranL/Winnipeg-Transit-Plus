@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus.Activities
+package com.kieran.winnipegbus.activities
 
 import android.content.Intent
 import android.os.AsyncTask
@@ -10,9 +10,9 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ListView
 
-import com.kieran.winnipegbus.Adapters.ServiceAdvisoriesAdapter
+import com.kieran.winnipegbus.adapters.ServiceAdvisoriesAdapter
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbus.Views.StyledSwipeRefresh
+import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.LoadResult
 import com.kieran.winnipegbusbackend.ServiceAdvisories.ServiceAdvisoriesParser
 import com.kieran.winnipegbusbackend.ServiceAdvisories.ServiceAdvisory
@@ -86,7 +86,7 @@ class ServiceAdvisoriesActivity : BaseActivity(), TransitApiManager.OnJsonLoadRe
         swipeRefreshLayout!!.isRefreshing = loading
     }
 
-    override fun OnReceive(result: LoadResult<JSONObject>) {
+    override fun onReceive(result: LoadResult<JSONObject>) {
         adapter!!.clear()
         val advisories = ServiceAdvisoriesParser.parseAdvisories(result.result!!)
         adapter!!.addAll(advisories)

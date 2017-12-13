@@ -27,6 +27,5 @@ class Times(times: JSONObject) {
         } catch (e: JSONException) {
 
         }
-
     }
 }

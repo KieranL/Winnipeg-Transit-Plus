@@ -2,14 +2,12 @@ package com.kieran.winnipegbusbackend
 
 import android.util.Xml
 
-import com.kieran.winnipegbus.Activities.BaseActivity
+import com.kieran.winnipegbus.activities.BaseActivity
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
 
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
-import org.w3c.dom.NodeList
-import org.xmlpull.v1.XmlSerializer
 
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -17,9 +15,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.ArrayList
 import java.util.Collections
-import java.util.Comparator
 
-import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
 object FavouriteStopsList {

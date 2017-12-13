@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus.Adapters
+package com.kieran.winnipegbus.adapters
 
 import android.app.Activity
 import android.content.Context
@@ -12,11 +12,7 @@ import com.kieran.winnipegbus.R
 import com.kieran.winnipegbusbackend.StopFeature
 
 class StopFeaturesAdapter(context: Context, private val layoutResourceId: Int, private val stopFeatures: List<StopFeature>) : ArrayAdapter<StopFeature>(context, layoutResourceId, stopFeatures) {
-    private val inflater: LayoutInflater
-
-    init {
-        inflater = (context as Activity).layoutInflater
-    }
+    private val inflater: LayoutInflater = (context as Activity).layoutInflater
 
     override fun areAllItemsEnabled(): Boolean {
         return false

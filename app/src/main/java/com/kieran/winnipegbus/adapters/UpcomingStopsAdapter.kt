@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus.Adapters
+package com.kieran.winnipegbus.adapters
 
 import android.app.Activity
 import android.content.Context

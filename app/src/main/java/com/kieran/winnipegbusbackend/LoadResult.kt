@@ -1,3 +1,3 @@
 package com.kieran.winnipegbusbackend
 
-class LoadResult<T>(var result: T?, var exception: Exception?)
+class LoadResult<out T>(val result: T?, val exception: Exception?)

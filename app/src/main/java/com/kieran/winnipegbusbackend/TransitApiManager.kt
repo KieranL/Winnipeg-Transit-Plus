@@ -31,7 +31,7 @@ object TransitApiManager {
     var lastQueryTime: StopTime? = StopTime()
 
     fun getJson(path: String): LoadResult<JSONObject> {
-        try {
+        return try {
             val url = URL(path)
             val s = java.util.Scanner(url.openStream()).useDelimiter("\\A")
             val myString = if (s.hasNext()) s.next() else ""
@@ -39,9 +39,9 @@ object TransitApiManager {
             val obj = JSONObject(myString)
             lastQueryTime = StopTime.convertStringToStopTime(obj.getString(QUERY_TIME))
 
-            return LoadResult(obj, null)
+            LoadResult(obj, null)
         } catch (ex: Exception) {
-            return LoadResult<JSONObject>(null, ex)
+            LoadResult(null, ex)
         }
 
     }
@@ -53,7 +53,7 @@ object TransitApiManager {
             }
 
             override fun onPostExecute(result: LoadResult<JSONObject>) {
-                listener.OnReceive(result)
+                listener.onReceive(result)
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, path)
     }
@@ -85,11 +85,11 @@ object TransitApiManager {
     }
 
     fun generateSearchQuery(search: String): SearchQuery {
-        try {
+        return try {
             val routeNumber = Integer.parseInt(search)
-            return generateSearchQuery(routeNumber)
+            generateSearchQuery(routeNumber)
         } catch (e: Exception) {
-            return SearchQuery(search, createUrl(STOPS_PARAMETER + COLON + createURLFriendlyString(search), null), SearchQueryType.GENERAL)
+            SearchQuery(search, createUrl(STOPS_PARAMETER + COLON + createURLFriendlyString(search), null), SearchQueryType.GENERAL)
         }
 
     }
@@ -144,6 +144,6 @@ object TransitApiManager {
     }
 
     interface OnJsonLoadResultReceiveListener {
-        fun OnReceive(result: LoadResult<JSONObject>)
+        fun onReceive(result: LoadResult<JSONObject>)
     }
 }

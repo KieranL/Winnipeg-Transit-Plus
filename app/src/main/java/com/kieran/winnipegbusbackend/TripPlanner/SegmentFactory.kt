@@ -10,15 +10,15 @@ import org.json.JSONObject
 
 object SegmentFactory {
     fun createSegment(segment: JSONObject): Segment? {
-        try {
+        return try {
             when (segment.getString("type")) {
-                "walk" -> return WalkSegment(segment)
-                "ride" -> return RideSegment(segment)
-                "transfer" -> return TransferSegment(segment)
-                else -> return null
+                "walk" -> WalkSegment(segment)
+                "ride" -> RideSegment(segment)
+                "transfer" -> TransferSegment(segment)
+                else -> null
             }
         } catch (e: JSONException) {
-            return null
+            null
         }
 
     }

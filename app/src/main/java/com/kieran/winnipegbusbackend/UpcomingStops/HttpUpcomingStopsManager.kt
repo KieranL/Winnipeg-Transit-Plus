@@ -15,26 +15,21 @@ class HttpUpcomingStopsManager : UpcomingStopsManager {
     override fun GetUpcomingStopsAsync(key: RouteKey, stopOnRoute: Int, listener: UpcomingStopsManager.OnUpcomingStopsFoundListener) {
         val query = TransitApiManager.generateSearchQuery(key)
         TransitApiManager.getJsonAsync(query.queryUrl, object : TransitApiManager.OnJsonLoadResultReceiveListener {
-            override fun OnReceive(result: LoadResult<JSONObject>) {
-                val loadResult = LoadResult<ArrayList<Int>>(null, null)
-
+            override fun onReceive(result: LoadResult<JSONObject>) {
                 if (result.result != null) {
                     try {
-                        val stops = result.result!!.getJSONArray("stops")
+                        val stops = result.result.getJSONArray("stops")
                         val stopNumbers = ArrayList<Int>()
 
                         for (i in 0 until stops.length()) {
                             stopNumbers.add(stops.getJSONObject(i).getInt("number"))
                         }
 
-                        loadResult.result = stopNumbers
+                        listener.OnUpcomingStopsFound(LoadResult(stopNumbers, null))
                     } catch (ex: JSONException) {
-                        loadResult.exception = ex
+                        listener.OnUpcomingStopsFound(LoadResult<ArrayList<Int>>(null, ex))
                     }
-
                 }
-
-                listener.OnUpcomingStopsFound(loadResult)
             }
         })
     }

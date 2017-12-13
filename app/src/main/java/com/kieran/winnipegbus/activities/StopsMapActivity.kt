@@ -1,17 +1,14 @@
-package com.kieran.winnipegbus.Activities
+package com.kieran.winnipegbus.activities
 
 import android.os.Bundle
 import android.view.Menu
 
 import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.FavouriteStop
 import com.kieran.winnipegbusbackend.Stop
 
 class StopsMapActivity : MapActivity() {

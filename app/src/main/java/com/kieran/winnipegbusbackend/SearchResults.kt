@@ -19,7 +19,7 @@ class SearchResults {
             stops.clear()
 
             try {
-                val stops = result.result!!.getJSONArray(Stop.STOP_TAG)
+                val stops = result.result.getJSONArray(Stop.STOP_TAG)
 
                 if (stops.length() > 0)
                     for (s in 0 until stops.length()) {

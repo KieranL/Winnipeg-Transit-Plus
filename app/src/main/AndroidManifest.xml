@@ -17,7 +17,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".Activities.HomeScreenActivity"
+            android:name=".activities.HomeScreenActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,53 +26,53 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.StopTimesActivity"
+            android:name=".activities.StopTimesActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.kieran.winnipegbus.Activities.HomeScreenActivity" />
+                android:value="com.kieran.winnipegbus.activities.HomeScreenActivity" />
         </activity>
         <activity
-            android:name=".Activities.FavouritesActivity"
+            android:name=".activities.FavouritesActivity"
             android:label="@string/title_activity_favourites"
-            android:parentActivityName=".Activities.HomeScreenActivity">
+            android:parentActivityName=".activities.HomeScreenActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.kieran.winnipegbus.Activities.HomeScreenActivity" />
+                android:value="com.kieran.winnipegbus.activities.HomeScreenActivity" />
         </activity>
         <activity
-            android:name=".Activities.SettingsActivity"
+            android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
         <activity
-            android:name=".Activities.SearchResultsActivity"
+            android:name=".activities.SearchResultsActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_search_results"
-            android:parentActivityName=".Activities.HomeScreenActivity">
+            android:parentActivityName=".activities.HomeScreenActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.kieran.winnipegbus.Activities.HomeScreenActivity" />
+                android:value="com.kieran.winnipegbus.activities.HomeScreenActivity" />
         </activity>
         <activity
-            android:name=".Activities.ScheduledStopInfoActivity"
+            android:name=".activities.ScheduledStopInfoActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_scheduled_stop_info"
-            android:parentActivityName=".Activities.StopTimesActivity">
+            android:parentActivityName=".activities.StopTimesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.kieran.winnipegbus.Activities.StopTimesActivity" />
+                android:value="com.kieran.winnipegbus.activities.StopTimesActivity" />
         </activity>
         <activity
-            android:name=".Activities.StopInfoActivity"
+            android:name=".activities.StopInfoActivity"
             android:label="@string/title_activity_stop_info"
-            android:parentActivityName=".Activities.StopTimesActivity">
+            android:parentActivityName=".activities.StopTimesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.kieran.winnipegbus.Activities.StopTimesActivity" />
+                android:value="com.kieran.winnipegbus.activities.StopTimesActivity" />
         </activity>
 
         <meta-data
@@ -80,24 +80,24 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".Activities.StopsMapActivity"
+            android:name=".activities.StopsMapActivity"
             android:label="@string/title_activity_route_map">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.kieran.winnipegbus.Activities.SearchResultsActivity" />
+                android:value="com.kieran.winnipegbus.activities.SearchResultsActivity" />
         </activity>
         <activity
-            android:name=".Activities.ServiceAdvisoriesActivity"
+            android:name=".activities.ServiceAdvisoriesActivity"
             android:label="@string/title_activity_service_advisories"
-            android:parentActivityName=".Activities.HomeScreenActivity" />
+            android:parentActivityName=".activities.HomeScreenActivity" />
         <activity
-            android:name=".Activities.ServiceAdvisoryActivity"
+            android:name=".activities.ServiceAdvisoryActivity"
             android:label="@string/title_activity_service_advisory"
-            android:parentActivityName=".Activities.ServiceAdvisoriesActivity" />
+            android:parentActivityName=".activities.ServiceAdvisoriesActivity" />
         <activity
-            android:name=".Activities.TripPlannerActivity"
+            android:name=".activities.TripPlannerActivity"
             android:label="@string/title_activity_trip_planner"
-            android:parentActivityName=".Activities.HomeScreenActivity" />
+            android:parentActivityName=".activities.HomeScreenActivity" />
     </application>
 
 </manifest>

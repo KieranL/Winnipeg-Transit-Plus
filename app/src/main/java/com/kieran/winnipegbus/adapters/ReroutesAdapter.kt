@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus.Adapters
+package com.kieran.winnipegbus.adapters
 
 import android.content.Context
 import android.view.View
@@ -53,6 +53,6 @@ class ReroutesAdapter(private val context: Context, private val reroutes: List<R
     }
 
     override fun isChildSelectable(groupPosition: Int, childPosition: Int): Boolean {
-        return (getGroup(groupPosition) as Reroute).instructions.size > 0
+        return (getGroup(groupPosition) as Reroute).instructions.isNotEmpty()
     }
 }

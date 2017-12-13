@@ -16,9 +16,6 @@ open class Route : Comparable<Any>, Serializable {
     lateinit var coverageType: CoverageTypes
         protected set
 
-    val isDownTownSpirit: Boolean
-        get() = isDownTownSpirit(routeNumber)
-
     constructor(route: Route) {
         routeNumber = route.routeNumber
         routeName = route.routeName

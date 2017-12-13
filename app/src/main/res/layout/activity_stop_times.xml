@@ -2,9 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.kieran.winnipegbus.Activities.StopTimesActivity">
+    tools:context="com.kieran.winnipegbus.activities.StopTimesActivity">
 
-    <com.kieran.winnipegbus.Views.StyledSwipeRefresh
+    <com.kieran.winnipegbus.views.StyledSwipeRefresh
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:layout_above="@+id/stopTimesAdView"
@@ -18,7 +18,7 @@
         android:divider="@null"
         android:layout_alignParentTop="true"/>
 
-    </com.kieran.winnipegbus.Views.StyledSwipeRefresh>
+    </com.kieran.winnipegbus.views.StyledSwipeRefresh>
 
     <com.google.android.gms.ads.AdView
         android:paddingTop="2dp"

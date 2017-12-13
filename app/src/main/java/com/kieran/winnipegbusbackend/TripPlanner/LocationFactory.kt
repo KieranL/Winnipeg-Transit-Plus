@@ -17,7 +17,8 @@ object LocationFactory {
     val POINT = "point"
     val STOP = "stop"
 
-    fun createLocation(location: JSONObject): Location? {
+    @Throws(InvalidLocationException::class)
+    fun createLocation(location: JSONObject): Location {
         var location = location
         try {
             if (location.has("origin"))
@@ -27,32 +28,32 @@ object LocationFactory {
 
             if (location.has("type")) {
                 val type = location.getString("type")
-                if (type == STOP)
-                    return Stop(location)
-                else if (type == MONUMENT)
-                    return Monument(location)
-                else if (type == ADDRESS)
-                    return Address(location)
-                else if (type == INTERSECTION)
-                    return Intersection(location)
-                else if (type == POINT)
-                    return Location(location)
+                when (type) {
+                    STOP -> return Stop(location)
+                    MONUMENT -> return Monument(location)
+                    ADDRESS -> return Address(location)
+                    INTERSECTION -> return Intersection(location)
+                    POINT -> return Location(location)
+                    else -> {
+                    }
+                }
             }
 
-            if (location.has(STOP))
-                return Stop(location.getJSONObject(STOP))
-            else if (location.has(MONUMENT))
-                return Monument(location.getJSONObject(MONUMENT))
-            else if (location.has(ADDRESS))
-                return Address(location.getJSONObject(ADDRESS))
-            else if (location.has(INTERSECTION))
-                return Intersection(location.getJSONObject(INTERSECTION))
-            else if (location.has(POINT))
-                return Location(location.getJSONObject(POINT))
+            when {
+                location.has(STOP) -> return Stop(location.getJSONObject(STOP))
+                location.has(MONUMENT) -> return Monument(location.getJSONObject(MONUMENT))
+                location.has(ADDRESS) -> return Address(location.getJSONObject(ADDRESS))
+                location.has(INTERSECTION) -> return Intersection(location.getJSONObject(INTERSECTION))
+                location.has(POINT) -> return Location(location.getJSONObject(POINT))
+                else -> {
+                }
+            }
         } catch (e: JSONException) {
 
         }
 
-        return null
+        throw InvalidLocationException()
     }
 }
+
+class InvalidLocationException : Exception()

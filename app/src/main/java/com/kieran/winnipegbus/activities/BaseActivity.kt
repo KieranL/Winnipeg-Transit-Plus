@@ -1,12 +1,10 @@
-package com.kieran.winnipegbus.Activities
+package com.kieran.winnipegbus.activities
 
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager

@@ -1,18 +1,16 @@
-package com.kieran.winnipegbus.Activities
+package com.kieran.winnipegbus.activities
 
 import android.app.AlertDialog
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemLongClickListener
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
 
-import com.kieran.winnipegbus.Adapters.StopListAdapter
+import com.kieran.winnipegbus.adapters.StopListAdapter
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbusbackend.FavouriteStop
 import com.kieran.winnipegbusbackend.FavouriteStopsList

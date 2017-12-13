@@ -4,9 +4,9 @@
     android:id="@+id/activity_trip_planner"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.kieran.winnipegbus.Activities.TripPlannerActivity">
+    tools:context="com.kieran.winnipegbus.activities.TripPlannerActivity">
 
-    <com.kieran.winnipegbus.Views.StyledSwipeRefresh
+    <com.kieran.winnipegbus.views.StyledSwipeRefresh
         android:id="@+id/trip_planner_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="fill_parent">
@@ -21,5 +21,5 @@
             android:divider="@null"
             android:groupIndicator="@null"
             android:padding="4dp" />
-    </com.kieran.winnipegbus.Views.StyledSwipeRefresh>
+    </com.kieran.winnipegbus.views.StyledSwipeRefresh>
 </RelativeLayout>

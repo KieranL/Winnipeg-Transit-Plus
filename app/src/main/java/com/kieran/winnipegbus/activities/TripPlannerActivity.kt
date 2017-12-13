@@ -1,26 +1,22 @@
-package com.kieran.winnipegbus.Activities
+package com.kieran.winnipegbus.activities
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.view.Menu
 import android.view.View
-import android.widget.Adapter
 import android.widget.AdapterView
 import android.widget.Button
-import android.widget.DatePicker
 import android.widget.ExpandableListView
 import android.widget.Spinner
-import android.widget.TimePicker
 
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationServices
-import com.kieran.winnipegbus.Adapters.TripPlannerAdapter
+import com.kieran.winnipegbus.adapters.TripPlannerAdapter
 import com.kieran.winnipegbus.LocationPickerDialog
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbus.Views.StyledSwipeRefresh
+import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.LoadResult
 import com.kieran.winnipegbusbackend.StopTime
 import com.kieran.winnipegbusbackend.TransitApiManager
@@ -29,7 +25,6 @@ import com.kieran.winnipegbusbackend.TripPlanner.classes.Location
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Trip
 import com.kieran.winnipegbusbackend.TripPlanner.classes.TripParameters
 
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -157,7 +152,7 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
         d.show()
     }
 
-    override fun OnReceive(result: LoadResult<JSONObject>) {
+    override fun onReceive(result: LoadResult<JSONObject>) {
         val jsonObject = result.result
         try {
             val plans = jsonObject!!.getJSONArray("plans")

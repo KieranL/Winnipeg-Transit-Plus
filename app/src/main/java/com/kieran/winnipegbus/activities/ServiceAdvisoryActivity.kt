@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus.Activities
+package com.kieran.winnipegbus.activities
 
 import android.os.Bundle
 import android.view.Menu
@@ -7,7 +7,7 @@ import android.widget.ArrayAdapter
 import android.widget.ExpandableListView
 import android.widget.ListView
 
-import com.kieran.winnipegbus.Adapters.ReroutesAdapter
+import com.kieran.winnipegbus.adapters.ReroutesAdapter
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbusbackend.ServiceAdvisories.AffectedStop
 import com.kieran.winnipegbusbackend.ServiceAdvisories.ServiceAdvisory

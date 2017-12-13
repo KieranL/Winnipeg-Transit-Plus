@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus.Adapters
+package com.kieran.winnipegbus.adapters
 
 import android.app.Activity
 import android.content.Context
@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 
-import com.kieran.winnipegbus.Activities.BaseActivity
+import com.kieran.winnipegbus.activities.BaseActivity
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbusbackend.ServiceAdvisories.ServiceAdvisory
 

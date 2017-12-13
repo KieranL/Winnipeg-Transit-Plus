@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus.Activities
+package com.kieran.winnipegbus.activities
 
 import android.content.res.Configuration
 import android.os.Bundle

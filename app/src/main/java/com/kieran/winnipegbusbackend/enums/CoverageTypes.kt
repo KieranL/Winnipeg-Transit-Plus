@@ -2,7 +2,7 @@ package com.kieran.winnipegbusbackend.enums
 
 import java.io.Serializable
 
-enum class CoverageTypes private constructor(var typeName: String) : Serializable {
+enum class CoverageTypes constructor(var typeName: String) : Serializable {
     REGULAR("regular"),
     EXPRESS("express"),
     SUPER_EXPRESS("super express"),
@@ -13,14 +13,12 @@ enum class CoverageTypes private constructor(var typeName: String) : Serializabl
 
         fun getEnum(coverageType: String?): CoverageTypes {
             return if (coverageType != null) {
-                if (coverageType == CoverageTypes.EXPRESS.typeName)
-                    CoverageTypes.EXPRESS
-                else if (coverageType == CoverageTypes.SUPER_EXPRESS.typeName)
-                    CoverageTypes.SUPER_EXPRESS
-                else if (coverageType == CoverageTypes.RAPID_TRANSIT.typeName)
-                    CoverageTypes.RAPID_TRANSIT
-                else
-                    CoverageTypes.REGULAR
+                when (coverageType) {
+                    CoverageTypes.EXPRESS.typeName -> CoverageTypes.EXPRESS
+                    CoverageTypes.SUPER_EXPRESS.typeName -> CoverageTypes.SUPER_EXPRESS
+                    CoverageTypes.RAPID_TRANSIT.typeName -> CoverageTypes.RAPID_TRANSIT
+                    else -> CoverageTypes.REGULAR
+                }
             } else {
                 CoverageTypes.REGULAR
             }

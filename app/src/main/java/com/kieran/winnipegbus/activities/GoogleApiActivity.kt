@@ -1,8 +1,7 @@
-package com.kieran.winnipegbus.Activities
+package com.kieran.winnipegbus.activities
 
 import android.Manifest
 import android.content.IntentSender
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
 import android.preference.PreferenceManager
@@ -85,20 +84,20 @@ abstract class GoogleApiActivity : BaseActivity(), GoogleApiClient.ConnectionCal
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
-            FINE_LOCATION -> if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            FINE_LOCATION -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 validatedLocationRequest()
         }
     }
 
     private fun validatedLocationRequest(): LocationRequest? {
-        try {
+        return try {
             val locationRequest = LocationRequest.create().setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
             locationRequest.interval = LOCATION_REFRESH_INTERVAL.toLong()
             locationRequest.fastestInterval = LOCATION_REFRESH_INTERVAL.toLong()
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this as LocationListener)
-            return locationRequest
+            locationRequest
         } catch (e: Exception) {
-            return null
+            null
         }
 
     }

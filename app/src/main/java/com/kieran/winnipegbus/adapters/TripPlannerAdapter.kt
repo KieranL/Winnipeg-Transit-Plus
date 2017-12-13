@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus.Adapters
+package com.kieran.winnipegbus.adapters
 
 import android.app.Activity
 import android.content.Context
@@ -9,20 +9,13 @@ import android.widget.BaseExpandableListAdapter
 import android.widget.TextView
 
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.TripPlanner.classes.RideSegment
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Segment
-import com.kieran.winnipegbusbackend.TripPlanner.classes.Times
 import com.kieran.winnipegbusbackend.TripPlanner.classes.TransferSegment
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Trip
-import com.kieran.winnipegbusbackend.TripPlanner.classes.WalkSegment
 
-class TripPlannerAdapter(private val context: Context, private val trips: List<Trip>) : BaseExpandableListAdapter() {
-    private val inflater: LayoutInflater
+class TripPlannerAdapter(context: Context, private val trips: List<Trip>) : BaseExpandableListAdapter() {
+    private val inflater: LayoutInflater = (context as Activity).layoutInflater
     private val use24hrTime: Boolean = false
-
-    init {
-        inflater = (context as Activity).layoutInflater
-    }
 
     override fun getGroupCount(): Int {
         return trips.size

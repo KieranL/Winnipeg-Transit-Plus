@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus.Activities
+package com.kieran.winnipegbus.activities
 
 import android.os.AsyncTask
 import android.os.Bundle
@@ -10,10 +10,10 @@ import android.view.View
 import android.widget.ListView
 import android.widget.TextView
 
-import com.kieran.winnipegbus.Adapters.UpcomingStopsAdapter
+import com.kieran.winnipegbus.adapters.UpcomingStopsAdapter
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbus.Views.RouteNumberTextView
-import com.kieran.winnipegbus.Views.StyledSwipeRefresh
+import com.kieran.winnipegbus.views.RouteNumberTextView
+import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.LoadResult
 import com.kieran.winnipegbusbackend.ScheduledStop
 import com.kieran.winnipegbusbackend.StopSchedule
@@ -153,9 +153,9 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
         refresh()
     }
 
-    override fun OnReceive(result: LoadResult<JSONObject>) {
+    override fun onReceive(result: LoadResult<JSONObject>) {
         if (result.result != null) {
-            val stopSchedule = StopSchedule(result.result!!)
+            val stopSchedule = StopSchedule(result.result)
             val scheduledStop1 = stopSchedule.getScheduledStopByKey(scheduledStop!!.key!!)
 
             if (scheduledStop1 != null) {
@@ -167,7 +167,7 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
                 upcomingStops!!.add(upcomingStop)
             }
         } else if (result.exception != null) {
-            handleException(result.exception!!)
+            handleException(result.exception)
 
             if (result.exception is FileNotFoundException) {
                 for (task in tasks!!)
@@ -196,8 +196,8 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
     override fun OnUpcomingStopsFound(result: LoadResult<ArrayList<Int>>) {
         val instance = this
         if (result.result != null) {
-            if (result.result!!.size > 0) {
-                for (stopNumber in result.result!!) {
+            if (result.result.size > 0) {
+                for (stopNumber in result.result) {
 
                     try {
                         val latest = if (scheduledStop!!.estimatedDepartureTime!!.milliseconds > TransitApiManager.lastQueryTime!!.milliseconds) scheduledStop!!.estimatedDepartureTime else TransitApiManager.lastQueryTime
@@ -213,7 +213,7 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
 
 
         } else if (result.exception != null) {
-            handleException(result.exception!!)
+            handleException(result.exception)
 
             Collections.sort(upcomingStops!!)
             adapter!!.notifyDataSetChanged()

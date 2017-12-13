@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus.Activities
+package com.kieran.winnipegbus.activities
 
 import android.os.AsyncTask
 import android.os.Bundle
@@ -7,10 +7,9 @@ import android.view.View
 import android.widget.ListView
 import android.widget.RelativeLayout
 
-import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.MarkerOptions
-import com.kieran.winnipegbus.Adapters.StopFeaturesAdapter
+import com.kieran.winnipegbus.adapters.StopFeaturesAdapter
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbusbackend.LoadResult
 import com.kieran.winnipegbusbackend.StopFeatures
@@ -76,12 +75,12 @@ class StopInfoActivity : MapActivity(), TransitApiManager.OnJsonLoadResultReceiv
         }
     }
 
-    override fun OnReceive(result: LoadResult<JSONObject>) {
+    override fun onReceive(result: LoadResult<JSONObject>) {
         if (result.result != null) {
-            stopFeatures!!.loadFeatures(result.result!!)
+            stopFeatures!!.loadFeatures(result.result)
             showStopFeatures()
         } else if (result.exception != null) {
-            handleException(result.exception!!)
+            handleException(result.exception)
         }
     }
 

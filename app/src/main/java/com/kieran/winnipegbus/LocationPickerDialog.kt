@@ -2,13 +2,11 @@ package com.kieran.winnipegbus
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import android.widget.SearchView
 
-import com.kieran.winnipegbus.Activities.GoogleApiActivity
-import com.kieran.winnipegbusbackend.FavouriteStop
+import com.kieran.winnipegbus.activities.GoogleApiActivity
 import com.kieran.winnipegbusbackend.FavouriteStopsList
 import com.kieran.winnipegbusbackend.LoadResult
 import com.kieran.winnipegbusbackend.TransitApiManager
@@ -16,7 +14,6 @@ import com.kieran.winnipegbusbackend.TripPlanner.LocationFactory
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Location
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Stop
 
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -37,15 +34,12 @@ class LocationPickerDialog(private val context: GoogleApiActivity, private val l
             override fun onQueryTextSubmit(query: String): Boolean {
                 val url = TransitApiManager.generateLocationQueryUrl(query)
                 TransitApiManager.getJsonAsync(url, object : TransitApiManager.OnJsonLoadResultReceiveListener {
-                    override fun OnReceive(result: LoadResult<JSONObject>) {
+                    override fun onReceive(result: LoadResult<JSONObject>) {
                         val builder = AlertDialog.Builder(context)
 
                         try {
                             val locationNodes = result.result!!.getJSONArray("locations")
-                            val locations = ArrayList<Location>()
-                            for (i in 0 until locationNodes.length()) {
-                                locations.add(LocationFactory.createLocation(locationNodes.getJSONObject(i))!!)
-                            }
+                            val locations = (0 until locationNodes.length()).map { LocationFactory.createLocation(locationNodes.getJSONObject(it))!! }
 
 
                             val charSequence = arrayOfNulls<CharSequence>(locations.size)
@@ -106,7 +100,7 @@ class LocationPickerDialog(private val context: GoogleApiActivity, private val l
                     self.dismiss()
                     dismiss()
                     TransitApiManager.getJsonAsync(TransitApiManager.generateFindStopUrl(favouriteStop.number), object : TransitApiManager.OnJsonLoadResultReceiveListener {
-                        override fun OnReceive(result: LoadResult<JSONObject>) {
+                        override fun onReceive(result: LoadResult<JSONObject>) {
                             try {
                                 val stopNode = result.result!!.getJSONObject("stop")
                                 val stop = Stop(stopNode)

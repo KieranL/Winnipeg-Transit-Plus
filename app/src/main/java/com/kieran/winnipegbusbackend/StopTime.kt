@@ -178,10 +178,10 @@ class StopTime : Comparable<Any>, Serializable {
             @SuppressLint("SimpleDateFormat")
             val dateFormat = SimpleDateFormat(DATE_FORMAT)
 
-            try {
-                return StopTime(dateFormat.parse(s))
+            return try {
+                StopTime(dateFormat.parse(s))
             } catch (e: ParseException) {
-                return null
+                null
             }
 
         }

@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus.Activities
+package com.kieran.winnipegbus.activities
 
 import android.content.Intent
 import android.location.Location
@@ -15,7 +15,6 @@ import android.widget.EditText
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationServices
-import com.kieran.winnipegbus.AppRater
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbusbackend.Stop
 import com.kieran.winnipegbusbackend.TransitApiManager
@@ -38,10 +37,6 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
 
         setContentView(R.layout.activity_home_screen)
         adViewResId = R.id.homeScreenAdView
-
-        val rater = AppRater(this)
-        rater.setPhrases(R.string.rate_title, R.string.rate_explanation, R.string.rate_now_button, R.string.rate_later_button, R.string.rate_never_button)
-        rater.show()
 
         searchButton = findViewById<View>(R.id.search_button) as Button
 

@@ -28,15 +28,15 @@ class RouteSchedule : Route, Serializable {
         try {
             val scheduledStops = jsonObject.getJSONArray(SCHEDULED_STOPS_TAG)
 
-            for (s in 0 until scheduledStops.length()) {
-                val stop = scheduledStops.getJSONObject(s)
-                try {
-                    stops?.add(ScheduledStop(stop, this))
-                } catch (e: Exception) {
-                    //blank
-                }
-
-            }
+            (0 until scheduledStops.length())
+                    .map { scheduledStops.getJSONObject(it) }
+                    .forEach {
+                        try {
+                            stops?.add(ScheduledStop(it, this))
+                        } catch (e: Exception) {
+                            //blank
+                        }
+                    }
 
         } catch (e: JSONException) {
             e.printStackTrace()

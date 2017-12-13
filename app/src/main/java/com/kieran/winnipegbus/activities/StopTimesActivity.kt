@@ -1,10 +1,8 @@
-package com.kieran.winnipegbus.Activities
+package com.kieran.winnipegbus.activities
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.hardware.Sensor
@@ -20,15 +18,14 @@ import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
 
-import com.kieran.winnipegbus.Adapters.StopTimeAdapter
+import com.kieran.winnipegbus.adapters.StopTimeAdapter
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.ShakeDetector
-import com.kieran.winnipegbus.Views.StyledSwipeRefresh
+import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.FavouriteStop
 import com.kieran.winnipegbusbackend.FavouriteStopsList
 import com.kieran.winnipegbusbackend.LoadResult
 import com.kieran.winnipegbusbackend.Route
-import com.kieran.winnipegbusbackend.RouteSchedule
 import com.kieran.winnipegbusbackend.ScheduledStop
 import com.kieran.winnipegbusbackend.Stop
 import com.kieran.winnipegbusbackend.StopSchedule
@@ -272,7 +269,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
             for (i in charSequence.indices)
                 charSequence[i] = routeFilterRoutes[i].toString()
 
-            filterDialog.setMultiChoiceItems(charSequence, selectedRoutes) { dialog, which, isChecked ->
+            filterDialog.setMultiChoiceItems(charSequence, selectedRoutes) { _, which, isChecked ->
                 hasFilterChanged = true
                 val routeNumber = routeFilterRoutes[which].routeNumber
                 selectedRoutes!![which] = isChecked
@@ -282,7 +279,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
                     routeNumberFilter.remove(Integer.valueOf(routeNumber))
             }
 
-            filterDialog.setPositiveButton(FILTER_POSITIVE) { dialog, which ->
+            filterDialog.setPositiveButton(FILTER_POSITIVE) { _, _ ->
                 if (hasFilterChanged) {
                     refresh()
                 }
@@ -319,11 +316,11 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
 
             if (loading && result.result != null) {
                 if (stopSchedule == null) {
-                    stopSchedule = StopSchedule(result.result!!, stopNumber)
+                    stopSchedule = StopSchedule(result.result, stopNumber)
 
                     stopName = stopSchedule!!.name
                 } else {
-                    stopSchedule!!.refresh(result.result!!)
+                    stopSchedule!!.refresh(result.result)
                 }
             }
 
@@ -337,7 +334,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
             }
 
             if (result.exception != null && loading) {
-                handleException(result.exception!!)
+                handleException(result.exception)
                 if (stopSchedule == null && result.exception is IOException)
                     title!!.setText(R.string.network_error)
             } else if (stops.size == 0 && loading) {

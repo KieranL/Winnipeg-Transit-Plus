@@ -1,15 +1,13 @@
-package com.kieran.winnipegbus.Activities
+package com.kieran.winnipegbus.activities
 
 import android.app.Activity
 import android.content.Context
-import android.content.SharedPreferences
 import android.content.res.Resources
 import android.os.Bundle
 import android.preference.ListPreference
 import android.preference.Preference
 import android.preference.PreferenceCategory
 import android.preference.PreferenceManager
-import android.support.v7.app.ActionBar
 
 import com.kieran.winnipegbus.ActivityManager
 import com.kieran.winnipegbus.R

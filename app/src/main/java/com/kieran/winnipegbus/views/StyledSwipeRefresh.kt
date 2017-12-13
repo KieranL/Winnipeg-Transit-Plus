@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus.Views
+package com.kieran.winnipegbus.views
 
 import android.content.Context
 import android.support.v4.widget.SwipeRefreshLayout

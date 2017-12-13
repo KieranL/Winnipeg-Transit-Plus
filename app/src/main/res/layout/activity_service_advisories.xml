@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.kieran.winnipegbus.Activities.ServiceAdvisoriesActivity">
+    tools:context="com.kieran.winnipegbus.activities.ServiceAdvisoriesActivity">
 
-    <com.kieran.winnipegbus.Views.StyledSwipeRefresh
+    <com.kieran.winnipegbus.views.StyledSwipeRefresh
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:id="@+id/service_advisories_swipe_refresh">
@@ -19,6 +19,6 @@
             android:layout_alignParentTop="true"
             xmlns:android="http://schemas.android.com/apk/res/android"/>
 
-    </com.kieran.winnipegbus.Views.StyledSwipeRefresh>
+    </com.kieran.winnipegbus.views.StyledSwipeRefresh>
 
 </RelativeLayout>

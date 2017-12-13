@@ -6,7 +6,7 @@
     android:paddingTop="2dp"
     android:orientation="horizontal">
 
-    <com.kieran.winnipegbus.Views.RouteNumberTextView
+    <com.kieran.winnipegbus.views.RouteNumberTextView
         android:id="@+id/route_number_text"
         android:layout_width="36sp"
         android:layout_height="wrap_content"
