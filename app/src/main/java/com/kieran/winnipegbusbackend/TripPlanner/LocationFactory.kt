@@ -4,7 +4,7 @@ import com.kieran.winnipegbusbackend.TripPlanner.classes.Address
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Intersection
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Location
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Monument
-import com.kieran.winnipegbusbackend.TripPlanner.classes.Stop
+import com.kieran.winnipegbusbackend.TripPlanner.classes.StopLocation
 
 import org.json.JSONException
 import org.json.JSONObject
@@ -29,7 +29,7 @@ object LocationFactory {
             if (location.has("type")) {
                 val type = location.getString("type")
                 when (type) {
-                    STOP -> return Stop(location)
+                    STOP -> return StopLocation(location)
                     MONUMENT -> return Monument(location)
                     ADDRESS -> return Address(location)
                     INTERSECTION -> return Intersection(location)
@@ -40,7 +40,7 @@ object LocationFactory {
             }
 
             when {
-                location.has(STOP) -> return Stop(location.getJSONObject(STOP))
+                location.has(STOP) -> return StopLocation(location.getJSONObject(STOP))
                 location.has(MONUMENT) -> return Monument(location.getJSONObject(MONUMENT))
                 location.has(ADDRESS) -> return Address(location.getJSONObject(ADDRESS))
                 location.has(INTERSECTION) -> return Intersection(location.getJSONObject(INTERSECTION))

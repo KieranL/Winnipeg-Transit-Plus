@@ -32,7 +32,7 @@ abstract class GoogleApiActivity : BaseActivity(), GoogleApiClient.ConnectionCal
             return Integer.parseInt(prefs.getString(getString(R.string.pref_key_nearby_distance), "200"))
         }
 
-    val latestLocation: Location
+    val latestLocation: Location?
         get() = LocationServices.FusedLocationApi.getLastLocation(googleApiClient)
 
     protected fun connectClient() {

@@ -35,7 +35,6 @@ class UpcomingStopsAdapter(internal var context: Context, internal var layoutRes
         }
 
         val upcomingStop = upComingStops[position]
-        holder.upcomingStop = upcomingStop
         holder.stopNumber!!.text = Integer.toString(upcomingStop.number)
         holder.stopName!!.text = upcomingStop.name
         holder.time!!.text = upcomingStop.time!!.toFormattedString(null, use24hrTime)
@@ -46,7 +45,5 @@ class UpcomingStopsAdapter(internal var context: Context, internal var layoutRes
         internal var time: TextView? = null
         internal var stopName: TextView? = null
         internal var stopNumber: TextView? = null
-        var upcomingStop: UpcomingStop? = null
-            internal set
     }
 }

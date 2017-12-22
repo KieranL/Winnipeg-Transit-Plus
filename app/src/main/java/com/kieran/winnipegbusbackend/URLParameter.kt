@@ -11,13 +11,7 @@ class URLParameter {
 
     constructor(key: String, numbers: List<Int>) {
         this.key = key
-        value = ""
-
-        for (i in numbers.indices) {
-            value += Integer.toString(numbers[i])
-            if (i < numbers.size - 1)
-                value += ","
-        }
+        value = numbers.joinToString(",")
     }
 
     override fun toString(): String {

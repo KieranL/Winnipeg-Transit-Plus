@@ -13,4 +13,5 @@
     <attr name="clockIcon" format="reference"/>
     <attr name="swapIcon" format="reference"/>
     <attr name="tripPlannerIcon" format="reference"/>
+    <attr name="getDirectionsIcon" format="reference"/>
 </resources>

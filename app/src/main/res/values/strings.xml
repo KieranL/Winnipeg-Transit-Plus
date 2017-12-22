@@ -46,5 +46,7 @@
     <string name="too_many_queries_error">Winnipeg Transit\'s maximum query limit has been reached. Please wait a few seconds and try again</string>
     <string name="title_activity_trip_planner">Trip Planner</string>
     <string name="current_location">Current Location</string>
+    <string name="no_location_found">No location found</string>
+    <string name="get_directions">Get Directions</string>
 
 </resources>

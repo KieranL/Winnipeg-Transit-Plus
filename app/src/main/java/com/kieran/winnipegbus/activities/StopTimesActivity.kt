@@ -31,6 +31,9 @@ import com.kieran.winnipegbusbackend.Stop
 import com.kieran.winnipegbusbackend.StopSchedule
 import com.kieran.winnipegbusbackend.StopTime
 import com.kieran.winnipegbusbackend.TransitApiManager
+import com.kieran.winnipegbusbackend.TripPlanner.classes.StopLocation
+import com.kieran.winnipegbusbackend.TripPlanner.classes.TripParameters
+import org.json.JSONException
 
 import org.json.JSONObject
 
@@ -218,6 +221,14 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
                 else
                     showLongToaster(R.string.wait_for_load)
                 return true
+            }
+            R.id.get_directions_button -> {
+                val intent = Intent(this, TripPlannerActivity::class.java)
+                val parameters = TripParameters()
+
+                parameters.origin = StopLocation(stopSchedule)
+                intent.putExtra(TripPlannerActivity.PARAMETERS, parameters)
+                startActivity(intent)
             }
         }
         return super.onOptionsItemSelected(item)

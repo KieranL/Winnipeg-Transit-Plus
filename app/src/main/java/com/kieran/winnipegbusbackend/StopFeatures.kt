@@ -17,8 +17,7 @@ class StopFeatures(stopNumber: Int, stopName: String, latLng: LatLng) : Stop(sto
             val features = document.getJSONArray(STOP_FEATURE_TAG)
             stopFeatures.clear()
 
-            for (f in 0 until features.length())
-                stopFeatures.add(StopFeature(features.getJSONObject(f)))
+            (0 until features.length()).mapTo(stopFeatures) { StopFeature(features.getJSONObject(it)) }
         } catch (e: JSONException) {
             //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
         }

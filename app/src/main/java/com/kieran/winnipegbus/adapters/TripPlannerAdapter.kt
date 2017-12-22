@@ -63,8 +63,8 @@ class TripPlannerAdapter(context: Context, private val trips: List<Trip>) : Base
 
         val trip = trips[groupPosition]
         val times = trip.times
-        holder.timeRange!!.text = times!!.startTime!!.toFormattedString(null, use24hrTime) + " - " + times.endTime!!.toFormattedString(null, use24hrTime)
-        holder.totalTime!!.text = Integer.toString(trip.times!!.totalTime)
+        holder.timeRange!!.text = "%s - %s".format(times!!.startTime!!.toFormattedString(null, use24hrTime), times.endTime!!.toFormattedString(null, use24hrTime))
+        holder.totalTime!!.text = "%d".format(trip.times!!.totalTime)
 
         return row
     }
@@ -90,8 +90,8 @@ class TripPlannerAdapter(context: Context, private val trips: List<Trip>) : Base
             val segment = trip.segments[childPosition]
             if (segment != null) {
                 holder.string!!.text = trips[groupPosition].segments[childPosition].toString()
-                holder.time!!.text = Integer.toString(segment.times.totalTime)
-                holder.time!!.setCompoundDrawablesWithIntrinsicBounds(getDrawableIconResId(segment), 0, 0, 0)
+                holder.time!!.text = "%d".format(segment.times.totalTime)
+                holder.time!!.setCompoundDrawablesWithIntrinsicBounds(0, 0, getDrawableIconResId(segment), 0)
             }
         }
 

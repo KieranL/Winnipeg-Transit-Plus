@@ -154,7 +154,7 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
         alertDialog.setMessage("Add to Favourites?")
         alertDialog.setPositiveButton("Yes") { dialogInterface, which ->
             FavouriteStopsList.loadFavourites()
-            FavouriteStopsList.addToFavourites(searchResults.get(position))
+            FavouriteStopsList.addToFavourites(searchResults[position])
         }
 
         alertDialog.setNegativeButton("No", null)

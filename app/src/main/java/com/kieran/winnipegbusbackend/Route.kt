@@ -39,8 +39,8 @@ open class Route : Comparable<Any>, Serializable {
         return routeNumber.toString() + " " + if (routeName != null) routeName else ""
     }
 
-    override operator fun compareTo(another: Any): Int {
-        return routeNumber - (another as Route).routeNumber
+    override operator fun compareTo(other: Any): Int {
+        return routeNumber - (other as Route).routeNumber
     }
 
     companion object {

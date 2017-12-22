@@ -15,7 +15,6 @@ class StopTime : Comparable<Any>, Serializable {
 
     val minutesString: String
         get() {
-            val minutes = minutes
             return if (minutes >= 10) minutes.toString() else "0" + minutes.toString()
         }
 

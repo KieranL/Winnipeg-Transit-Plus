@@ -131,6 +131,10 @@ class StopSchedule : Stop {
 
     }
 
+    fun getLatLng(): LatLng? {
+        return latLng
+    }
+
     companion object {
         private val STOP_TAG = "stop"
         private val STOP_SCHEDULE_TAG = "stop-schedule"

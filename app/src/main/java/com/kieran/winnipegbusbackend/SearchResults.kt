@@ -43,11 +43,11 @@ class SearchResults {
     }
 
     private fun getLatLng(stop: JSONObject): LatLng? {
-        try {
+        return try {
             val geographic = stop.getJSONObject(Stop.STOP_CENTRE_TAG).getJSONObject(Stop.GEOGRAPHIC_TAG)
-            return LatLng(geographic.getDouble(StopSchedule.LATITUDE_TAG), geographic.getDouble(StopSchedule.LONGITUDE_TAG))
+            LatLng(geographic.getDouble(StopSchedule.LATITUDE_TAG), geographic.getDouble(StopSchedule.LONGITUDE_TAG))
         } catch (e: JSONException) {
-            return null
+            null
         }
 
     }

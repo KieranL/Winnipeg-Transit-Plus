@@ -42,6 +42,13 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trip_planner)
+
+
+        googleApiClient = GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this).build()
+        connectClient()
         val intent = intent
 
         tripParameters = intent.getSerializableExtra(PARAMETERS) as TripParameters?
@@ -59,12 +66,6 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
         swipeRefresh = findViewById<View>(R.id.trip_planner_swipe_refresh) as StyledSwipeRefresh
         swipeRefresh!!.setOnRefreshListener(this)
         initializeFields()
-
-        googleApiClient = GoogleApiClient.Builder(this)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this).build()
-        connectClient()
     }
 
     private fun initializeFields() {
@@ -87,11 +88,9 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
         val timeModeView = findViewById<View>(R.id.time_mode_spinner) as Spinner
         val adapter = timeModeView.adapter
 
-        for (i in 0 until adapter.count) {
-            if (adapter.getItem(i) as String == tripParameters!!.timeMode!!.name) {
-                timeModeView.setSelection(i)
-            }
-        }
+        (0 until adapter.count)
+                .filter { adapter.getItem(it) as String == tripParameters!!.timeMode!!.name }
+                .forEach { timeModeView.setSelection(it) }
 
         timeModeView.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
@@ -171,6 +170,12 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
 
     override fun onConnected(bundle: Bundle?) {
         requestLocation()
+        val deviceLocation = latestLocation
+
+        if (deviceLocation != null && tripParameters?.origin == null) {
+            tripParameters!!.origin = Location(deviceLocation, context.getString(R.string.current_location))
+            initializeFields()
+        }
     }
 
 
@@ -202,7 +207,7 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
     }
 
     companion object {
-        private val PARAMETERS = "parameters"
+        public val PARAMETERS = "parameters"
     }
 }
 

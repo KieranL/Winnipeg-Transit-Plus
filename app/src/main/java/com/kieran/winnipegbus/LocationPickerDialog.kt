@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.View
 import android.widget.SearchView
+import android.widget.Toast
 
 import com.kieran.winnipegbus.activities.GoogleApiActivity
 import com.kieran.winnipegbusbackend.FavouriteStopsList
@@ -12,12 +13,10 @@ import com.kieran.winnipegbusbackend.LoadResult
 import com.kieran.winnipegbusbackend.TransitApiManager
 import com.kieran.winnipegbusbackend.TripPlanner.LocationFactory
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Location
-import com.kieran.winnipegbusbackend.TripPlanner.classes.Stop
+import com.kieran.winnipegbusbackend.TripPlanner.classes.StopLocation
 
 import org.json.JSONException
 import org.json.JSONObject
-
-import java.util.ArrayList
 
 class LocationPickerDialog(private val context: GoogleApiActivity, private val listener: OnLocationPickedListener) : Dialog(context), View.OnClickListener {
 
@@ -32,39 +31,47 @@ class LocationPickerDialog(private val context: GoogleApiActivity, private val l
         val originSearchView = findViewById<View>(R.id.location_searchView) as SearchView
         originSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                val url = TransitApiManager.generateLocationQueryUrl(query)
-                TransitApiManager.getJsonAsync(url, object : TransitApiManager.OnJsonLoadResultReceiveListener {
-                    override fun onReceive(result: LoadResult<JSONObject>) {
-                        val builder = AlertDialog.Builder(context)
-
-                        try {
-                            val locationNodes = result.result!!.getJSONArray("locations")
-                            val locations = (0 until locationNodes.length()).map { LocationFactory.createLocation(locationNodes.getJSONObject(it))!! }
-
-
-                            val charSequence = arrayOfNulls<CharSequence>(locations.size)
-
-                            for (i in charSequence.indices)
-                                charSequence[i] = locations[i].title
-
-                            builder.setItems(charSequence) { dialog, which ->
-                                listener.OnLocationPicked(locations[which])
-                                self.dismiss()
-                                dismiss()
-                            }
-                        } catch (e: JSONException) {
-                            e.printStackTrace()
-                        }
-
-                        builder.create().show()
-                    }
-                })
+                submitQuery(query, self)
 
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
                 return false
+            }
+        })
+    }
+
+    private fun submitQuery(query: String, self: LocationPickerDialog) {
+        val url = TransitApiManager.generateLocationQueryUrl(query)
+        TransitApiManager.getJsonAsync(url, object : TransitApiManager.OnJsonLoadResultReceiveListener {
+            override fun onReceive(result: LoadResult<JSONObject>) {
+                val builder = AlertDialog.Builder(context)
+
+                try {
+                    val locationNodes = result.result!!.getJSONArray("locations")
+                    val locations = (0 until locationNodes.length()).map { LocationFactory.createLocation(locationNodes.getJSONObject(it)) }
+
+
+                    if (locations.any()) {
+                        val charSequence = arrayOfNulls<CharSequence>(locations.size)
+
+                        for (i in charSequence.indices)
+                            charSequence[i] = locations[i].title
+
+                        builder.setItems(charSequence) { dialog, which ->
+                            listener.OnLocationPicked(locations[which])
+                            self.dismiss()
+                            dismiss()
+                        }
+
+                        builder.create().show()
+                    } else {
+                        Toast.makeText(context, R.string.no_location_found, Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
             }
         })
     }
@@ -103,7 +110,7 @@ class LocationPickerDialog(private val context: GoogleApiActivity, private val l
                         override fun onReceive(result: LoadResult<JSONObject>) {
                             try {
                                 val stopNode = result.result!!.getJSONObject("stop")
-                                val stop = Stop(stopNode)
+                                val stop = StopLocation(stopNode)
                                 listener.OnLocationPicked(stop)
                             } catch (e: JSONException) {
                                 e.printStackTrace()

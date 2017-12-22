@@ -44,11 +44,7 @@ object FavouriteStopsList {
     }
 
     operator fun contains(stopNumber: Int): Boolean {
-        for (fs in favouritesList)
-            if (fs.number == stopNumber)
-                return true
-
-        return false
+        return favouritesList.any { it.number == stopNumber }
     }
 
     fun remove(stopNumber: Int) {
@@ -57,10 +53,7 @@ object FavouriteStopsList {
     }
 
     fun getFavouriteStopByStopNumber(stopNumber: Int): FavouriteStop? {
-        for (fs in favouritesList)
-            if (fs.number == stopNumber)
-                return fs
-        return null
+        return favouritesList.firstOrNull { it.number == stopNumber }
     }
 
     fun loadFavourites(): Boolean {
@@ -97,8 +90,7 @@ object FavouriteStopsList {
     fun saveFavouriteStops(): Boolean {
         isLoadNeeded = true
         try {
-            val fos: FileOutputStream
-            fos = FileOutputStream(FILES_DIR)
+            val fos = FileOutputStream(FILES_DIR)
             val serializer = Xml.newSerializer()
             serializer.setOutput(fos, "UTF-8")
             serializer.startTag("", FAVOURITE_STOPS_TAG)
@@ -150,7 +142,6 @@ object FavouriteStopsList {
                 FavouritesListSortType.STOP_NUMBER_DESC -> -(stop1.number - stop2.number)
                 FavouritesListSortType.FREQUENCY_ASC -> stop1.timesUsed - stop2.timesUsed
                 FavouritesListSortType.FREQUENCY_DESC -> -(stop1.timesUsed - stop2.timesUsed)
-                else -> stop1.number - stop2.number
             }
         }
     }
@@ -167,24 +158,24 @@ object FavouriteStopsList {
     }
 
     private fun getValue(tag: String, originalNode: Node): String? {
-        try {
+        return try {
             val node = (originalNode as Element).getElementsByTagName(tag).item(0).firstChild
-            return node.nodeValue
+            node.nodeValue
         } catch (e: Exception) {
-            return null
+            null
         }
 
     }
 
     private fun getXML(inputStream: InputStream): LoadResult<Document> {
-        try {
+        return try {
             val dbf = DocumentBuilderFactory.newInstance()
             val db = dbf.newDocumentBuilder()
             val XMLDocument = db.parse(inputStream)
 
-            return LoadResult(XMLDocument, null)
+            LoadResult(XMLDocument, null)
         } catch (e: Exception) {
-            return LoadResult<Document>(null, e)
+            LoadResult<Document>(null, e)
         }
 
     }

@@ -25,7 +25,7 @@ class StopsMapActivity : MapActivity() {
         return true
     }
 
-    override fun onConnected(dataBundle: Bundle) {
+    override fun onConnected(dataBundle: Bundle?) {
         if (SearchResultsActivity.searchResults != null) {
             for (favouriteStop in SearchResultsActivity.searchResults.getStops()) {
                 val markerOptions = MarkerOptions()
