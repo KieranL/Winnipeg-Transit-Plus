@@ -8,7 +8,7 @@ import com.kieran.winnipegbusbackend.enums.SearchQueryType
 import org.json.JSONObject
 
 import java.net.URL
-import java.util.ArrayList
+import java.util.*
 
 object TransitApiManager {
     private val START_TIME_DECREASE = 10000
@@ -27,14 +27,16 @@ object TransitApiManager {
     private val LONGITUDE_PARAMETER = "lon"
     private val SERVICE_ADVISORIES_PARAMETER = "service-advisories"
     private val LOCATIONS_PARAMETER = "locations"
-    private val URL_FORMAT = "http://api.winnipegtransit.com/v2/%s.json?usage=short&api-key=FTy2QN8ts293ZlhYP1t%s"
+    private val URL_FORMAT = "http://api.winnipegtransit.com/v3/%s.json?usage=short&api-key=FTy2QN8ts293ZlhYP1t%s"
     var lastQueryTime: StopTime? = StopTime()
 
     fun getJson(path: String): LoadResult<JSONObject> {
         return try {
             val url = URL(path)
-            val s = java.util.Scanner(url.openStream()).useDelimiter("\\A")
+            val stream = url.openStream()
+            val s = Scanner(stream).useDelimiter("\\A")
             val myString = if (s.hasNext()) s.next() else ""
+            stream.close()
 
             val obj = JSONObject(myString)
             lastQueryTime = StopTime.convertStringToStopTime(obj.getString(QUERY_TIME))

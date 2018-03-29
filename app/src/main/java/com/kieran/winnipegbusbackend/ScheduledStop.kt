@@ -7,8 +7,7 @@ import org.json.JSONObject
 
 import java.io.Serializable
 
-class ScheduledStop(stop: JSONObject, private val parentRoute: RouteSchedule) : Serializable {
-
+class ScheduledStop(stop: JSONObject, private val parentRoute: RouteSchedule) : Serializable, Comparable<ScheduledStop> {
     var routeVariantName: String? = null
         private set
     var estimatedArrivalTime: StopTime? = null
@@ -19,15 +18,21 @@ class ScheduledStop(stop: JSONObject, private val parentRoute: RouteSchedule) : 
         private set
     var scheduledDepartureTime: StopTime? = null
         private set
-    private var hasBikeRack: Boolean = false
-    private var hasEasyAccess: Boolean = false
+    var isCancelled: Boolean = false
+        private set
+    var hasBikeRack: Boolean = false
+        private set
+    var hasWifi: Boolean = false
+        private set
+    var busNumber: Int = 0
+        private set
     var key: ScheduledStopKey? = null
         private set
     var routeKey: RouteKey? = null
         private set
 
     val timeStatus: String
-        get() = StopTime.getTimeStatus(estimatedDepartureTime!!, scheduledDepartureTime!!)
+        get() = if (isCancelled) "Cancelled" else StopTime.getTimeStatus(estimatedDepartureTime!!, scheduledDepartureTime!!)
 
     val routeNumber: Int
         get() = parentRoute.routeNumber
@@ -42,6 +47,7 @@ class ScheduledStop(stop: JSONObject, private val parentRoute: RouteSchedule) : 
         loadVariantInfo(stop)
         loadBusInfo(stop)
         loadKey(stop)
+        loadCancelledStatus(stop)
     }
 
     private fun loadKey(stop: JSONObject) {
@@ -53,12 +59,21 @@ class ScheduledStop(stop: JSONObject, private val parentRoute: RouteSchedule) : 
 
     }
 
+    private fun loadCancelledStatus(stop: JSONObject) {
+        try {
+            isCancelled = stop.getBoolean(CANCELLED_STATUS_TAG)
+        } catch (ex: JSONException) {
+            //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
+        }
+    }
+
     private fun loadBusInfo(stop: JSONObject) {
         try {
             val bus = stop.getJSONObject(BUS_INFO_TAG)
 
-            hasEasyAccess = bus.getBoolean(EASY_ACCESS_TAG)
             hasBikeRack = bus.getBoolean(BIKE_RACK_TAG)
+            hasWifi = bus.getBoolean(WIFI_TAG)
+            busNumber = bus.getInt(BUS_NUMBER_TAG)
         } catch (ex: JSONException) {
             //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
         }
@@ -97,16 +112,14 @@ class ScheduledStop(stop: JSONObject, private val parentRoute: RouteSchedule) : 
 
     }
 
-    fun hasBikeRack(): Boolean {
-        return hasBikeRack
-    }
-
-    fun hasEasyAccess(): Boolean {
-        return hasEasyAccess
-    }
-
     fun hasArrivalTime(): Boolean {
         return estimatedArrivalTime != null && scheduledArrivalTime != null
+    }
+
+    override fun compareTo(other: ScheduledStop): Int {
+        val time = if(isCancelled) scheduledDepartureTime else estimatedDepartureTime
+
+        return time!!.compareTo(other.estimatedDepartureTime!!)
     }
 
     companion object {
@@ -117,10 +130,12 @@ class ScheduledStop(stop: JSONObject, private val parentRoute: RouteSchedule) : 
         private val SCHEDULED_TAG = "scheduled"
         private val BUS_INFO_TAG = "bus"
         private val BIKE_RACK_TAG = "bike-rack"
-        private val EASY_ACCESS_TAG = "easy-access"
         private val STOP_KEY_TAG = "key"
         private val VARIANT_NAME_TAG = "name"
         private val VARIANT_TAG = "variant"
         private val VARIANT_KEY_TAG = "key"
+        private val WIFI_TAG = "wifi"
+        private val BUS_NUMBER_TAG = "key"
+        private val CANCELLED_STATUS_TAG = "cancelled"
     }
 }

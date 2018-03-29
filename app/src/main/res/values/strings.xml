@@ -25,8 +25,8 @@
     <string name="title_activity_scheduled_stop_info">"Bus Info"</string>
     <string name="bus_info_arrival">Arrival</string>
     <string name="bus_info_departure">Departure</string>
-    <string name="scheduled">Sched.</string>
-    <string name="estimated">Est.</string>
+    <string name="scheduled">Scheduled Departure</string>
+    <string name="estimated">Estimated Departure</string>
     <string name="title_activity_stop_info">StopInfoActivity</string>
     <string name="features_feature">Feature</string>
     <string name="features_count">Count</string>
