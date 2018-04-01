@@ -24,7 +24,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
     private var searchField: EditText? = null
 
     private val isSearchEnabled: Boolean
-        get() = searchField!!.text.length > 0
+        get() = searchField!!.text.isNotEmpty()
 
     override fun onRestart() {
         super.onRestart()

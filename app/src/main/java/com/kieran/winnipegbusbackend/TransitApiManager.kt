@@ -29,6 +29,7 @@ object TransitApiManager {
     private val LOCATIONS_PARAMETER = "locations"
     private val URL_FORMAT = "http://api.winnipegtransit.com/v3/%s.json?usage=short&api-key=FTy2QN8ts293ZlhYP1t%s"
     var lastQueryTime: StopTime? = StopTime()
+        private set
 
     fun getJson(path: String): LoadResult<JSONObject> {
         return try {

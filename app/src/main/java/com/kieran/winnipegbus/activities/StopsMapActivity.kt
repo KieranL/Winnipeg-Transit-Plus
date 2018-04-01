@@ -61,11 +61,11 @@ class StopsMapActivity : MapActivity() {
                     minLng = favouriteStop.latLng!!.longitude
             }
 
-            if (maxLat != 0.0 && minLat != 0.0 && maxLng != 0.0 && minLng != 0.0) {
+            cameraUpdate = if (maxLat != 0.0 && minLat != 0.0 && maxLng != 0.0 && minLng != 0.0) {
                 val bounds = LatLngBounds(LatLng(minLat, minLng), LatLng(maxLat, maxLng))
-                cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, MAP_PADDING)
+                CameraUpdateFactory.newLatLngBounds(bounds, MAP_PADDING)
             } else {
-                cameraUpdate = CameraUpdateFactory.newLatLngZoom(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), DEFAULT_ZOOM)
+                CameraUpdateFactory.newLatLngZoom(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE), DEFAULT_ZOOM)
             }
             map!!.moveCamera(cameraUpdate!!)
         }

@@ -69,7 +69,7 @@ class AppTests {
 
         val stopSchedule = StopSchedule(dom!!)
 
-        Assert.assertTrue(stopSchedule.scheduledStopsSorted.size > 0)
+        Assert.assertTrue(stopSchedule.scheduledStopsSorted.isNotEmpty())
     }
 
     @Test

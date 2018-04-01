@@ -18,11 +18,11 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         get() {
             val prefs = PreferenceManager.getDefaultSharedPreferences(this)
             val themeId = Integer.parseInt(prefs.getString(getString(R.string.pref_key_theme), "0"))
-            when (themeId) {
-                0 -> return R.style.Dark
-                1 -> return R.style.Light
-                2 -> return R.style.Rt
-                else -> return R.style.Dark
+            return when (themeId) {
+                0 -> R.style.Dark
+                1 -> R.style.Light
+                2 -> R.style.Rt
+                else -> R.style.Dark
             }
         }
 

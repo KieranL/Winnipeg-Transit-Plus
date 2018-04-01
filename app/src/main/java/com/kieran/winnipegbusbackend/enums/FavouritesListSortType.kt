@@ -10,11 +10,11 @@ enum class FavouritesListSortType {
     companion object {
 
         fun getEnum(value: String): FavouritesListSortType {
-            when (Integer.parseInt(value)) {
-                1 -> return STOP_NUMBER_DESC
-                2 -> return FREQUENCY_ASC
-                3 -> return FREQUENCY_DESC
-                else -> return STOP_NUMBER_ASC
+            return when (Integer.parseInt(value)) {
+                1 -> STOP_NUMBER_DESC
+                2 -> FREQUENCY_ASC
+                3 -> FREQUENCY_DESC
+                else -> STOP_NUMBER_ASC
             }
         }
     }
