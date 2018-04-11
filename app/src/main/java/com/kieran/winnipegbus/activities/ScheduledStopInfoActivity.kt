@@ -1,5 +1,6 @@
 package com.kieran.winnipegbus.activities
 
+import android.annotation.SuppressLint
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
@@ -81,31 +82,29 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
                 task.cancel(true)
     }
 
+    @SuppressLint("SetTextI18n")
     private fun fillTextViews() {
+        val scheduledStop = this.scheduledStop
         if (scheduledStop != null) {
             val routeNumber = getTextView(R.id.bus_number) as RouteNumberTextView
-            routeNumber.text = Integer.toString(scheduledStop!!.routeNumber)
-            routeNumber.setColour(scheduledStop!!)
+            routeNumber.text = Integer.toString(scheduledStop.routeNumber)
+            routeNumber.setColour(scheduledStop)
 
-            setTextViewText(R.id.bus_name, scheduledStop!!.routeVariantName!!)
+            setTextViewText(R.id.bus_name, scheduledStop.routeVariantName!!)
 
-            if (scheduledStop!!.hasArrivalTime()) {
-                findViewById<View>(R.id.arrival_times_header).visibility = View.VISIBLE
+            setTextViewText(R.id.scheduled_departure, scheduledStop.scheduledDepartureTime!!.toFormattedString(null, use24hrTime))
+            setTextViewText(R.id.estimated_departure, scheduledStop.estimatedDepartureTime!!.toFormattedString(null, use24hrTime))
 
-                val arrival = getTextView(R.id.scheduled_arrival)
-                arrival.text = scheduledStop!!.scheduledArrivalTime!!.toFormattedString(null, use24hrTime)
-                arrival.visibility = View.VISIBLE
+            setTextViewText(R.id.has_bike_rack, String.format(BIKE_RACK, booleanStringValue(scheduledStop.hasBikeRack)))
+            setTextViewText(R.id.has_wifi, String.format(WIFI, booleanStringValue(scheduledStop.hasWifi)))
 
-                val departure = getTextView(R.id.estimated_arrival)
-                departure.text = scheduledStop!!.estimatedArrivalTime!!.toFormattedString(null, use24hrTime)
-                departure.visibility = View.VISIBLE
+            var busNumberText = String.format(BUS_NUMBER, "Unknown")
+
+            if(scheduledStop.busNumber != 0) {
+                busNumberText = String.format(BUS_NUMBER, scheduledStop.busNumber.toString())
             }
 
-            setTextViewText(R.id.scheduled_departure, scheduledStop!!.scheduledDepartureTime!!.toFormattedString(null, use24hrTime))
-            setTextViewText(R.id.estimated_departure, scheduledStop!!.estimatedDepartureTime!!.toFormattedString(null, use24hrTime))
-
-            setTextViewText(R.id.has_bike_rack, String.format(BIKE_RACK, booleanStringValue(scheduledStop!!.hasBikeRack())))
-            setTextViewText(R.id.has_easy_access, String.format(EASY_ACCESS, booleanStringValue(scheduledStop!!.hasEasyAccess())))
+            setTextViewText(R.id.details_bus_number, busNumberText)
         }
     }
 
@@ -224,8 +223,9 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
     }
 
     companion object {
-        val EASY_ACCESS = "Easy access: %s"
         val BIKE_RACK = "Bike rack: %s"
+        val WIFI = "Wi-Fi: %s"
+        val BUS_NUMBER = "Bus Number: %s"
         val STOP_EXTRA = "stop"
     }
 }

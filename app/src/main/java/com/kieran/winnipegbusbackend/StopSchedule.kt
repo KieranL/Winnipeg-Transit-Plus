@@ -28,7 +28,7 @@ class StopSchedule : Stop {
         get() {
             val scheduledStops = scheduledStops
 
-            Collections.sort(scheduledStops) { stop1, stop2 -> stop1.estimatedDepartureTime!!.compareTo(stop2.estimatedDepartureTime!!) }
+            Collections.sort(scheduledStops)
 
             return scheduledStops
         }

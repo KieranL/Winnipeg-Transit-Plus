@@ -26,7 +26,7 @@ class TripPlannerTest {
             trips[i] = Trip(plans.getJSONObject(i))
         }
 
-        Assert.assertTrue(trips.size > 0)
+        Assert.assertTrue(trips.isNotEmpty())
     }
 
     @Test
@@ -38,7 +38,7 @@ class TripPlannerTest {
         val location = LocationFactory.createLocation(locations.getJSONObject(0))
 
         Assert.assertNotNull(location)
-        Assert.assertTrue(location!!.title == "1099 GrantAve")
+        Assert.assertTrue(location.title == "1099 GrantAve")
     }
 
     @Test
@@ -50,7 +50,7 @@ class TripPlannerTest {
         val location = LocationFactory.createLocation(locations.getJSONObject(0))
 
         Assert.assertNotNull(location)
-        Assert.assertTrue(location!!.title == "GrantAve at StaffordSt")
+        Assert.assertTrue(location.title == "GrantAve at StaffordSt")
     }
 
     @Test
@@ -62,6 +62,6 @@ class TripPlannerTest {
         val location = LocationFactory.createLocation(locations.getJSONObject(0))
 
         Assert.assertNotNull(location)
-        Assert.assertTrue(location!!.title == "Bell MTS Place")
+        Assert.assertTrue(location.title == "Bell MTS Place")
     }
 }

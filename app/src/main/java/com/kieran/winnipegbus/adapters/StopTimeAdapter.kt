@@ -13,6 +13,9 @@ import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.views.RouteNumberTextView
 import com.kieran.winnipegbusbackend.ScheduledStop
 import com.kieran.winnipegbusbackend.TransitApiManager
+import android.util.TypedValue
+
+
 
 class StopTimeAdapter(context: Context, private val layoutResourceId: Int, private val scheduledStops: List<ScheduledStop>) : ArrayAdapter<ScheduledStop>(context, layoutResourceId, scheduledStops) {
     private var use24hrTime: Boolean = false
@@ -47,13 +50,28 @@ class StopTimeAdapter(context: Context, private val layoutResourceId: Int, priva
         holder.routeNumber!!.setColour(scheduledStop)
         holder.routeVariantName!!.text = scheduledStop.routeVariantName
         holder.timeStatus!!.text = scheduledStop.timeStatus
-        holder.departureTime!!.text = scheduledStop.estimatedDepartureTime!!.toFormattedString(TransitApiManager.lastQueryTime, use24hrTime)
+
+        val timeText: String
+        if(scheduledStop.isCancelled) {
+            timeText = scheduledStop.scheduledDepartureTime!!.toFormattedString(null, use24hrTime)
+            val params = holder.timeStatus!!.layoutParams as ViewGroup.LayoutParams
+            params.width = spToPx(96f, context)
+            holder.timeStatus!!.layoutParams = params
+        }else {
+            timeText = scheduledStop.estimatedDepartureTime!!.toFormattedString(TransitApiManager.lastQueryTime, use24hrTime)
+        }
+
+        holder.departureTime!!.text = timeText
 
         return row
     }
 
     fun loadTimeSetting() {
         use24hrTime = BaseActivity.getTimeSetting(context)
+    }
+
+    fun spToPx(sp: Float, context: Context): Int {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.resources.displayMetrics).toInt()
     }
 
     private class StopTimeHolder {

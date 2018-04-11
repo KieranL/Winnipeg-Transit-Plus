@@ -42,7 +42,7 @@ class FavouritesActivity : BaseActivity(), AdapterView.OnItemClickListener, OnIt
 
         setContentView(R.layout.activity_favourite_stops)
 
-        val listView = findViewById<View>(R.id.stops_listView) as ListView
+        val listView = findViewById<ListView>(R.id.stops_listView)
 
         initializeAdsIfEnabled()
         getFavouritesList()
@@ -80,22 +80,22 @@ class FavouritesActivity : BaseActivity(), AdapterView.OnItemClickListener, OnIt
         val alertDialog = AlertDialog.Builder(this)
 
         alertDialog.setMessage("Edit this Favourite?")
-        alertDialog.setPositiveButton("Delete") { dialogInterface, which ->
+        alertDialog.setPositiveButton("Delete") { _, _ ->
             FavouriteStopsList.remove(adapter!!.getItem(position)!!.number)
             reloadList()
         }
 
-        alertDialog.setNeutralButton("Rename") { dialogInterface, which ->
+        alertDialog.setNeutralButton("Rename") { _, _ ->
             val renameDialog = AlertDialog.Builder(context)
             val editText = EditText(context)
-            val favouriteStop = FavouriteStopsList.get(position)
+            val favouriteStop = FavouriteStopsList[position]
             editText.setText(favouriteStop.displayName)
             renameDialog.setView(editText)
 
             renameDialog.setNeutralButton("Default", null)
 
-            renameDialog.setPositiveButton("Ok") { dialog, which ->
-                FavouriteStopsList.get(position).alias = editText.text.toString()
+            renameDialog.setPositiveButton("Ok") { _, _ ->
+                FavouriteStopsList[position].alias = editText.text.toString()
                 FavouriteStopsList.saveFavouriteStops()
                 reloadList()
             }

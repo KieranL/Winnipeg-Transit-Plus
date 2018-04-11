@@ -45,12 +45,10 @@ class StopListAdapter : ArrayAdapter<FavouriteStop> {
             holder = row.tag as StopHolder
         }
 
-        val favouriteStop: FavouriteStop
-
-        if (stops != null)
-            favouriteStop = stops!![position]
+        val favouriteStop: FavouriteStop = if (stops != null)
+            stops!![position]
         else
-            favouriteStop = FavouriteStopsList.get(position)
+            FavouriteStopsList[position]
 
         holder.stopNumber!!.text = Integer.toString(favouriteStop.number)
         holder.stopName!!.text = favouriteStop.displayName

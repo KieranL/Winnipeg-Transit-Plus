@@ -97,6 +97,7 @@
         <activity
             android:name=".activities.TripPlannerActivity"
             android:label="@string/title_activity_trip_planner"
+            android:configChanges="orientation|screenSize"
             android:parentActivityName=".activities.HomeScreenActivity" />
     </application>
 

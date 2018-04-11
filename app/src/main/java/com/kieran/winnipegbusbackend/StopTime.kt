@@ -75,12 +75,11 @@ class StopTime : Comparable<Any>, Serializable {
         var timeString: String
         val hours = hours
 
-        if (hours == 0)
-            timeString = "12" + ":" + minutesString
-        else if (hours <= 12)
-            timeString = hoursString + ":" + minutesString
-        else
-            timeString = (hours - 12).toString() + ":" + minutesString
+        timeString = when {
+            hours == 0 -> "12" + ":" + minutesString
+            hours <= 12 -> hoursString + ":" + minutesString
+            else -> (hours - 12).toString() + ":" + minutesString
+        }
 
         timeString += if (hours >= 12) "p" else "a"
 

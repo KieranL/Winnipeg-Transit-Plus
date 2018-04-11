@@ -182,10 +182,10 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         val themeId = themeResId
         val drawableId: Int
 
-        if (isFavoured)
-            drawableId = if (themeId == R.style.Light) R.drawable.ic_favourite_stops_light else R.drawable.ic_favourite_stops_dark
+        drawableId = if (isFavoured)
+            if (themeId == R.style.Light) R.drawable.ic_favourite_stops_light else R.drawable.ic_favourite_stops_dark
         else
-            drawableId = if (themeId == R.style.Light) R.drawable.ic_add_to_favourites_light else R.drawable.ic_add_to_favourites_dark
+            if (themeId == R.style.Light) R.drawable.ic_add_to_favourites_light else R.drawable.ic_add_to_favourites_dark
 
         return resources.getDrawable(drawableId)
     }
@@ -249,7 +249,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         val alertDialog = AlertDialog.Builder(this)
         alertDialog.setMessage(DELETE_THIS_FAVOURITE)
 
-        alertDialog.setPositiveButton(DIALOG_YES) { dialogInterface, which ->
+        alertDialog.setPositiveButton(DIALOG_YES) { _, _ ->
             FavouriteStopsList.remove(stopNumber)
             item.icon = getFavouritesButtonDrawable(false)
         }

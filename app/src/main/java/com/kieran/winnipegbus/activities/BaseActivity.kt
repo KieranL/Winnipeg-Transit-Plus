@@ -39,11 +39,11 @@ abstract class BaseActivity : AppCompatActivity() {
         get() {
             val prefs = PreferenceManager.getDefaultSharedPreferences(this)
             val themeId = Integer.parseInt(prefs.getString(getString(R.string.pref_key_theme), "0"))
-            when (themeId) {
-                0 -> return R.style.Dark
-                1 -> return R.style.Light
-                2 -> return R.style.Rt
-                else -> return R.style.Dark
+            return when (themeId) {
+                0 -> R.style.Dark
+                1 -> R.style.Light
+                2 -> R.style.Rt
+                else -> R.style.Dark
             }
         }
 
@@ -202,14 +202,11 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     protected fun handleException(ex: Exception) {
-        val resId: Int
-
-        if (ex is FileNotFoundException)
-            resId = R.string.too_many_queries_error
-        else if (ex is IOException)
-            resId = R.string.network_error
-        else
-            resId = R.string.unknown_error
+        val resId: Int = when (ex) {
+            is FileNotFoundException -> R.string.too_many_queries_error
+            is IOException -> R.string.network_error
+            else -> R.string.unknown_error
+        }
 
         showShortToaster(resId)
     }

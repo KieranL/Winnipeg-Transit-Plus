@@ -184,7 +184,7 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
                     showLongToaster(R.string.no_results_found)
                 }
             } else if (result.exception != null) {
-                handleException(result.exception!!)
+                handleException(result.exception)
             }
         }
 
