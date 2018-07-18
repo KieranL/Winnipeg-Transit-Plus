@@ -86,14 +86,10 @@ class TripPlannerAdapter(context: Context, private val trips: List<Trip>) : Base
         }
 
         val trip = trips[groupPosition]
-        if (trip != null) {
-            val segment = trip.segments[childPosition]
-            if (segment != null) {
-                holder.string!!.text = trips[groupPosition].segments[childPosition].toString()
-                holder.time!!.text = "%d".format(segment.times.totalTime)
-                holder.time!!.setCompoundDrawablesWithIntrinsicBounds(0, 0, getDrawableIconResId(segment), 0)
-            }
-        }
+        val segment = trip.segments[childPosition]
+        holder.string!!.text = trips[groupPosition].segments[childPosition].toString()
+        holder.time!!.text = "%d".format(segment.times.totalTime)
+        holder.time!!.setCompoundDrawablesWithIntrinsicBounds(0, 0, getDrawableIconResId(segment), 0)
 
         return row
     }

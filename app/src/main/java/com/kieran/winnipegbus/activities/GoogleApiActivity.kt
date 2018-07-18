@@ -1,6 +1,7 @@
 package com.kieran.winnipegbus.activities
 
 import android.Manifest
+import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Location

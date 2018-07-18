@@ -2,6 +2,7 @@ package com.kieran.winnipegbus
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.SearchView
@@ -17,6 +18,9 @@ import com.kieran.winnipegbusbackend.TripPlanner.classes.StopLocation
 
 import org.json.JSONException
 import org.json.JSONObject
+import android.support.v4.app.ActivityCompat.startActivityForResult
+import com.google.android.gms.location.places.ui.PlacePicker
+
 
 class LocationPickerDialog(private val context: GoogleApiActivity, private val listener: OnLocationPickedListener) : Dialog(context), View.OnClickListener {
 
@@ -80,18 +84,20 @@ class LocationPickerDialog(private val context: GoogleApiActivity, private val l
     override fun onClick(v: View) {
         val self = this
         when (v.id) {
-            R.id.current_location_button -> if (context.isLocationEnabled && context.isGooglePlayServicesAvailable) {
-                val deviceLocation = context.latestLocation
+            R.id.current_location_button ->  {
+                val PLACE_PICKER_REQUEST = 1
+                val builder = PlacePicker.IntentBuilder()
 
-                if (deviceLocation != null) {
-                    val location = Location(deviceLocation, context.getString(R.string.current_location))
-                    listener.OnLocationPicked(location)
-                    dismiss()
-                } else {
-                    context.showShortToaster(GoogleApiActivity.ACQUIRING_LOCATION)
-                }
-            } else {
-                context.showLongToaster(GoogleApiActivity.LOCATION_SERVICES_NOT_AVAILABLE)
+                context.startActivityForResult(builder.build(context), PLACE_PICKER_REQUEST)
+//                val deviceLocation = context.latestLocation
+//
+//                if (deviceLocation != null) {
+//                    val location = Location(deviceLocation, context.getString(R.string.current_location))
+//                    listener.OnLocationPicked(location)
+//                    dismiss()
+//                } else {
+//                    context.showShortToaster(GoogleApiActivity.ACQUIRING_LOCATION)
+//                }
             }
             R.id.from_favourites_button -> {
                 val builder = AlertDialog.Builder(context)
@@ -126,5 +132,11 @@ class LocationPickerDialog(private val context: GoogleApiActivity, private val l
 
     interface OnLocationPickedListener {
         fun OnLocationPicked(location: Location)
+    }
+
+    companion object {
+        fun handleActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+
+        }
     }
 }

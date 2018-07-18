@@ -1,20 +1,17 @@
 package com.kieran.winnipegbusbackend.TripPlanner
 
-import com.kieran.winnipegbusbackend.TripPlanner.classes.RideSegment
-import com.kieran.winnipegbusbackend.TripPlanner.classes.Segment
-import com.kieran.winnipegbusbackend.TripPlanner.classes.TransferSegment
-import com.kieran.winnipegbusbackend.TripPlanner.classes.WalkSegment
+import com.kieran.winnipegbusbackend.TripPlanner.classes.*
 
 import org.json.JSONException
 import org.json.JSONObject
 
 object SegmentFactory {
-    fun createSegment(segment: JSONObject): Segment? {
+    fun createSegment(tripParameters: TripParameters, segment: JSONObject): Segment? {
         return try {
             when (segment.getString("type")) {
-                "walk" -> WalkSegment(segment)
-                "ride" -> RideSegment(segment)
-                "transfer" -> TransferSegment(segment)
+                "walk" -> WalkSegment(tripParameters, segment)
+                "ride" -> RideSegment(tripParameters, segment)
+                "transfer" -> TransferSegment(tripParameters, segment)
                 else -> null
             }
         } catch (e: JSONException) {

@@ -16,6 +16,10 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
         <activity
             android:name=".activities.HomeScreenActivity"
             android:label="@string/app_name">
@@ -74,10 +78,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.kieran.winnipegbus.activities.StopTimesActivity" />
         </activity>
-
-        <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="@string/google_maps_key" />
 
         <activity
             android:name=".activities.StopsMapActivity"
