@@ -2,6 +2,7 @@ package com.kieran.winnipegbus.activities
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.view.Menu
@@ -33,16 +34,16 @@ import java.util.Calendar
 import java.util.GregorianCalendar
 
 class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadResultReceiveListener, SwipeRefreshLayout.OnRefreshListener {
-    private var tripParameters: TripParameters? = TripParameters()
+    private var tripParameters: TripParameters = TripParameters()
     private var trips: ArrayList<Trip>? = null
     private var adapter: TripPlannerAdapter? = null
     private var getDirectionsButton: Button? = null
     private var swipeRefresh: StyledSwipeRefresh? = null
+    private var locationPickerDialog: LocationPickerDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trip_planner)
-
 
         googleApiClient = GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
@@ -51,10 +52,8 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
         connectClient()
         val intent = intent
 
-        tripParameters = intent.getSerializableExtra(PARAMETERS) as TripParameters?
-
-        if (tripParameters == null)
-            tripParameters = TripParameters()
+        if (intent.hasExtra(PARAMETERS))
+            tripParameters = intent.getSerializableExtra(PARAMETERS) as TripParameters
 
         trips = ArrayList()
         val listView = findViewById<View>(R.id.trip_planner_listview) as ExpandableListView
@@ -72,29 +71,29 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
         val originButton = findViewById<View>(R.id.origin_select_button) as Button
         val destinationButton = findViewById<View>(R.id.destination_select_button) as Button
 
-        if (tripParameters!!.origin != null)
-            originButton.text = tripParameters!!.origin!!.title
+        if (tripParameters.origin != null)
+            originButton.text = tripParameters.origin!!.title
         else
             originButton.text = "Select"
 
-        if (tripParameters!!.destination != null)
-            destinationButton.text = tripParameters!!.destination!!.title
+        if (tripParameters.destination != null)
+            destinationButton.text = tripParameters.destination!!.title
         else
             destinationButton.text = "Select"
 
-        setTextViewText(R.id.trip_time_hour_minute, tripParameters!!.time!!.toFormattedString(null, timeSetting))
-        setTextViewText(R.id.trip_time_date, tripParameters!!.time!!.toDatePickerDateFormat())
+        setTextViewText(R.id.trip_time_hour_minute, tripParameters.time!!.toFormattedString(null, timeSetting))
+        setTextViewText(R.id.trip_time_date, tripParameters.time!!.toDatePickerDateFormat())
 
         val timeModeView = findViewById<View>(R.id.time_mode_spinner) as Spinner
         val adapter = timeModeView.adapter
 
         (0 until adapter.count)
-                .filter { adapter.getItem(it) as String == tripParameters!!.timeMode!!.name }
+                .filter { adapter.getItem(it) as String == tripParameters.timeMode!!.name }
                 .forEach { timeModeView.setSelection(it) }
 
         timeModeView.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                tripParameters!!.timeMode = TimeMode.getTimeModeByName(adapter.getItem(position) as String)
+                tripParameters.timeMode = TimeMode.getTimeModeByName(adapter.getItem(position) as String)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -102,7 +101,7 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
             }
         }
 
-        getDirectionsButton!!.isEnabled = tripParameters!!.isValid
+        getDirectionsButton!!.isEnabled = tripParameters.isValid
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -117,19 +116,19 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
 
     fun getDirections() {
         trips!!.clear()
-        TransitApiManager.getJsonAsync(tripParameters!!.url, this)
+        TransitApiManager.getJsonAsync(tripParameters.url, this)
     }
 
     fun pickTime(view: View) {
         val c = GregorianCalendar()
         val d = TimePickerDialog(this, TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-            c.timeInMillis = tripParameters!!.time!!.milliseconds
+            c.timeInMillis = tripParameters.time!!.milliseconds
             c.set(Calendar.HOUR_OF_DAY, hourOfDay)
             c.set(Calendar.MINUTE, minute)
-            tripParameters!!.time = StopTime(c.timeInMillis)
+            tripParameters.time = StopTime(c.timeInMillis)
 
-            setTextViewText(R.id.trip_time_hour_minute, tripParameters!!.time!!.toFormattedString(null, timeSetting))
-        }, tripParameters!!.time!!.hours, tripParameters!!.time!!.minutes, timeSetting)
+            setTextViewText(R.id.trip_time_hour_minute, tripParameters.time!!.toFormattedString(null, timeSetting))
+        }, tripParameters.time!!.hours, tripParameters.time!!.minutes, timeSetting)
 
         d.setTitle("")
         d.show()
@@ -138,14 +137,14 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
     fun pickDate(view: View) {
         val c = GregorianCalendar()
         val d = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            c.timeInMillis = tripParameters!!.time!!.milliseconds
+            c.timeInMillis = tripParameters.time!!.milliseconds
             c.set(Calendar.YEAR, year)
             c.set(Calendar.MONTH, monthOfYear)
             c.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-            tripParameters!!.time = StopTime(c.timeInMillis)
+            tripParameters.time = StopTime(c.timeInMillis)
 
-            setTextViewText(R.id.trip_time_date, tripParameters!!.time!!.toDatePickerDateFormat())
-        }, tripParameters!!.time!!.year, tripParameters!!.time!!.month, tripParameters!!.time!!.dayOfMonth)
+            setTextViewText(R.id.trip_time_date, tripParameters.time!!.toDatePickerDateFormat())
+        }, tripParameters.time!!.year, tripParameters.time!!.month, tripParameters.time!!.dayOfMonth)
 
         d.setTitle("")
         d.show()
@@ -157,7 +156,7 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
             val plans = jsonObject!!.getJSONArray("plans")
 
             for (i in 0 until plans.length()) {
-                trips!!.add(Trip(plans.getJSONObject(i)))
+                trips!!.add(Trip(tripParameters, plans.getJSONObject(i)))
             }
 
             adapter!!.notifyDataSetChanged()
@@ -165,40 +164,43 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
         } catch (e: JSONException) {
 
         }
-
     }
 
     override fun onConnected(bundle: Bundle?) {
         requestLocation()
         val deviceLocation = latestLocation
 
-        if (deviceLocation != null && tripParameters?.origin == null) {
-            tripParameters!!.origin = Location(deviceLocation, context.getString(R.string.current_location))
+        if (deviceLocation != null && tripParameters.origin == null) {
+            tripParameters.origin = Location(deviceLocation, context.getString(R.string.current_location))
             initializeFields()
         }
     }
 
 
     fun selectOrigin(view: View) {
-        LocationPickerDialog(this, object : LocationPickerDialog.OnLocationPickedListener {
-            override fun OnLocationPicked(location: Location) {
-                tripParameters!!.origin = location
+        locationPickerDialog = LocationPickerDialog(this, object : LocationPickerDialog.OnLocationPickedListener {
+            override fun onLocationPicked(location: Location) {
+                tripParameters.origin = location
                 initializeFields()
             }
-        }).show()
+        })
+
+        locationPickerDialog?.show()
     }
 
     fun selectDestination(view: View) {
-        LocationPickerDialog(this, object : LocationPickerDialog.OnLocationPickedListener {
-            override fun OnLocationPicked(location: Location) {
-                tripParameters!!.destination = location
+        locationPickerDialog = LocationPickerDialog(this, object : LocationPickerDialog.OnLocationPickedListener {
+            override fun onLocationPicked(location: Location) {
+                tripParameters.destination = location
                 initializeFields()
             }
-        }).show()
+        })
+
+        locationPickerDialog?.show()
     }
 
     fun swapLocations(view: View) {
-        tripParameters!!.swapLocations()
+        tripParameters.swapLocations()
         initializeFields()
     }
 
@@ -206,8 +208,12 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
         getDirections()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        locationPickerDialog?.handleActivityResult(requestCode, resultCode, data)
+    }
+
     companion object {
-        public val PARAMETERS = "parameters"
+        val PARAMETERS = "parameters"
     }
 }
 

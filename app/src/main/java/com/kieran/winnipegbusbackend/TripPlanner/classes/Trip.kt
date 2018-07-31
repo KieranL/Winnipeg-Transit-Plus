@@ -8,7 +8,7 @@ import org.json.JSONObject
 
 import java.util.ArrayList
 
-class Trip(trip: JSONObject) {
+class Trip(tripParameters: TripParameters, trip: JSONObject) {
     var times: Times? = null
         private set
     var segments: ArrayList<Segment>
@@ -16,25 +16,24 @@ class Trip(trip: JSONObject) {
 
     init {
         segments = ArrayList()
-        getSegments(trip)
+        getSegments(tripParameters, trip)
     }
 
-    private fun getSegments(trip: JSONObject) {
+    private fun getSegments(tripParameters: TripParameters, trip: JSONObject) {
         try {
             val times = trip.getJSONObject("times")
             this.times = Times(times)
             val segmentNodes = trip.getJSONArray("segments")
 
-            for (i in 0 until segmentNodes.length()) {
-                val segment = segmentNodes.getJSONObject(i)
-                segments.add(SegmentFactory.createSegment(segment)!!)
-            }
+            (0 until segmentNodes.length())
+                    .map { segmentNodes.getJSONObject(it) }
+                    .map { SegmentFactory.createSegment(tripParameters, it) }
+                    .forEach { segment -> segment?.let { segments.add(it) } }
 
 
         } catch (e: JSONException) {
 
         }
-
     }
 
     override fun toString(): String {

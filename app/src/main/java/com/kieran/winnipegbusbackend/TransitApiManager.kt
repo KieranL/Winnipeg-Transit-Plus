@@ -2,6 +2,7 @@ package com.kieran.winnipegbusbackend
 
 import android.location.Location
 import android.os.AsyncTask
+import com.kieran.winnipegbus.BuildConfig
 
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
 
@@ -27,7 +28,7 @@ object TransitApiManager {
     private val LONGITUDE_PARAMETER = "lon"
     private val SERVICE_ADVISORIES_PARAMETER = "service-advisories"
     private val LOCATIONS_PARAMETER = "locations"
-    private val URL_FORMAT = "http://api.winnipegtransit.com/v3/%s.json?usage=short&api-key=FTy2QN8ts293ZlhYP1t%s"
+    private val URL_FORMAT = "http://api.winnipegtransit.com/v3/%s.json?usage=short&api-key=" + BuildConfig.winnipeg_transit_api_key + "%s"
     var lastQueryTime: StopTime? = StopTime()
         private set
 

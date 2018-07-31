@@ -17,6 +17,8 @@ android {
         versionCode 30
         versionName "1.7.4"
         signingConfig signingConfigs.config
+        resValue "string", "google_maps_key", (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
+        buildConfigField "String", "winnipeg_transit_api_key", (project.findProperty("WINNIPEG_TRANSIT_API_KEY") ?: "")
     }
     buildTypes {
         release {

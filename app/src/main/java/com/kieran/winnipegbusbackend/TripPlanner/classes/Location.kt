@@ -45,7 +45,6 @@ open class Location : Serializable {
         } catch (e: JSONException) {
 
         }
-
     }
 
     override fun equals(other: Any?): Boolean {
