@@ -47,4 +47,11 @@ abstract class MapActivity : GoogleApiActivity(), GoogleApiClient.ConnectionCall
             }
         }
     }
+
+    companion object {
+        val DEFAULT_ZOOM = 11f
+        val DEFAULT_LATITUDE = 49.8954
+        val DEFAULT_LONGITUDE = -97.1385
+        val MAP_PADDING = 50
+    }
 }

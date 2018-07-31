@@ -39,6 +39,7 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
     private var adapter: TripPlannerAdapter? = null
     private var getDirectionsButton: Button? = null
     private var swipeRefresh: StyledSwipeRefresh? = null
+    private var locationPickerDialog: LocationPickerDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -163,7 +164,6 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
         } catch (e: JSONException) {
 
         }
-
     }
 
     override fun onConnected(bundle: Bundle?) {
@@ -178,21 +178,25 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
 
 
     fun selectOrigin(view: View) {
-        LocationPickerDialog(this, object : LocationPickerDialog.OnLocationPickedListener {
-            override fun OnLocationPicked(location: Location) {
+        locationPickerDialog = LocationPickerDialog(this, object : LocationPickerDialog.OnLocationPickedListener {
+            override fun onLocationPicked(location: Location) {
                 tripParameters.origin = location
                 initializeFields()
             }
-        }).show()
+        })
+
+        locationPickerDialog?.show()
     }
 
     fun selectDestination(view: View) {
-        LocationPickerDialog(this, object : LocationPickerDialog.OnLocationPickedListener {
-            override fun OnLocationPicked(location: Location) {
+        locationPickerDialog = LocationPickerDialog(this, object : LocationPickerDialog.OnLocationPickedListener {
+            override fun onLocationPicked(location: Location) {
                 tripParameters.destination = location
                 initializeFields()
             }
-        }).show()
+        })
+
+        locationPickerDialog?.show()
     }
 
     fun swapLocations(view: View) {
@@ -204,12 +208,12 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
         getDirections()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-        LocationPickerDialog.handleActivityResult(requestCode, resultCode, data)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        locationPickerDialog?.handleActivityResult(requestCode, resultCode, data)
     }
 
     companion object {
-        public val PARAMETERS = "parameters"
+        val PARAMETERS = "parameters"
     }
 }
 

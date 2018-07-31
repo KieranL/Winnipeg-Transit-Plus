@@ -1,5 +1,6 @@
 package com.kieran.winnipegbus
 
+import android.app.Activity.RESULT_CANCELED
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
@@ -18,8 +19,12 @@ import com.kieran.winnipegbusbackend.TripPlanner.classes.StopLocation
 
 import org.json.JSONException
 import org.json.JSONObject
-import android.support.v4.app.ActivityCompat.startActivityForResult
 import com.google.android.gms.location.places.ui.PlacePicker
+import android.app.Activity.RESULT_OK
+import com.google.android.gms.maps.model.Circle
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.kieran.winnipegbus.activities.MapActivity
 
 
 class LocationPickerDialog(private val context: GoogleApiActivity, private val listener: OnLocationPickedListener) : Dialog(context), View.OnClickListener {
@@ -64,7 +69,7 @@ class LocationPickerDialog(private val context: GoogleApiActivity, private val l
                             charSequence[i] = locations[i].title
 
                         builder.setItems(charSequence) { dialog, which ->
-                            listener.OnLocationPicked(locations[which])
+                            listener.onLocationPicked(locations[which])
                             self.dismiss()
                             dismiss()
                         }
@@ -82,22 +87,13 @@ class LocationPickerDialog(private val context: GoogleApiActivity, private val l
 
 
     override fun onClick(v: View) {
-        val self = this
         when (v.id) {
-            R.id.current_location_button ->  {
-                val PLACE_PICKER_REQUEST = 1
+            R.id.current_location_button -> {
                 val builder = PlacePicker.IntentBuilder()
-
+                val bounds = LatLngBounds.Builder()
+                bounds.include(LatLng(MapActivity.DEFAULT_LATITUDE, MapActivity.DEFAULT_LONGITUDE))
+                builder.setLatLngBounds(bounds.build())
                 context.startActivityForResult(builder.build(context), PLACE_PICKER_REQUEST)
-//                val deviceLocation = context.latestLocation
-//
-//                if (deviceLocation != null) {
-//                    val location = Location(deviceLocation, context.getString(R.string.current_location))
-//                    listener.OnLocationPicked(location)
-//                    dismiss()
-//                } else {
-//                    context.showShortToaster(GoogleApiActivity.ACQUIRING_LOCATION)
-//                }
             }
             R.id.from_favourites_button -> {
                 val builder = AlertDialog.Builder(context)
@@ -110,14 +106,13 @@ class LocationPickerDialog(private val context: GoogleApiActivity, private val l
 
                 builder.setItems(charSequence) { dialog, which ->
                     val favouriteStop = favouriteStops[which]
-                    self.dismiss()
                     dismiss()
                     TransitApiManager.getJsonAsync(TransitApiManager.generateFindStopUrl(favouriteStop.number), object : TransitApiManager.OnJsonLoadResultReceiveListener {
                         override fun onReceive(result: LoadResult<JSONObject>) {
                             try {
                                 val stopNode = result.result!!.getJSONObject("stop")
                                 val stop = StopLocation(stopNode)
-                                listener.OnLocationPicked(stop)
+                                listener.onLocationPicked(stop)
                             } catch (e: JSONException) {
                                 e.printStackTrace()
                             }
@@ -130,13 +125,25 @@ class LocationPickerDialog(private val context: GoogleApiActivity, private val l
         }
     }
 
+    fun handleActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                val place = PlacePicker.getPlace(data, context)
+                val location = Location(place.latLng, place.name.toString())
+
+                dismiss()
+                listener.onLocationPicked(location)
+            } else if (resultCode != RESULT_CANCELED){
+                Toast.makeText(context, R.string.unable_to_find_place, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     interface OnLocationPickedListener {
-        fun OnLocationPicked(location: Location)
+        fun onLocationPicked(location: Location)
     }
 
     companion object {
-        fun handleActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-
-        }
+        private val PLACE_PICKER_REQUEST = 1
     }
 }

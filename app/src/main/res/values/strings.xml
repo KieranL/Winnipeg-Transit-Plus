@@ -46,5 +46,8 @@
     <string name="current_location">Current Location</string>
     <string name="no_location_found">No location found</string>
     <string name="get_directions">Get Directions</string>
+    <string name="unable_to_find_place">Oops, Something went wrong trying to find the location</string>
+    <string name="does_bus_have_wifi">Does this bus have wifi?</string>
+    <string name="does_bus_have_bike_rack">Does this bus have a bike rack?</string>
 
 </resources>
