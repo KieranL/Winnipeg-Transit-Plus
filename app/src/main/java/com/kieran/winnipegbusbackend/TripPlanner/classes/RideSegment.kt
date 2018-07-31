@@ -4,7 +4,7 @@ import com.kieran.winnipegbusbackend.Route
 
 import org.json.JSONObject
 
-class RideSegment(segment: JSONObject) : Segment(segment) {
+class RideSegment(tripParameters: TripParameters, segment: JSONObject) : Segment(tripParameters, segment) {
     internal val route: Route = Route(segment)
 
     override fun toString(): String {

@@ -14,16 +14,14 @@ import com.kieran.winnipegbus.views.RouteNumberTextView
 import com.kieran.winnipegbusbackend.ScheduledStop
 import com.kieran.winnipegbusbackend.TransitApiManager
 import android.util.TypedValue
-
+import android.widget.ImageView
 
 
 class StopTimeAdapter(context: Context, private val layoutResourceId: Int, private val scheduledStops: List<ScheduledStop>) : ArrayAdapter<ScheduledStop>(context, layoutResourceId, scheduledStops) {
     private var use24hrTime: Boolean = false
-    private val inflater: LayoutInflater
+    private val inflater: LayoutInflater = (context as Activity).layoutInflater
 
     init {
-        inflater = (context as Activity).layoutInflater
-
         loadTimeSetting()
     }
 
@@ -37,6 +35,8 @@ class StopTimeAdapter(context: Context, private val layoutResourceId: Int, priva
             holder = StopTimeHolder()
             holder.routeNumber = row!!.findViewById<View>(R.id.route_number_text) as RouteNumberTextView
             holder.routeVariantName = row.findViewById<View>(R.id.route_name_text) as TextView
+            holder.hasBikeRackIcon = row.findViewById<View>(R.id.bus_bike_rack_indicator) as ImageView
+            holder.hasWifiIcon = row.findViewById<View>(R.id.bus_wifi_indicator) as ImageView
             holder.timeStatus = row.findViewById<View>(R.id.time_status_text) as TextView
             holder.departureTime = row.findViewById<View>(R.id.departure_time_text) as TextView
 
@@ -46,10 +46,12 @@ class StopTimeAdapter(context: Context, private val layoutResourceId: Int, priva
         }
 
         val scheduledStop = scheduledStops[position]
-        holder.routeNumber!!.text = Integer.toString(scheduledStop.routeNumber)
-        holder.routeNumber!!.setColour(scheduledStop)
-        holder.routeVariantName!!.text = scheduledStop.routeVariantName
-        holder.timeStatus!!.text = scheduledStop.timeStatus
+        holder.routeNumber?.text = String.format("%d", scheduledStop.routeNumber)
+        holder.routeNumber?.setColour(scheduledStop)
+        holder.routeVariantName?.text = scheduledStop.routeVariantName
+        holder.hasBikeRackIcon?.visibility = if (scheduledStop.hasBikeRack) View.VISIBLE else View.GONE
+        holder.hasWifiIcon?.visibility = if (scheduledStop.hasWifi) View.VISIBLE else View.GONE
+        holder.timeStatus?.text = scheduledStop.timeStatus
 
         val timeText: String
         if(scheduledStop.isCancelled) {
@@ -77,6 +79,8 @@ class StopTimeAdapter(context: Context, private val layoutResourceId: Int, priva
     private class StopTimeHolder {
         internal var routeNumber: RouteNumberTextView? = null
         internal var routeVariantName: TextView? = null
+        internal var hasBikeRackIcon: ImageView? = null
+        internal var hasWifiIcon: ImageView? = null
         internal var timeStatus: TextView? = null
         internal var departureTime: TextView? = null
     }

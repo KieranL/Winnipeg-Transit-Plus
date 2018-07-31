@@ -12,9 +12,8 @@ class TripParameters : Serializable {
     var time: StopTime? = null
     var timeMode: TimeMode? = null
 
-    //        return "https://api.winnipegtransit.com/v2/trip-planner.json?origin=addresses/136590&destination=intersections/123172:378@954&api-key=FTy2QN8ts293ZlhYP1t";
     val url: String
-        get() = String.format(Locale.CANADA, "https://api.winnipegtransit.com/v2/trip-planner.json?origin=%s&destination=%s&mode=%s&time=%s&date=%s&api-key=FTy2QN8ts293ZlhYP1t", origin!!.urlString, destination!!.urlString, timeMode!!.urlParameter, time!!.toURLTimeString().split("T".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1], time!!.toURLTimeString().split("T".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0])
+        get() = String.format(Locale.CANADA, "https://api.winnipegtransit.com/v3/trip-planner.json?origin=%s&destination=%s&mode=%s&time=%s&date=%s&api-key=FTy2QN8ts293ZlhYP1t", origin!!.urlString, destination!!.urlString, timeMode!!.urlParameter, time!!.toURLTimeString().split("T".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1], time!!.toURLTimeString().split("T".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0])
 
     val isValid: Boolean
         get() = (origin != null

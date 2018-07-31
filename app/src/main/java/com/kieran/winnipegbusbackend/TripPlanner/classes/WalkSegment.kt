@@ -2,7 +2,7 @@ package com.kieran.winnipegbusbackend.TripPlanner.classes
 
 import org.json.JSONObject
 
-class WalkSegment(segment: JSONObject) : Segment(segment) {
+class WalkSegment(tripParameters: TripParameters, segment: JSONObject) : Segment(tripParameters, segment) {
 
     override fun toString(): String {
         return if (from != null && to != null)
