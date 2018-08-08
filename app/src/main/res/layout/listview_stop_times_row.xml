@@ -6,7 +6,7 @@
     android:paddingTop="2dp"
     android:orientation="horizontal">
 
-    <com.kieran.winnipegbus.Views.RouteNumberTextView
+    <com.kieran.winnipegbus.views.RouteNumberTextView
         android:id="@+id/route_number_text"
         android:layout_width="36sp"
         android:layout_height="wrap_content"
@@ -20,8 +20,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/route_number_text"
-        android:layout_toLeftOf="@+id/time_status_text"
+        android:layout_toLeftOf="@+id/bus_wifi_indicator"
         android:textSize="18sp" />
+
+    <ImageView
+        android:id="@+id/bus_bike_rack_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="18sp"
+        android:layout_toLeftOf="@+id/bus_wifi_indicator"
+        android:visibility="gone"
+        android:contentDescription="@string/does_bus_have_bike_rack"
+        android:src="?attr/busBikeIcon"/>
+
+    <ImageView
+        android:id="@+id/bus_wifi_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="18sp"
+        android:layout_toLeftOf="@+id/time_status_text"
+        android:visibility="gone"
+        android:contentDescription="@string/does_bus_have_wifi"
+        android:src="?attr/busWifiIcon"/>
 
     <TextView
         android:id="@+id/time_status_text"

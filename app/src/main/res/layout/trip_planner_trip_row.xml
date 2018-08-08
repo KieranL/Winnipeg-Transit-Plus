@@ -2,17 +2,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="4dp">
+    android:padding="2dp">
 
     <RelativeLayout
-        android:paddingTop="2dp"
-        android:paddingLeft="2dp"
-        android:paddingRight="2dp"
+        android:paddingTop="4dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?attr/stopTimesHeaderBackground">
 
         <TextView
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:paddingBottom="4dp"
             android:id="@+id/trip_time_range"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,13 +22,17 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
         <TextView
-            android:layout_width="64sp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:paddingBottom="4dp"
+            android:layout_width="84sp"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:id="@+id/trip_time"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:drawableLeft="?attr/clockIcon"/>
+            android:gravity="end"
+            android:drawableEnd="?attr/clockIcon"/>
 
         <View
             android:layout_width="fill_parent"

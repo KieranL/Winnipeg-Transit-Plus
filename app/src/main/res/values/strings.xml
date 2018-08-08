@@ -13,7 +13,6 @@
     <string name="banner_ad_home_unit_id">ca-app-pub-1189975520647633/7696260309</string>
     <string name="banner_ad_stops_list_unit_id">ca-app-pub-1189975520647633/9812121904</string>
     <string name="banner_ad_stop_times_unit_id">ca-app-pub-1189975520647633/1321335907</string>
-    <string name="test_device_id_gs5">F1E47669A01E4AA87B9B9AAD04E84D0C</string>
     <string name="refresh_stop_times_button">Refresh</string>
     <string name="add_to_favourites_button">Add to Favourites</string>
     <string name="title_activity_search_results">Search Results</string>
@@ -25,8 +24,8 @@
     <string name="title_activity_scheduled_stop_info">"Bus Info"</string>
     <string name="bus_info_arrival">Arrival</string>
     <string name="bus_info_departure">Departure</string>
-    <string name="scheduled">Sched.</string>
-    <string name="estimated">Est.</string>
+    <string name="scheduled">Scheduled Departure</string>
+    <string name="estimated">Estimated Departure</string>
     <string name="title_activity_stop_info">StopInfoActivity</string>
     <string name="features_feature">Feature</string>
     <string name="features_count">Count</string>
@@ -34,7 +33,6 @@
     <string name="banner_ad_stop_features_id">ca-app-pub-1189975520647633/3682591503</string>
     <string name="pref_favourites_sort">pref_favourites_sort_list</string>
     <string name="search_tip">Search by Street name, Route number or Stop number</string>
-    <string name="google_maps_key">AIzaSyBI288Hjgv2ZYa6b9QOz9VF1OOEZEDdwts</string>
     <string name="map">Map</string>
     <string name="title_activity_route_map">Map</string>
     <string name="test_device_id_gs6e">2BCF178C0DAA545593FB48844D1C242B</string>
@@ -46,5 +44,10 @@
     <string name="too_many_queries_error">Winnipeg Transit\'s maximum query limit has been reached. Please wait a few seconds and try again</string>
     <string name="title_activity_trip_planner">Trip Planner</string>
     <string name="current_location">Current Location</string>
+    <string name="no_location_found">No location found</string>
+    <string name="get_directions">Get Directions</string>
+    <string name="unable_to_find_place">Oops, Something went wrong trying to find the location</string>
+    <string name="does_bus_have_wifi">Does this bus have wifi?</string>
+    <string name="does_bus_have_bike_rack">Does this bus have a bike rack?</string>
 
 </resources>

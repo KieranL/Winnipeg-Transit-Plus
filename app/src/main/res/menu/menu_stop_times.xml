@@ -1,17 +1,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.kieran.winnipegbus.Activities.StopTimesActivity">
-    <item
-        android:id="@+id/action_refresh"
-        android:title="@string/refresh_stop_times_button"
-        app:showAsAction="ifRoom"
-        android:icon="?refreshIcon"/>
+    tools:context="com.kieran.winnipegbus.activities.StopTimesActivity">
     <item
         android:id="@+id/add_to_favourites_button"
         android:icon="?addToFavouritesIcon"
         android:title="@string/add_to_favourites_button"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/get_directions_button"
+        android:icon="?getDirectionsIcon"
+        android:title="@string/get_directions"
+        app:showAsAction="never"
+        android:visible="false"/>
+    <item
+        android:id="@+id/action_refresh"
+        android:title="@string/refresh_stop_times_button"
+        app:showAsAction="ifRoom"
+        android:icon="?refreshIcon"/>
     <item
         android:id="@+id/action_filter"
         android:title="@string/filter_button"
