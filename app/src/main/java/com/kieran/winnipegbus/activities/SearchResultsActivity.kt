@@ -188,7 +188,10 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
             }
         }
 
-        adapter!!.notifyDataSetChanged()
+        runOnUiThread {
+            adapter!!.notifyDataSetChanged()
+        }
+
         swipeRefreshLayout!!.isRefreshing = false
         loading = false
     }
