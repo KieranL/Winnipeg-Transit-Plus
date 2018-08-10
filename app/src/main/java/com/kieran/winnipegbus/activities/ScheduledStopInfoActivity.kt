@@ -100,7 +100,7 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
 
             var busNumberText = String.format(BUS_NUMBER, "Unknown")
 
-            if(scheduledStop.busNumber != 0) {
+            if (scheduledStop.busNumber != 0) {
                 busNumberText = String.format(BUS_NUMBER, scheduledStop.busNumber.toString())
             }
 
@@ -178,7 +178,11 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
 
         if (tasks!!.size <= 2) {
             Collections.sort(upcomingStops!!)
-            adapter!!.notifyDataSetChanged()
+
+            runOnUiThread {
+                adapter!!.notifyDataSetChanged()
+            }
+
             swipeRefreshLayout!!.isRefreshing = false
             loading = false
         }
@@ -215,7 +219,11 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
             handleException(result.exception)
 
             Collections.sort(upcomingStops!!)
-            adapter!!.notifyDataSetChanged()
+
+            runOnUiThread {
+                adapter!!.notifyDataSetChanged()
+            }
+
             swipeRefreshLayout!!.isRefreshing = false
             loading = false
             tasks!!.clear()

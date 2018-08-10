@@ -355,7 +355,9 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
                 title!!.text = stopName
             }
 
-            adapter!!.notifyDataSetChanged()
+            runOnUiThread {
+                adapter!!.notifyDataSetChanged()
+            }
 
             lastUpdated!!.text = String.format(UPDATED_STRING, StopTime().toFormattedString(null, timeSetting))
             swipeRefreshLayout!!.isRefreshing = false
