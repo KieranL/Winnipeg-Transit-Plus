@@ -49,5 +49,9 @@
     <string name="unable_to_find_place">Oops, Something went wrong trying to find the location</string>
     <string name="does_bus_have_wifi">Does this bus have wifi?</string>
     <string name="does_bus_have_bike_rack">Does this bus have a bike rack?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="disable_ads_confirmation_title">Are you sure you want to disable adds?</string>
+    <string name="disable_ads_confirmation">They help to pay for the costs of developing the app.</string>
 
 </resources>
