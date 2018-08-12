@@ -1,6 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <CheckBoxPreference
-        android:key="pref_ads_disabled"
+        android:key="pref_disable_ads"
         android:title="@string/pref_title_disable_ads"
         android:defaultValue="false"
         android:widgetLayout="@layout/checkbox"/>

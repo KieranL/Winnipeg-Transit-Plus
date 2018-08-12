@@ -169,7 +169,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     fun adsDisabled(): Boolean {
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        return prefs.getBoolean("pref_ads_disabled", false)
+        return prefs.getBoolean("pref_disable_ads", false)
     }
 
     protected fun openStopTimes(stop: Stop) {
