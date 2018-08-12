@@ -22,10 +22,10 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.kieran.winnipegbus.ActivityManager
 import com.kieran.winnipegbus.R
+import com.kieran.winnipegbusbackend.RateLimitedException
 import com.kieran.winnipegbusbackend.Stop
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
 
-import java.io.FileNotFoundException
 import java.io.IOException
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -203,7 +203,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     protected fun handleException(ex: Exception) {
         val resId: Int = when (ex) {
-            is FileNotFoundException -> R.string.too_many_queries_error
+            is RateLimitedException -> R.string.too_many_queries_error
             is IOException -> R.string.network_error
             else -> R.string.unknown_error
         }

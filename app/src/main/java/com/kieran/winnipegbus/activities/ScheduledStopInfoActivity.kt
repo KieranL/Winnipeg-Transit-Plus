@@ -15,11 +15,7 @@ import com.kieran.winnipegbus.adapters.UpcomingStopsAdapter
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.views.RouteNumberTextView
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
-import com.kieran.winnipegbusbackend.LoadResult
-import com.kieran.winnipegbusbackend.ScheduledStop
-import com.kieran.winnipegbusbackend.StopSchedule
-import com.kieran.winnipegbusbackend.TransitApiManager
-import com.kieran.winnipegbusbackend.UpcomingStop
+import com.kieran.winnipegbusbackend.*
 import com.kieran.winnipegbusbackend.UpcomingStops.HttpUpcomingStopsManager
 import com.kieran.winnipegbusbackend.UpcomingStops.UpcomingStopsManager
 
@@ -168,7 +164,7 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
         } else if (result.exception != null) {
             handleException(result.exception)
 
-            if (result.exception is FileNotFoundException) {
+            if (result.exception is FileNotFoundException || result.exception is RateLimitedException) {
                 for (task in tasks!!)
                     task.cancel(true)
 

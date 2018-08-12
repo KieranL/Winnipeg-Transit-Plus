@@ -7,6 +7,7 @@ import com.kieran.winnipegbus.BuildConfig
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
 
 import org.json.JSONObject
+import java.net.HttpURLConnection
 
 import java.net.URL
 import java.util.*
@@ -35,7 +36,12 @@ object TransitApiManager {
     fun getJson(path: String): LoadResult<JSONObject> {
         return try {
             val url = URL(path)
-            val stream = url.openStream()
+            val con: HttpURLConnection = url.openConnection() as HttpURLConnection
+
+            if(con.responseCode == 503)
+                return LoadResult(null, RateLimitedException())
+
+            val stream = con.inputStream
             val s = Scanner(stream).useDelimiter("\\A")
             val myString = if (s.hasNext()) s.next() else ""
             stream.close()
@@ -47,7 +53,6 @@ object TransitApiManager {
         } catch (ex: Exception) {
             LoadResult(null, ex)
         }
-
     }
 
     fun getJsonAsync(path: String, listener: OnJsonLoadResultReceiveListener): AsyncTask<*, *, *> {
@@ -151,3 +156,5 @@ object TransitApiManager {
         fun onReceive(result: LoadResult<JSONObject>)
     }
 }
+
+class RateLimitedException : Exception()
