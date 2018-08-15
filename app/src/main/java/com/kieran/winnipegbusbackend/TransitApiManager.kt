@@ -7,10 +7,10 @@ import com.kieran.winnipegbus.BuildConfig
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
 
 import org.json.JSONObject
-import java.net.HttpURLConnection
 
 import java.net.URL
 import java.util.*
+import javax.net.ssl.HttpsURLConnection
 
 object TransitApiManager {
     private val START_TIME_DECREASE = 10000
@@ -29,14 +29,14 @@ object TransitApiManager {
     private val LONGITUDE_PARAMETER = "lon"
     private val SERVICE_ADVISORIES_PARAMETER = "service-advisories"
     private val LOCATIONS_PARAMETER = "locations"
-    private val URL_FORMAT = "http://api.winnipegtransit.com/v3/%s.json?usage=short&api-key=" + BuildConfig.winnipeg_transit_api_key + "%s"
+    private val URL_FORMAT = "https://api.winnipegtransit.com/v3/%s.json?usage=short&api-key=" + BuildConfig.winnipeg_transit_api_key + "%s"
     var lastQueryTime: StopTime? = StopTime()
         private set
 
     fun getJson(path: String): LoadResult<JSONObject> {
         return try {
             val url = URL(path)
-            val con: HttpURLConnection = url.openConnection() as HttpURLConnection
+            val con: HttpsURLConnection = url.openConnection() as HttpsURLConnection
 
             if(con.responseCode == 503)
                 return LoadResult(null, RateLimitedException())
