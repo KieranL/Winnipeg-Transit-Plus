@@ -1,13 +1,13 @@
 package com.kieran.winnipegbus.activities
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.res.Resources
 import android.os.Bundle
-import android.preference.ListPreference
-import android.preference.Preference
-import android.preference.PreferenceCategory
-import android.preference.PreferenceManager
+import android.preference.*
 
 import com.kieran.winnipegbus.ActivityManager
 import com.kieran.winnipegbus.R
@@ -41,11 +41,32 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         actionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
+    @SuppressLint("ApplySharedPref")
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         context = this
 
         setupSimplePreferencesScreen()
+
+
+        val pref = findPreference("pref_disable_ads") as CheckBoxPreference
+        pref.setOnPreferenceChangeListener { preference, _ ->
+            if(!(preference as CheckBoxPreference).isChecked) {
+                val builder  = AlertDialog.Builder(context)
+                builder.setTitle(R.string.disable_ads_confirmation_title)
+                builder.setMessage(R.string.disable_ads_confirmation)
+                builder.setPositiveButton(R.string.yes, { _: DialogInterface, _: Int ->
+                    preference.isChecked = true
+                })
+                builder.setNegativeButton(R.string.no, null)
+
+                builder.show()
+
+                false
+            } else {
+                true
+            }
+        }
     }
 
     private fun setupSimplePreferencesScreen() {

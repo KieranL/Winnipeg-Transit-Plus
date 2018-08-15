@@ -159,7 +159,9 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
                 trips!!.add(Trip(tripParameters, plans.getJSONObject(i)))
             }
 
-            adapter!!.notifyDataSetChanged()
+            runOnUiThread {
+                adapter!!.notifyDataSetChanged()
+            }
             swipeRefresh!!.isRefreshing = false
         } catch (e: JSONException) {
 

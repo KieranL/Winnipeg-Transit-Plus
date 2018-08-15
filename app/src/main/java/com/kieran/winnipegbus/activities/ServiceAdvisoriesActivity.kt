@@ -91,7 +91,9 @@ class ServiceAdvisoriesActivity : BaseActivity(), TransitApiManager.OnJsonLoadRe
         val advisories = ServiceAdvisoriesParser.parseAdvisories(result.result!!)
         adapter!!.addAll(advisories)
 
-        adapter!!.notifyDataSetChanged()
+        runOnUiThread {
+            adapter!!.notifyDataSetChanged()
+        }
         swipeRefreshLayout!!.isRefreshing = false
         loading = false
     }

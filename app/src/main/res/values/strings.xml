@@ -41,7 +41,7 @@
     <string name="title_activity_service_advisories">Service Advisories</string>
     <string name="title_activity_service_advisory">Service Advisory</string>
     <string name="unknown_error">Unknown error occurred</string>
-    <string name="too_many_queries_error">Winnipeg Transit\'s maximum query limit has been reached. Please wait a few seconds and try again</string>
+    <string name="too_many_queries_error">Winnipeg Transit is rate limiting your device. Please wait a few seconds and try again</string>
     <string name="title_activity_trip_planner">Trip Planner</string>
     <string name="current_location">Current Location</string>
     <string name="no_location_found">No location found</string>
@@ -49,5 +49,9 @@
     <string name="unable_to_find_place">Oops, Something went wrong trying to find the location</string>
     <string name="does_bus_have_wifi">Does this bus have wifi?</string>
     <string name="does_bus_have_bike_rack">Does this bus have a bike rack?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="disable_ads_confirmation_title">Are you sure you want to disable adds?</string>
+    <string name="disable_ads_confirmation">They help to pay for the costs of developing the app.</string>
 
 </resources>

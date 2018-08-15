@@ -69,7 +69,9 @@ class StopInfoActivity : MapActivity(), TransitApiManager.OnJsonLoadResultReceiv
 
     private fun showStopFeatures() {
         if (stopFeatures!!.numberOfFeatures() > 0) {
-            adapter!!.notifyDataSetChanged()
+            runOnUiThread {
+                adapter!!.notifyDataSetChanged()
+            }
             val layout = findViewById<View>(R.id.stop_features_group) as RelativeLayout
             layout.visibility = View.VISIBLE
         }
