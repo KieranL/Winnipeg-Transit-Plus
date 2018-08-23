@@ -44,7 +44,6 @@ import java.util.Locale
 
 class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, ShakeDetector.OnShakeListener {
     private var stopSchedule: StopSchedule? = null
-
     private var stopNumber: Int = 0
     private var stopName: String? = null
     private var loading = false
@@ -249,12 +248,12 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         val alertDialog = AlertDialog.Builder(this)
         alertDialog.setMessage(DELETE_THIS_FAVOURITE)
 
-        alertDialog.setPositiveButton(DIALOG_YES) { _, _ ->
+        alertDialog.setPositiveButton(R.string.yes) { _, _ ->
             FavouriteStopsList.remove(stopNumber)
             item.icon = getFavouritesButtonDrawable(false)
         }
 
-        alertDialog.setNegativeButton(DIALOG_NO, null)
+        alertDialog.setNegativeButton(R.string.no, null)
         alertDialog.create().show()
     }
 
@@ -339,11 +338,14 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         }
 
         override fun onPostExecute(result: LoadResult<JSONObject>) {
-            if (loading && result.result != null) {
-                stops.clear()
-                stops.addAll(stopSchedule!!.scheduledStopsSorted)
+            runOnUiThread {
+                if (loading && result.result != null) {
+                    stops.clear()
+                    stops.addAll(stopSchedule!!.scheduledStopsSorted)
+                }
+                adapter!!.notifyDataSetChanged()
             }
-
+            
             if (result.exception != null && loading) {
                 handleException(result.exception)
                 if (stopSchedule == null && result.exception is IOException)
@@ -355,9 +357,6 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
                 title!!.text = stopName
             }
 
-            runOnUiThread {
-                adapter!!.notifyDataSetChanged()
-            }
 
             lastUpdated!!.text = String.format(UPDATED_STRING, StopTime().toFormattedString(null, timeSetting))
             swipeRefreshLayout!!.isRefreshing = false
@@ -372,8 +371,6 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         private val UPDATED_STRING = "Updated %s"
         private val ACTIONBAR_TEXT = "Stop %d"
         private val DELETE_THIS_FAVOURITE = "Delete this Favourite?"
-        private val DIALOG_YES = "Yes"
-        private val DIALOG_NO = "No"
         private val CREATE_NOTIFICATION_FOR_BUS = "Create a notification for this bus?"
     }
 }
