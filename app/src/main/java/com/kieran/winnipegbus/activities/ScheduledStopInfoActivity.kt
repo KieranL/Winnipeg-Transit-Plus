@@ -133,9 +133,12 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
         if (!loading) {
             if (isOnline) {
                 loading = true
-                upcomingStops!!.clear()
 
-                upcomingStopsManager!!.GetUpcomingStopsAsync(scheduledStop!!.routeKey!!, scheduledStop!!.key!!.stopNumber, this)
+                runOnUiThread {
+                    upcomingStops!!.clear()
+
+                    upcomingStopsManager!!.GetUpcomingStopsAsync(scheduledStop!!.routeKey!!, scheduledStop!!.key!!.stopNumber, this)
+                }
             } else {
                 showLongToaster(R.string.network_error)
             }
@@ -173,9 +176,8 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
         }
 
         if (tasks!!.size <= 2) {
-            Collections.sort(upcomingStops!!)
-
             runOnUiThread {
+                Collections.sort(upcomingStops!!)
                 adapter!!.notifyDataSetChanged()
             }
 
@@ -214,9 +216,8 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
         } else if (result.exception != null) {
             handleException(result.exception)
 
-            Collections.sort(upcomingStops!!)
-
             runOnUiThread {
+                Collections.sort(upcomingStops!!)
                 adapter!!.notifyDataSetChanged()
             }
 
