@@ -8,7 +8,7 @@ import org.json.JSONObject
 import java.io.Serializable
 import java.util.ArrayList
 
-class StopFeatures(stopNumber: Int, stopName: String, latLng: LatLng) : Stop(stopName, stopNumber), Serializable {
+class StopFeatures(stopNumber: Int, stopName: String, latLng: LatLng?) : Stop(stopName, stopNumber), Serializable {
     private val stopFeatures: ArrayList<StopFeature> = ArrayList()
     private val latLng: SerializableLatLng = SerializableLatLng(latLng)
 
