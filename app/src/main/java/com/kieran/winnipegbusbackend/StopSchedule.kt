@@ -115,7 +115,7 @@ class StopSchedule : Stop {
     }
 
     fun createStopFeatures(): StopFeatures {
-        return StopFeatures(number, name, latLng!!)
+        return StopFeatures(number, name, latLng)
     }
 
     fun refresh(jsonObject: JSONObject) {
