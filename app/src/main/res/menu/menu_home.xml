@@ -16,8 +16,7 @@
         android:id="@+id/trip_planner"
         android:icon="?tripPlannerIcon"
         android:title="@string/title_activity_trip_planner"
-        app:showAsAction="never"
-        android:visible="false"/>
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/service_advisories"
         android:orderInCategory="100"
