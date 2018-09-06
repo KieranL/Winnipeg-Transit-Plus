@@ -139,6 +139,10 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
 
         if (sensorManager != null)
             sensorManager!!.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_UI)
+
+        if(isBooleanSettingEnabled("pref_refresh_on_resume", true)) {
+            refresh()
+        }
     }
 
     public override fun onPause() {
