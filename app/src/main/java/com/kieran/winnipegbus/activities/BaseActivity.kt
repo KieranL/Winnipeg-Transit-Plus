@@ -167,6 +167,11 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
+    fun isBooleanSettingEnabled(key: String, defaultValue: Boolean = false): Boolean {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        return prefs.getBoolean(key, defaultValue)
+    }
+
     fun adsDisabled(): Boolean {
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         return prefs.getBoolean("pref_disable_ads", false)
