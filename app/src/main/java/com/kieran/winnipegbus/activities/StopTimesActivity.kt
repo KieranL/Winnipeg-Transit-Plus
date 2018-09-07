@@ -105,10 +105,15 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
             lastUpdated = findViewById(R.id.stop_times_header_last_updated)
         }
 
-        val stop = intent.getSerializableExtra(STOP) as Stop
-        stopName = stop.name
-        title!!.text = stopName
-        stopNumber = stop.number
+        val stop = intent.getSerializableExtra(STOP) as Stop?
+
+        if(stop != null) {
+            stopName = stop.name
+            title!!.text = stopName
+            stopNumber = stop.number
+        }else {
+            stopNumber = intent.getIntExtra(STOP_NUMBER, 0)
+        }
 
         setTitle(String.format(Locale.CANADA, ACTIONBAR_TEXT, stopNumber))
 
@@ -376,5 +381,6 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         private val ACTIONBAR_TEXT = "Stop %d"
         private val DELETE_THIS_FAVOURITE = "Delete this Favourite?"
         private val CREATE_NOTIFICATION_FOR_BUS = "Create a notification for this bus?"
+        val STOP_NUMBER = "stop_number"
     }
 }

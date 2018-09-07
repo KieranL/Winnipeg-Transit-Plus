@@ -1,10 +1,15 @@
 package com.kieran.winnipegbus.activities
 
 import android.content.Intent
+import android.content.pm.ShortcutInfo
+import android.content.pm.ShortcutManager
+import android.graphics.drawable.Icon
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -16,8 +21,10 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationServices
 import com.kieran.winnipegbus.R
+import com.kieran.winnipegbusbackend.FavouriteStopsList
 import com.kieran.winnipegbusbackend.Stop
 import com.kieran.winnipegbusbackend.TransitApiManager
+import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
 
 class HomeScreenActivity : GoogleApiActivity(), LocationListener {
     private var searchButton: Button? = null
@@ -58,6 +65,34 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).build()
         connectClient()
+
+        createAppShortcuts()
+    }
+
+    private fun createAppShortcuts() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+                val shortcutManager = getSystemService<ShortcutManager>(ShortcutManager::class.java)
+                
+                val stops = FavouriteStopsList.getFavouriteStopsSorted(FavouritesListSortType.FREQUENCY_DESC).take(4)
+                val shortcuts = stops.mapIndexed { index, stop ->
+                    val intent = Intent(this, StopTimesActivity::class.java)
+                    intent.putExtra(StopTimesActivity.STOP_NUMBER, stop.number)
+                    intent.action = Intent.ACTION_VIEW
+
+                    ShortcutInfo.Builder(this, index.toString())
+                            .setShortLabel(stop.displayName)
+                            .setLongLabel(stop.toString())
+                            .setIcon(Icon.createWithResource(context, R.drawable.ic_favourite_stops_dark))
+                            .setIntent(intent)
+                            .build()
+                }
+
+                shortcutManager.dynamicShortcuts = shortcuts.reversed()
+            }
+        }catch (ex: Exception) {
+            Log.e("Winnipeg Transit Plus", "Unable to create app shortcuts")
+        }
     }
 
     private fun createTextWatcher(): TextWatcher {
