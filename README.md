@@ -16,8 +16,9 @@ The app does use third party services that may collect information used to ident
 
 Link to privacy policy of third party service providers used by the app
 
-Google Play Services
-AdMob
+- [Google Play Services](https://policies.google.com/privacy)
+- [AdMob](https://support.google.com/admob/answer/6128543?hl=en)
+
 Log Data
 
 I want to inform you that whenever you use my Service, in a case of an error in the app I collect data and information (through third party products) on your phone called Log Data. This Log Data may include information such as your device Internet Protocol (“IP”) address, device name, operating system version, the configuration of the app when utilizing my Service, the time and date of your use of the Service, and other statistics.
