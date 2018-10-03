@@ -25,6 +25,13 @@ import com.kieran.winnipegbusbackend.FavouriteStopsList
 import com.kieran.winnipegbusbackend.Stop
 import com.kieran.winnipegbusbackend.TransitApiManager
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
+import java.net.URL
+import android.content.DialogInterface
+import android.support.v7.app.AlertDialog
+import android.webkit.WebView
+import android.webkit.WebViewClient
+
+
 
 class HomeScreenActivity : GoogleApiActivity(), LocationListener {
     private var searchButton: Button? = null
@@ -73,7 +80,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                 val shortcutManager = getSystemService<ShortcutManager>(ShortcutManager::class.java)
-                
+
                 val stops = FavouriteStopsList.getFavouriteStopsSorted(FavouritesListSortType.FREQUENCY_DESC).take(4)
                 val shortcuts = stops.mapIndexed { index, stop ->
                     val intent = Intent(this, StopTimesActivity::class.java)
@@ -133,6 +140,24 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
             R.id.trip_planner -> {
                 startTripPlannerActivity()
                 return true
+            }
+            R.id.action_privacy_policy -> {
+                val alert = AlertDialog.Builder(this)
+                alert.setTitle("Privacy Policy")
+
+                val wv = WebView(this)
+                wv.loadUrl(getString(R.string.privacy_url))
+                wv.webViewClient = object : WebViewClient() {
+                    override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+                        view.loadUrl(url)
+
+                        return true
+                    }
+                }
+
+                alert.setView(wv)
+                alert.setNegativeButton("Close", { dialog, id -> dialog.dismiss() })
+                alert.show()
             }
         }
 
