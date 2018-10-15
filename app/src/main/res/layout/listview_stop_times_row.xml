@@ -36,10 +36,19 @@
         android:id="@+id/bus_wifi_indicator"
         android:layout_width="wrap_content"
         android:layout_height="18sp"
-        android:layout_toLeftOf="@+id/time_status_text"
+        android:layout_toLeftOf="@+id/two_bus_indicator"
         android:visibility="gone"
         android:contentDescription="@string/does_bus_have_wifi"
         android:src="?attr/busWifiIcon"/>
+
+    <ImageView
+        android:id="@+id/two_bus_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="18sp"
+        android:layout_toLeftOf="@+id/time_status_text"
+        android:visibility="gone"
+        android:contentDescription="@string/does_bus_have_extended_capacity"
+        android:src="?attr/twoBusIcon"/>
 
     <TextView
         android:id="@+id/time_status_text"

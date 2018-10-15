@@ -30,6 +30,8 @@ class ScheduledStop(stop: JSONObject, private val parentRoute: RouteSchedule) : 
         private set
     var routeKey: RouteKey? = null
         private set
+    val isTwoBus: Boolean
+        get() = TWO_BUS_NUMBERS.contains(busNumber)
 
     val timeStatus: String
         get() = if (isCancelled) "Cancelled" else StopTime.getTimeStatus(estimatedDepartureTime!!, scheduledDepartureTime!!)
@@ -137,5 +139,6 @@ class ScheduledStop(stop: JSONObject, private val parentRoute: RouteSchedule) : 
         private val WIFI_TAG = "wifi"
         private val BUS_NUMBER_TAG = "key"
         private val CANCELLED_STATUS_TAG = "cancelled"
+        private val TWO_BUS_NUMBERS = intArrayOf(971, 972, 973, 974, 975, 976, 977, 978,979,981,982,983,984,985,986,987,989,990)
     }
 }
