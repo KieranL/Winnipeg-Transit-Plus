@@ -226,12 +226,14 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
                 return true
             }
             R.id.get_directions_button -> {
-                val intent = Intent(this, TripPlannerActivity::class.java)
-                val parameters = TripParameters()
+                if(!loading) {
+                    val intent = Intent(this, TripPlannerActivity::class.java)
+                    val parameters = TripParameters()
 
-                parameters.origin = StopLocation(stopSchedule)
-                intent.putExtra(TripPlannerActivity.PARAMETERS, parameters)
-                startActivity(intent)
+                    parameters.origin = StopLocation(stopSchedule)
+                    intent.putExtra(TripPlannerActivity.PARAMETERS, parameters)
+                    startActivity(intent)
+                }
             }
         }
         return super.onOptionsItemSelected(item)

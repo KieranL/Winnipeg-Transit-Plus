@@ -77,7 +77,7 @@
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/destination_textView"
         android:id="@+id/swap_button"
-        android:layout_above="@+id/time_mode_spinner"
+        android:layout_above="@+id/time_bar"
         android:src="?attr/swapIcon"
         android:onClick="swapLocations"
         android:background="@color/transparent" />
@@ -85,10 +85,18 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/time_mode_spinner"
+        android:layout_below="@+id/destination_select_button"
         android:id="@+id/time_bar"
         android:orientation="horizontal"
         android:gravity="end">
+
+        <Spinner
+            android:id="@+id/time_mode_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/time_mode_options"
+            android:spinnerMode="dialog"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <Button
             android:layout_width="wrap_content"
@@ -103,25 +111,5 @@
             android:onClick="pickDate"
             android:id="@+id/trip_time_date"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"/></LinearLayout>
-
-
-    <TextView
-        android:text="Time Mode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/time_mode_textView"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:layout_alignBaseline="@+id/time_mode_spinner"
-        android:layout_alignBottom="@+id/time_mode_spinner"
-        android:layout_alignParentStart="true" />
-    <Spinner
-        android:id="@+id/time_mode_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_below="@+id/destination_select_button"
-        android:entries="@array/time_mode_options"
-        android:spinnerMode="dialog"
-        android:layout_alignParentEnd="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
 </RelativeLayout>

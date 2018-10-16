@@ -6,7 +6,7 @@ class WalkSegment(tripParameters: TripParameters, segment: JSONObject) : Segment
 
     override fun toString(): String {
         return if (from != null && to != null)
-            super.toString()
+            "Walk from " + super.toString()
         else
             "Walk"
     }

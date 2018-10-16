@@ -8,6 +8,6 @@ class RideSegment(tripParameters: TripParameters, segment: JSONObject) : Segment
     internal val route: Route = Route(segment)
 
     override fun toString(): String {
-        return route.routeName.toString()
+        return "Ride " + route.routeName.toString()
     }
 }

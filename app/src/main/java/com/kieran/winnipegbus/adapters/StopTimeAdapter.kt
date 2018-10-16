@@ -47,7 +47,7 @@ class StopTimeAdapter(context: Context, private val layoutResourceId: Int, priva
 
         val scheduledStop = scheduledStops[position]
         holder.routeNumber?.text = String.format("%d", scheduledStop.routeNumber)
-        holder.routeNumber?.setColour(scheduledStop)
+        holder.routeNumber?.setColour(scheduledStop.routeNumber, scheduledStop.coverageType)
         holder.routeVariantName?.text = scheduledStop.routeVariantName
         holder.hasBikeRackIcon?.visibility = if (scheduledStop.hasBikeRack) View.VISIBLE else View.GONE
         holder.hasWifiIcon?.visibility = if (scheduledStop.hasWifi) View.VISIBLE else View.GONE

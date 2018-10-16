@@ -154,12 +154,12 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
         val jsonObject = result.result
         try {
             val plans = jsonObject!!.getJSONArray("plans")
-
-            for (i in 0 until plans.length()) {
-                trips!!.add(Trip(tripParameters, plans.getJSONObject(i)))
-            }
-
             runOnUiThread {
+                for (i in 0 until plans.length()) {
+                    trips!!.add(Trip(tripParameters, plans.getJSONObject(i)))
+                }
+
+
                 adapter!!.notifyDataSetChanged()
             }
             swipeRefresh!!.isRefreshing = false
