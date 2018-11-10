@@ -154,17 +154,18 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    fun createAd() {
-        val adRequest = AdRequest.Builder()
-        adRequest.addTestDevice(getString(R.string.test_device_id_gs6e))
-        adView!!.loadAd(adRequest.build())
+    private fun createAd() {
+        try {
+            val adRequest = AdRequest.Builder()
+            adView!!.loadAd(adRequest.build())
+        }catch (e: Exception) {
+            //Log error when logger is made
+        }
     }
 
-    fun destroyAdView() {
-        if (adView != null) {
-            adView!!.visibility = View.GONE
-            adView!!.destroy()
-        }
+    private fun destroyAdView() {
+        adView?.visibility = View.GONE
+        adView?.destroy()
     }
 
     fun isBooleanSettingEnabled(key: String, defaultValue: Boolean = false): Boolean {
@@ -172,7 +173,7 @@ abstract class BaseActivity : AppCompatActivity() {
         return prefs.getBoolean(key, defaultValue)
     }
 
-    fun adsDisabled(): Boolean {
+    private fun adsDisabled(): Boolean {
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         return prefs.getBoolean("pref_disable_ads", false)
     }
