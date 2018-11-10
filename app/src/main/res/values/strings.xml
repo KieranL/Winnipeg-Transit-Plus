@@ -47,8 +47,8 @@
     <string name="no_location_found">No location found</string>
     <string name="get_directions">Get Directions</string>
     <string name="unable_to_find_place">Oops, Something went wrong trying to find the location</string>
-    <string name="does_bus_have_wifi">Does this bus have wifi?</string>
-    <string name="does_bus_have_bike_rack">Does this bus have a bike rack?</string>
+    <string name="does_bus_have_wifi">This bus has WiFi</string>
+    <string name="does_bus_have_bike_rack">This bus has a bike rack</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="disable_ads_confirmation_title">Are you sure you want to disable adds?</string>
@@ -56,5 +56,6 @@
     <string name="pref_title_refresh_on_resume">Automatically refresh</string>
     <string name="privacy_url">http://kieranl.github.io/Winnipeg-Transit-Plus/</string>
     <string name="action_privacy_policy">Privacy Policy</string>
+    <string name="does_bus_have_extended_capacity">This bus has a higher passenger capacity</string>
 
 </resources>

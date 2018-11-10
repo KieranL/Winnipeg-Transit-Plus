@@ -17,4 +17,5 @@
     <attr name="busNumberIcon" format="reference"/>
     <attr name="busWifiIcon" format="reference"/>
     <attr name="busBikeIcon" format="reference"/>
+    <attr name="twoBusIcon" format="reference"/>
 </resources>
