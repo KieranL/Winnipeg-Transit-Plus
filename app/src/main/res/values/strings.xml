@@ -35,7 +35,6 @@
     <string name="search_tip">Search by Street name, Route number or Stop number</string>
     <string name="map">Map</string>
     <string name="title_activity_route_map">Map</string>
-    <string name="test_device_id_gs6e">2BCF178C0DAA545593FB48844D1C242B</string>
     <string name="action_nearby_stops">Nearby Stops</string>
     <string name="stop_times_header_updated_text">Updated</string>
     <string name="title_activity_service_advisories">Service Advisories</string>
