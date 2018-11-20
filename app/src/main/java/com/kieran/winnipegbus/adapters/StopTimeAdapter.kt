@@ -37,6 +37,7 @@ class StopTimeAdapter(context: Context, private val layoutResourceId: Int, priva
             holder.routeVariantName = row.findViewById<View>(R.id.route_name_text) as TextView
             holder.hasBikeRackIcon = row.findViewById<View>(R.id.bus_bike_rack_indicator) as ImageView
             holder.hasWifiIcon = row.findViewById<View>(R.id.bus_wifi_indicator) as ImageView
+            holder.isTwoBusIcon = row.findViewById<View>(R.id.two_bus_indicator) as ImageView
             holder.timeStatus = row.findViewById<View>(R.id.time_status_text) as TextView
             holder.departureTime = row.findViewById<View>(R.id.departure_time_text) as TextView
 
@@ -51,6 +52,7 @@ class StopTimeAdapter(context: Context, private val layoutResourceId: Int, priva
         holder.routeVariantName?.text = scheduledStop.routeVariantName
         holder.hasBikeRackIcon?.visibility = if (scheduledStop.hasBikeRack) View.VISIBLE else View.GONE
         holder.hasWifiIcon?.visibility = if (scheduledStop.hasWifi) View.VISIBLE else View.GONE
+        holder.isTwoBusIcon?.visibility = if (scheduledStop.isTwoBus) View.VISIBLE else View.GONE
         holder.timeStatus?.text = scheduledStop.timeStatus
 
         val timeText: String
@@ -81,6 +83,7 @@ class StopTimeAdapter(context: Context, private val layoutResourceId: Int, priva
         internal var routeVariantName: TextView? = null
         internal var hasBikeRackIcon: ImageView? = null
         internal var hasWifiIcon: ImageView? = null
+        internal var isTwoBusIcon: ImageView? = null
         internal var timeStatus: TextView? = null
         internal var departureTime: TextView? = null
     }

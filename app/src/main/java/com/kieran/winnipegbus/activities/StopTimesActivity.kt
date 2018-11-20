@@ -22,24 +22,14 @@ import com.kieran.winnipegbus.adapters.StopTimeAdapter
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.ShakeDetector
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
-import com.kieran.winnipegbusbackend.FavouriteStop
-import com.kieran.winnipegbusbackend.FavouriteStopsList
-import com.kieran.winnipegbusbackend.LoadResult
-import com.kieran.winnipegbusbackend.Route
-import com.kieran.winnipegbusbackend.ScheduledStop
-import com.kieran.winnipegbusbackend.Stop
-import com.kieran.winnipegbusbackend.StopSchedule
-import com.kieran.winnipegbusbackend.StopTime
-import com.kieran.winnipegbusbackend.TransitApiManager
+import com.kieran.winnipegbusbackend.*
 import com.kieran.winnipegbusbackend.TripPlanner.classes.StopLocation
 import com.kieran.winnipegbusbackend.TripPlanner.classes.TripParameters
-import org.json.JSONException
 
 import org.json.JSONObject
 
 import java.io.IOException
 import java.util.ArrayList
-import java.util.Collections
 import java.util.Locale
 
 class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, ShakeDetector.OnShakeListener {
@@ -48,9 +38,9 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
     private var stopName: String? = null
     private var loading = false
     private val stops = ArrayList<ScheduledStop>()
-    private var adapter: StopTimeAdapter? = null
+    private lateinit var adapter: StopTimeAdapter
     private val routeNumberFilter = ArrayList<Int>()
-    private var title: TextView? = null
+    private lateinit var title: TextView
     private var selectedRoutes: BooleanArray? = null
     private val routeFilterRoutes = ArrayList<Route>()
     private var loadStopTimesTask: AsyncTask<*, *, *>? = null
@@ -59,7 +49,8 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
     private var shakeDetector: ShakeDetector? = null
     private var hasFilterChanged: Boolean = false
     private var swipeRefreshLayout: StyledSwipeRefresh? = null
-    private var lastUpdated: TextView? = null
+    private lateinit var lastUpdatedView: TextView
+    private var lastUpdated: StopTime? = null
 
     private val scheduleEndTime: StopTime
         get() {
@@ -100,14 +91,12 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
 
         val intent = intent
 
-        if (title == null) {
-            title = findViewById(R.id.listView_stop_times_header_text)
-            lastUpdated = findViewById(R.id.stop_times_header_last_updated)
-        }
+        title = findViewById(R.id.listView_stop_times_header_text)
+        lastUpdatedView = findViewById(R.id.stop_times_header_last_updated)
 
         val stop = intent.getSerializableExtra(STOP) as Stop
         stopName = stop.name
-        title!!.text = stopName
+        title.text = stopName
         stopNumber = stop.number
 
         setTitle(String.format(Locale.CANADA, ACTIONBAR_TEXT, stopNumber))
@@ -141,7 +130,8 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
             sensorManager!!.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_UI)
 
         if(isBooleanSettingEnabled("pref_refresh_on_resume", true)) {
-            refresh()
+            if(lastUpdated != null && System.currentTimeMillis() - StaticConfig.STOP_TIMES_MIN_AUTO_REFRESH_MILLISECONDS_DELTA > lastUpdated!!.milliseconds)
+                refresh()
         }
     }
 
@@ -198,7 +188,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
             if (isOnline) {
                 loading = true
 
-                adapter!!.loadTimeSetting()
+                adapter.loadTimeSetting()
 
                 getTimes()
             } else {
@@ -307,11 +297,11 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         }
     }
 
-    fun getFilterRoutes() {
+    private fun getFilterRoutes() {
         for (routeSchedule in stopSchedule!!.getRouteList())
             routeFilterRoutes.add(Route(routeSchedule))
 
-        Collections.sort(routeFilterRoutes)
+        routeFilterRoutes.sort()
     }
 
     override fun onRefresh() {
@@ -349,34 +339,32 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
                     stops.clear()
                     stops.addAll(stopSchedule!!.scheduledStopsSorted)
                 }
-                adapter!!.notifyDataSetChanged()
+                adapter.notifyDataSetChanged()
             }
             
             if (result.exception != null && loading) {
                 handleException(result.exception)
                 if (stopSchedule == null && result.exception is IOException)
-                    title!!.setText(R.string.network_error)
+                    title.setText(R.string.network_error)
             } else if (stops.size == 0 && loading) {
                 showLongToaster(R.string.no_results_found)
-                title!!.setText(R.string.no_results_found)
+                title.setText(R.string.no_results_found)
             } else {
-                title!!.text = stopName
+                title.text = stopName
             }
 
-
-            lastUpdated!!.text = String.format(UPDATED_STRING, StopTime().toFormattedString(null, timeSetting))
+            lastUpdated = StopTime()
+            lastUpdatedView.text = String.format(UPDATED_STRING, lastUpdated!!.toFormattedString(null, timeSetting))
             swipeRefreshLayout!!.isRefreshing = false
             loading = false
         }
     }
 
     companion object {
-
-        private val FILTER_POSITIVE = "Done"
-        val STOP = "stop"
-        private val UPDATED_STRING = "Updated %s"
-        private val ACTIONBAR_TEXT = "Stop %d"
-        private val DELETE_THIS_FAVOURITE = "Delete this Favourite?"
-        private val CREATE_NOTIFICATION_FOR_BUS = "Create a notification for this bus?"
+        private const val FILTER_POSITIVE = "Done"
+        const val STOP = "stop"
+        private const val UPDATED_STRING = "Updated %s"
+        private const val ACTIONBAR_TEXT = "Stop %d"
+        private const val DELETE_THIS_FAVOURITE = "Delete this Favourite?"
     }
 }

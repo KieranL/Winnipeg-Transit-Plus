@@ -4,8 +4,7 @@ apply plugin: 'kotlin-android'
 android {
     signingConfigs {
         config {
-            storeFile file('C:/Users/kiera/Desktop/AppKey.jks')
-            keyAlias 'AppKey'
+
         }
     }
     compileSdkVersion 26
@@ -14,8 +13,8 @@ android {
         applicationId "com.kieran.winnipegbus"
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 35
-        versionName "1.7.8"
+        versionCode 36
+        versionName "1.7.9"
         signingConfig signingConfigs.config
         resValue "string", "google_maps_key", (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
         buildConfigField "String", "winnipeg_transit_api_key", (project.findProperty("WINNIPEG_TRANSIT_API_KEY") ?: "")
