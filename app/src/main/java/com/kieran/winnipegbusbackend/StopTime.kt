@@ -13,7 +13,7 @@ class StopTime : Comparable<Any>, Serializable {
     var milliseconds: Long = 0
         private set
 
-    val minutesString: String
+    private val minutesString: String
         get() {
             return if (minutes >= 10) minutes.toString() else "0" + minutes.toString()
         }
@@ -68,7 +68,7 @@ class StopTime : Comparable<Any>, Serializable {
     }
 
     override fun toString(): String {
-        return hoursString + ":" + minutesString
+        return "$hoursString:$minutesString"
     }
 
     fun to12hrTimeString(): String {
@@ -76,8 +76,8 @@ class StopTime : Comparable<Any>, Serializable {
         val hours = hours
 
         timeString = when {
-            hours == 0 -> "12" + ":" + minutesString
-            hours <= 12 -> hoursString + ":" + minutesString
+            hours == 0 -> "12:$minutesString"
+            hours <= 12 -> "$hoursString:$minutesString"
             else -> (hours - 12).toString() + ":" + minutesString
         }
 
@@ -146,14 +146,14 @@ class StopTime : Comparable<Any>, Serializable {
     }
 
     companion object {
-        private val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
-        private val DUE_TIME = 0.5
-        private val DUE_STRING = "Due"
-        private val EARLY_TIME = -0.5
-        private val LATE_TIME = 0.5
-        private val EARLY_TEXT = "Early"
-        private val LATE_TEXT = "Late"
-        private val OK_TEXT = "Ok"
+        private const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
+        private const val DUE_TIME = 0.5
+        private const val DUE_STRING = "Due"
+        private const val EARLY_TIME = -0.5
+        private const val LATE_TIME = 0.5
+        private const val EARLY_TEXT = "Early"
+        private const val LATE_TEXT = "Late"
+        private const val OK_TEXT = "Ok"
         @Transient private val calendar = Calendar.getInstance()
         private val datePickerDateFormat = SimpleDateFormat("EEE, MMM dd", Locale.CANADA)
 

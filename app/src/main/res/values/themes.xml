@@ -20,6 +20,7 @@
         <item name="busNumberIcon">@drawable/ic_bus_dark</item>
         <item name="busWifiIcon">@drawable/ic_bus_wifi_dark</item>
         <item name="busBikeIcon">@drawable/ic_bus_bike_dark</item>
+        <item name="twoBusIcon">@drawable/ic_two_bus</item>
     </style>
     <style name="Light" parent="Base.Theme.AppCompat.Light">
         <item name="stopTimesHeaderBackground">@drawable/header_background_light</item>
@@ -40,6 +41,7 @@
         <item name="busNumberIcon">@drawable/ic_bus_light</item>
         <item name="busWifiIcon">@drawable/ic_bus_wifi_light</item>
         <item name="busBikeIcon">@drawable/ic_bus_bike_light</item>
+        <item name="twoBusIcon">@drawable/ic_two_bus_light</item>
     </style>
     <style name="Rt" parent="Dark">
         <item name="android:colorBackground">@color/dark_rt_red</item>
