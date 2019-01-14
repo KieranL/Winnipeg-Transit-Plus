@@ -177,7 +177,7 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
 
         if (tasks!!.size <= 2) {
             runOnUiThread {
-                Collections.sort(upcomingStops!!)
+                Collections.sort(upcomingStops)
                 adapter!!.notifyDataSetChanged()
             }
 
