@@ -12,7 +12,7 @@ import android.widget.Toast
 import com.kieran.winnipegbus.activities.GoogleApiActivity
 import com.kieran.winnipegbusbackend.FavouriteStopsList
 import com.kieran.winnipegbusbackend.LoadResult
-import com.kieran.winnipegbusbackend.TransitApiManager
+import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
 import com.kieran.winnipegbusbackend.TripPlanner.LocationFactory
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Location
 import com.kieran.winnipegbusbackend.TripPlanner.classes.StopLocation
@@ -21,7 +21,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import com.google.android.gms.location.places.ui.PlacePicker
 import android.app.Activity.RESULT_OK
-import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.kieran.winnipegbus.activities.MapActivity

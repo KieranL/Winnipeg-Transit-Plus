@@ -17,9 +17,7 @@ import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationServices
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbusbackend.Stop
-import com.kieran.winnipegbusbackend.TransitApiManager
-import java.net.URL
-import android.content.DialogInterface
+import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
 import android.support.v7.app.AlertDialog
 import android.webkit.WebView
 import android.webkit.WebViewClient

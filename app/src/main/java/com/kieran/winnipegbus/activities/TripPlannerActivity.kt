@@ -20,7 +20,7 @@ import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.LoadResult
 import com.kieran.winnipegbusbackend.StopTime
-import com.kieran.winnipegbusbackend.TransitApiManager
+import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
 import com.kieran.winnipegbusbackend.TripPlanner.TimeMode
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Location
 import com.kieran.winnipegbusbackend.TripPlanner.classes.Trip
