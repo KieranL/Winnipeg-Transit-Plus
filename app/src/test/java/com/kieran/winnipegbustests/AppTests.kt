@@ -3,7 +3,7 @@ package com.kieran.winnipegbustests
 import com.kieran.winnipegbusbackend.RouteKey
 import com.kieran.winnipegbusbackend.StopSchedule
 import com.kieran.winnipegbusbackend.StopTime
-import com.kieran.winnipegbusbackend.TransitApiManager
+import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
 
 import junit.framework.Assert
 

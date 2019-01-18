@@ -23,7 +23,7 @@ import com.kieran.winnipegbusbackend.LoadResult
 import com.kieran.winnipegbusbackend.SearchQuery
 import com.kieran.winnipegbusbackend.SearchResults
 import com.kieran.winnipegbusbackend.Stop
-import com.kieran.winnipegbusbackend.TransitApiManager
+import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
 
 import org.json.JSONObject

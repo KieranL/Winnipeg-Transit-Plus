@@ -1,12 +1,15 @@
-package com.kieran.winnipegbusbackend
+package com.kieran.winnipegbusbackend.winnipegtransit
 
 import android.location.Location
 import android.os.AsyncTask
 import com.kieran.winnipegbus.BuildConfig
+import com.kieran.winnipegbusbackend.*
 
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
+import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
 
 import org.json.JSONObject
+import java.lang.Double
 
 import java.net.URL
 import java.util.*
@@ -30,7 +33,7 @@ object TransitApiManager {
     private val SERVICE_ADVISORIES_PARAMETER = "service-advisories"
     private val LOCATIONS_PARAMETER = "locations"
     private val URL_FORMAT = "https://api.winnipegtransit.com/v3/%s.json?usage=short&api-key=" + BuildConfig.winnipeg_transit_api_key + "%s"
-    var lastQueryTime: StopTime? = StopTime()
+    var lastQueryTime: StopTime = StopTime()
         private set
 
     fun getJson(path: String): LoadResult<JSONObject> {
@@ -47,7 +50,10 @@ object TransitApiManager {
             stream.close()
 
             val obj = JSONObject(myString)
-            lastQueryTime = StopTime.convertStringToStopTime(obj.getString(QUERY_TIME))
+            val newQueryTime = StopTime.convertStringToStopTime(obj.getString(QUERY_TIME))
+
+            if(newQueryTime != null)
+                lastQueryTime = newQueryTime
 
             LoadResult(obj, null)
         } catch (ex: Exception) {
@@ -100,7 +106,6 @@ object TransitApiManager {
         } catch (e: Exception) {
             SearchQuery(search, createUrl(STOPS_PARAMETER + COLON + createURLFriendlyString(search), null), SearchQueryType.GENERAL)
         }
-
     }
 
     fun generateSearchQuery(routeNumber: Int): SearchQuery {
@@ -131,7 +136,7 @@ object TransitApiManager {
 
     fun generateSearchQuery(location: Location, radius: Int): SearchQuery {
         val totalRadius = Math.round(location.accuracy) + radius
-        val parameters = arrayOf(URLParameter(DISTANCE_PARAMETER, Integer.toString(totalRadius)), URLParameter(LATITUDE_PARAMETER, java.lang.Double.toString(location.latitude)), URLParameter(LONGITUDE_PARAMETER, java.lang.Double.toString(location.longitude))).toList()
+        val parameters = arrayOf(URLParameter(DISTANCE_PARAMETER, Integer.toString(totalRadius)), URLParameter(LATITUDE_PARAMETER, Double.toString(location.latitude)), URLParameter(LONGITUDE_PARAMETER, Double.toString(location.longitude))).toList()
         val url = createUrl(STOPS_PARAMETER, parameters)
         return SearchQuery("NearbyStops", url, SearchQueryType.NEARBY)
     }
@@ -156,5 +161,3 @@ object TransitApiManager {
         fun onReceive(result: LoadResult<JSONObject>)
     }
 }
-
-class RateLimitedException : Exception()

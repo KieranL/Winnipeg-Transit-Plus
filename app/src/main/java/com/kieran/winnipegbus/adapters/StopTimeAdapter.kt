@@ -12,17 +12,21 @@ import com.kieran.winnipegbus.activities.BaseActivity
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.views.RouteNumberTextView
 import com.kieran.winnipegbusbackend.ScheduledStop
-import com.kieran.winnipegbusbackend.TransitApiManager
+import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
 import android.util.TypedValue
 import android.widget.ImageView
+import com.kieran.winnipegbusbackend.interfaces.TransitService
+import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitService
 
 
 class StopTimeAdapter(context: Context, private val layoutResourceId: Int, private val scheduledStops: List<ScheduledStop>) : ArrayAdapter<ScheduledStop>(context, layoutResourceId, scheduledStops) {
     private var use24hrTime: Boolean = false
     private val inflater: LayoutInflater = (context as Activity).layoutInflater
+    private var transitService: TransitService
 
     init {
         loadTimeSetting()
+        transitService = WinnipegTransitService
     }
 
     override fun getView(position: Int, row: View?, parent: ViewGroup): View {
@@ -62,7 +66,7 @@ class StopTimeAdapter(context: Context, private val layoutResourceId: Int, priva
             params.width = spToPx(96f, context)
             holder.timeStatus!!.layoutParams = params
         }else {
-            timeText = scheduledStop.estimatedDepartureTime!!.toFormattedString(TransitApiManager.lastQueryTime, use24hrTime)
+            timeText = scheduledStop.estimatedDepartureTime!!.toFormattedString(transitService.getLastQueryTime(), use24hrTime)
         }
 
         holder.departureTime!!.text = timeText

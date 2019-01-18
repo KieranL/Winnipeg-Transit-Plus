@@ -18,6 +18,10 @@ import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.*
 import com.kieran.winnipegbusbackend.UpcomingStops.HttpUpcomingStopsManager
 import com.kieran.winnipegbusbackend.UpcomingStops.UpcomingStopsManager
+import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
+import com.kieran.winnipegbusbackend.interfaces.TransitService
+import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
+import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitService
 
 import org.json.JSONObject
 
@@ -34,12 +38,14 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
     private var loading = false
     private var swipeRefreshLayout: StyledSwipeRefresh? = null
     private var upcomingStopsManager: UpcomingStopsManager? = null
+    private lateinit var transitService: TransitService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scheduled_stop_info)
         scheduledStop = intent.getSerializableExtra(STOP_EXTRA) as ScheduledStop
         upcomingStopsManager = HttpUpcomingStopsManager()
+        transitService = WinnipegTransitService
 
         if (scheduledStop != null) {
             use24hrTime = timeSetting
@@ -201,7 +207,7 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
                 for (stopNumber in result.result) {
 
                     try {
-                        val latest = if (scheduledStop!!.estimatedDepartureTime!!.milliseconds > TransitApiManager.lastQueryTime!!.milliseconds) scheduledStop!!.estimatedDepartureTime else TransitApiManager.lastQueryTime
+                        val latest = if (scheduledStop!!.estimatedDepartureTime!!.milliseconds > transitService.getLastQueryTime().milliseconds) scheduledStop!!.estimatedDepartureTime else TransitApiManager.lastQueryTime
 
                         val task = TransitApiManager.getJsonAsync(TransitApiManager.generateStopNumberURL(stopNumber, scheduledStop!!.routeNumber, latest!!, null), instance)
                         tasks!!.add(task)

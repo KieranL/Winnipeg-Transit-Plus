@@ -25,6 +25,7 @@ import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.*
 import com.kieran.winnipegbusbackend.TripPlanner.classes.StopLocation
 import com.kieran.winnipegbusbackend.TripPlanner.classes.TripParameters
+import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
 
 import org.json.JSONObject
 

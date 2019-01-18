@@ -2,10 +2,8 @@ package com.kieran.winnipegbusbackend.UpcomingStops
 
 import com.kieran.winnipegbusbackend.LoadResult
 import com.kieran.winnipegbusbackend.RouteKey
-import com.kieran.winnipegbusbackend.SearchQuery
-import com.kieran.winnipegbusbackend.TransitApiManager
+import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
 
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
