@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.hardware.Sensor
 import android.hardware.SensorManager
-import android.os.AsyncTask
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v4.widget.SwipeRefreshLayout
@@ -25,9 +24,14 @@ import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.*
 import com.kieran.winnipegbusbackend.TripPlanner.classes.StopLocation
 import com.kieran.winnipegbusbackend.TripPlanner.classes.TripParameters
-import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
-
-import org.json.JSONObject
+import com.kieran.winnipegbusbackend.interfaces.TransitService
+import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitRouteIdentifier
+import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitService
+import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitStopIdentifier
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 import java.io.IOException
 import java.util.ArrayList
@@ -44,7 +48,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
     private lateinit var title: TextView
     private var selectedRoutes: BooleanArray? = null
     private val routeFilterRoutes = ArrayList<Route>()
-    private var loadStopTimesTask: AsyncTask<*, *, *>? = null
+    private var loadStopTimesTask: Job? = null
     private var sensorManager: SensorManager? = null
     private var accelerometer: Sensor? = null
     private var shakeDetector: ShakeDetector? = null
@@ -52,6 +56,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
     private var swipeRefreshLayout: StyledSwipeRefresh? = null
     private lateinit var lastUpdatedView: TextView
     private var lastUpdated: StopTime? = null
+    private lateinit var transitService: TransitService
 
     private val scheduleEndTime: StopTime
         get() {
@@ -74,6 +79,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_stop_times)
+        transitService = WinnipegTransitService
         adViewResId = R.id.stopTimesAdView
 
         FavouriteStopsList.loadFavourites()
@@ -121,7 +127,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         super.onDestroy()
         loading = false
         if (loadStopTimesTask != null)
-            loadStopTimesTask!!.cancel(true)
+            loadStopTimesTask!!.cancel()
     }
 
     public override fun onResume() {
@@ -159,9 +165,36 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
     }
 
     private fun getTimes() {
-        val urlPath = TransitApiManager.generateStopNumberURL(stopNumber, routeNumberFilter, null, scheduleEndTime)
+        loadStopTimesTask = GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val stopSchedule = transitService.getStopSchedule(WinnipegTransitStopIdentifier(stopNumber), null, scheduleEndTime, routeNumberFilter.map{ WinnipegTransitRouteIdentifier(it)})
 
-        loadStopTimesTask = LoadStopTimes().execute(urlPath)
+                runOnUiThread {
+                    if (loading) {
+                        stops.clear()
+                        stops.addAll(stopSchedule.scheduledStopsSorted)
+                    }
+                    adapter.notifyDataSetChanged()
+                    stopName = stopSchedule.name
+                    title.text = stopName
+                    this@StopTimesActivity.stopSchedule = stopSchedule
+                }
+            } catch (e: Exception) {
+                runOnUiThread { handleException(e) }
+
+                if (loading) {
+                    if (stopSchedule == null && e is IOException)
+                        title.setText(R.string.network_error)
+                }
+            }
+
+            runOnUiThread {
+                lastUpdated = StopTime()
+                lastUpdatedView.text = String.format(UPDATED_STRING, lastUpdated!!.toFormattedString(null, timeSetting))
+                swipeRefreshLayout!!.isRefreshing = false
+                loading = false
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -313,50 +346,6 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
 
     override fun onShake() {
         refresh()
-    }
-
-    private inner class LoadStopTimes : AsyncTask<String, Void, LoadResult<JSONObject>>() {
-        override fun doInBackground(vararg urls: String): LoadResult<JSONObject> {
-            val result: LoadResult<JSONObject> = TransitApiManager.getJson(urls[0])
-
-            if (loading && result.result != null) {
-                if (stopSchedule == null) {
-                    stopSchedule = StopSchedule(result.result, stopNumber)
-
-                    stopName = stopSchedule!!.name
-                } else {
-                    stopSchedule!!.refresh(result.result)
-                }
-            }
-
-            return result
-        }
-
-        override fun onPostExecute(result: LoadResult<JSONObject>) {
-            runOnUiThread {
-                if (loading && result.result != null) {
-                    stops.clear()
-                    stops.addAll(stopSchedule!!.scheduledStopsSorted)
-                }
-                adapter.notifyDataSetChanged()
-            }
-            
-            if (result.exception != null && loading) {
-                handleException(result.exception)
-                if (stopSchedule == null && result.exception is IOException)
-                    title.setText(R.string.network_error)
-            } else if (stops.size == 0 && loading) {
-                showLongToaster(R.string.no_results_found)
-                title.setText(R.string.no_results_found)
-            } else {
-                title.text = stopName
-            }
-
-            lastUpdated = StopTime()
-            lastUpdatedView.text = String.format(UPDATED_STRING, lastUpdated!!.toFormattedString(null, timeSetting))
-            swipeRefreshLayout!!.isRefreshing = false
-            loading = false
-        }
     }
 
     companion object {

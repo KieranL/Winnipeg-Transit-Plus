@@ -1,11 +1,12 @@
 package com.kieran.winnipegbusbackend.interfaces
 
 import com.kieran.winnipegbusbackend.StopFeatures
+import com.kieran.winnipegbusbackend.StopSchedule
 import com.kieran.winnipegbusbackend.StopTime
 import com.kieran.winnipegbusbackend.enums.ScheduleType
 
 interface TransitService {
-    fun getStopSchedule(stop: StopIdentifier, routes: ArrayList<RouteIdentifier> = ArrayList())
+    fun getStopSchedule(stop: StopIdentifier, startTime: StopTime?, endTime: StopTime?, routes: List<RouteIdentifier> = ArrayList()): StopSchedule
 
     fun getStopDetails(stop: StopIdentifier, stopFeatures: StopFeatures): StopFeatures
 

@@ -7,6 +7,7 @@ import com.kieran.winnipegbusbackend.*
 
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
 import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
+import com.kieran.winnipegbusbackend.exceptions.TransitDataNotFoundException
 
 import org.json.JSONObject
 import java.lang.Double
@@ -43,6 +44,8 @@ object TransitApiManager {
 
             if(con.responseCode == 503)
                 return LoadResult(null, RateLimitedException())
+            else if(con.responseCode == 404)
+                return LoadResult(null, TransitDataNotFoundException())
 
             val stream = con.inputStream
             val s = Scanner(stream).useDelimiter("\\A")
