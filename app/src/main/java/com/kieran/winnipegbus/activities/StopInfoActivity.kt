@@ -11,8 +11,8 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.kieran.winnipegbus.adapters.StopFeaturesAdapter
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbusbackend.StopFeatures
+import com.kieran.winnipegbusbackend.TransitServiceProvider
 import com.kieran.winnipegbusbackend.interfaces.TransitService
-import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitService
 import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitStopIdentifier
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
@@ -30,7 +30,7 @@ class StopInfoActivity : MapActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_stop_info)
-        transitService = WinnipegTransitService
+        transitService = TransitServiceProvider.getTransitService()
         stopFeatures = intent.getSerializableExtra(STOP_FEATURES) as StopFeatures
 
         title = String.format(Locale.CANADA, ACTIONBAR_TEXT, stopFeatures!!.number)

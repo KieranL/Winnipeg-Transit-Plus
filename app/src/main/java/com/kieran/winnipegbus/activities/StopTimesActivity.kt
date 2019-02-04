@@ -26,7 +26,6 @@ import com.kieran.winnipegbusbackend.TripPlanner.classes.StopLocation
 import com.kieran.winnipegbusbackend.TripPlanner.classes.TripParameters
 import com.kieran.winnipegbusbackend.interfaces.TransitService
 import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitRouteIdentifier
-import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitService
 import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitStopIdentifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -79,7 +78,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_stop_times)
-        transitService = WinnipegTransitService
+        transitService = TransitServiceProvider.getTransitService()
         adViewResId = R.id.stopTimesAdView
 
         FavouriteStopsList.loadFavourites()

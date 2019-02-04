@@ -1,13 +1,12 @@
 package com.kieran.winnipegbusbackend.winnipegtransit
 
-import com.kieran.winnipegbusbackend.StopFeatures
-import com.kieran.winnipegbusbackend.StopSchedule
-import com.kieran.winnipegbusbackend.StopTime
+import com.kieran.winnipegbusbackend.*
 import com.kieran.winnipegbusbackend.enums.ScheduleType
 import com.kieran.winnipegbusbackend.interfaces.Location
 import com.kieran.winnipegbusbackend.interfaces.RouteIdentifier
 import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
 import com.kieran.winnipegbusbackend.interfaces.TransitService
+import com.kieran.winnipegbusbackend.shared.GeoLocation
 
 object WinnipegTransitService : TransitService {
     override fun getStopSchedule(stop: StopIdentifier, startTime: StopTime?, endTime: StopTime?, routes: List<RouteIdentifier>): StopSchedule {
@@ -35,16 +34,40 @@ object WinnipegTransitService : TransitService {
         return stopFeatures
     }
 
-    override fun getRouteStops(route: RouteIdentifier) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getRouteStops(route: RouteIdentifier): List<Stop> {
+        val url = TransitApiManager.generateSearchQuery((route as WinnipegTransitRouteIdentifier).routeNumber)
+        val result = TransitApiManager.getJson(url)
+
+        if (result.result != null) {
+            val searchResults = SearchResults()
+            searchResults.loadStops(result)
+            return searchResults.getStops()
+        } else
+            throw result.exception!!
     }
 
-    override fun findStop(name: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun findStop(name: String): List<Stop> {
+        val url = TransitApiManager.generateSearchQuery(name)
+        val result = TransitApiManager.getJson(url)
+
+        if (result.result != null) {
+            val searchResults = SearchResults()
+            searchResults.loadStops(result)
+            return searchResults.getStops()
+        } else
+            throw result.exception!!
     }
 
-    override fun findClosestStops(location: Location, distance: Int, stopCount: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun findClosestStops(location: Location, distance: Int, stopCount: Int): List<Stop> {
+        val url = TransitApiManager.generateSearchQuery((location as GeoLocation), distance)
+        val result = TransitApiManager.getJson(url)
+
+        if (result.result != null) {
+            val searchResults = SearchResults()
+            searchResults.loadStops(result)
+            return searchResults.getStops()
+        } else
+            throw result.exception!!
     }
 
     override fun getLastQueryTime(): StopTime {

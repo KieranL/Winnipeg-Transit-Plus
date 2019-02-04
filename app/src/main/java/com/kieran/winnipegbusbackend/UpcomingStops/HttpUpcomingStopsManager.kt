@@ -11,8 +11,8 @@ import java.util.ArrayList
 
 class HttpUpcomingStopsManager : UpcomingStopsManager {
     override fun GetUpcomingStopsAsync(key: RouteKey, stopOnRoute: Int, listener: UpcomingStopsManager.OnUpcomingStopsFoundListener) {
-        val query = TransitApiManager.generateSearchQuery(key)
-        TransitApiManager.getJsonAsync(query.queryUrl, object : TransitApiManager.OnJsonLoadResultReceiveListener {
+        val queryUrl = TransitApiManager.generateSearchQuery(key)
+        TransitApiManager.getJsonAsync(queryUrl, object : TransitApiManager.OnJsonLoadResultReceiveListener {
             override fun onReceive(result: LoadResult<JSONObject>) {
                 if (result.result != null) {
                     try {

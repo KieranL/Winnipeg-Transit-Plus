@@ -12,11 +12,10 @@ import com.kieran.winnipegbus.activities.BaseActivity
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.views.RouteNumberTextView
 import com.kieran.winnipegbusbackend.ScheduledStop
-import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
 import android.util.TypedValue
 import android.widget.ImageView
+import com.kieran.winnipegbusbackend.TransitServiceProvider
 import com.kieran.winnipegbusbackend.interfaces.TransitService
-import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitService
 
 
 class StopTimeAdapter(context: Context, private val layoutResourceId: Int, private val scheduledStops: List<ScheduledStop>) : ArrayAdapter<ScheduledStop>(context, layoutResourceId, scheduledStops) {
@@ -26,7 +25,7 @@ class StopTimeAdapter(context: Context, private val layoutResourceId: Int, priva
 
     init {
         loadTimeSetting()
-        transitService = WinnipegTransitService
+        transitService = TransitServiceProvider.getTransitService()
     }
 
     override fun getView(position: Int, row: View?, parent: ViewGroup): View {
@@ -78,7 +77,7 @@ class StopTimeAdapter(context: Context, private val layoutResourceId: Int, priva
         use24hrTime = BaseActivity.getTimeSetting(context)
     }
 
-    fun spToPx(sp: Float, context: Context): Int {
+    private fun spToPx(sp: Float, context: Context): Int {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.resources.displayMetrics).toInt()
     }
 

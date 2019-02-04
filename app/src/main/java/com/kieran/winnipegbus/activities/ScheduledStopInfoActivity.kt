@@ -21,7 +21,6 @@ import com.kieran.winnipegbusbackend.UpcomingStops.UpcomingStopsManager
 import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
 import com.kieran.winnipegbusbackend.interfaces.TransitService
 import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
-import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitService
 
 import org.json.JSONObject
 
@@ -45,7 +44,7 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
         setContentView(R.layout.activity_scheduled_stop_info)
         scheduledStop = intent.getSerializableExtra(STOP_EXTRA) as ScheduledStop
         upcomingStopsManager = HttpUpcomingStopsManager()
-        transitService = WinnipegTransitService
+        transitService = TransitServiceProvider.getTransitService()
 
         if (scheduledStop != null) {
             use24hrTime = timeSetting

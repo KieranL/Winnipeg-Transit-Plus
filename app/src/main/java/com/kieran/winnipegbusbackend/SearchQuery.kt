@@ -4,4 +4,4 @@ import com.kieran.winnipegbusbackend.enums.SearchQueryType
 
 import java.io.Serializable
 
-class SearchQuery(val query: String, val queryUrl: String, val searchQueryType: SearchQueryType) : Serializable
+class SearchQuery(val query: String, val searchQueryType: SearchQueryType) : Serializable

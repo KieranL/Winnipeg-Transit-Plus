@@ -18,13 +18,16 @@ import com.google.android.gms.location.LocationServices
 import com.kieran.winnipegbus.adapters.StopListAdapter
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
-import com.kieran.winnipegbusbackend.FavouriteStopsList
-import com.kieran.winnipegbusbackend.LoadResult
-import com.kieran.winnipegbusbackend.SearchQuery
-import com.kieran.winnipegbusbackend.SearchResults
-import com.kieran.winnipegbusbackend.Stop
+import com.kieran.winnipegbusbackend.*
 import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
+import com.kieran.winnipegbusbackend.interfaces.TransitService
+import com.kieran.winnipegbusbackend.shared.GeoLocation
+import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitRouteIdentifier
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 import org.json.JSONObject
 
@@ -33,14 +36,16 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
     private var adapter: StopListAdapter? = null
     private var searchQuery: SearchQuery? = null
     private var loading = false
-    private var task: AsyncTask<*, *, *>? = null
+    private var task: Job? = null
     private var swipeRefreshLayout: StyledSwipeRefresh? = null
+    private lateinit var transitService: TransitService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         searchResults.clear()
         adViewResId = R.id.stopsListAdView
         setContentView(R.layout.activity_search_results)
+        transitService = TransitServiceProvider.getTransitService()
 
         val listView = findViewById<View>(R.id.stops_listView) as ListView
 
@@ -87,8 +92,19 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
         if (!loading) {
             if (isOnline) {
                 loading = true
+                task = GlobalScope.launch(Dispatchers.IO) {
+                    val stops: List<Stop>
+                    when (searchQuery!!.searchQueryType) {
+                        SearchQueryType.GENERAL -> stops = transitService.findStop(searchQuery!!.query)
+                        SearchQueryType.NEARBY -> {
+                            val location = latestLocation
+                            stops =transitService.findClosestStops(GeoLocation(location!!.latitude, location.longitude), (nearbyStopsDistance + location.accuracy).toInt())
+                        }
+                        SearchQueryType.ROUTE_NUMBER -> stops =transitService.getRouteStops(WinnipegTransitRouteIdentifier(searchQuery!!.query.toInt()))
+                    }
 
-                task = TransitApiManager.getJsonAsync(searchQuery!!.queryUrl, this)
+                    onDataReceived(stops)
+                }
             } else {
                 showLongToaster(R.string.network_error)
             }
@@ -99,7 +115,7 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
     public override fun onDestroy() {
         super.onDestroy()
         if (task != null)
-            task!!.cancel(true)
+            task!!.cancel()
         loading = false
     }
 
@@ -172,7 +188,15 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
     }
 
     override fun onLocationChanged(location: Location) {
-        searchQuery = TransitApiManager.generateSearchQuery(location, nearbyStopsDistance)
+        task = GlobalScope.launch(Dispatchers.IO) {
+            val stops = transitService.findClosestStops(GeoLocation(location!!.latitude, location.longitude), (nearbyStopsDistance + location.accuracy).toInt())
+
+            onDataReceived(stops)
+        }
+    }
+
+    private fun onDataReceived(stops: List<Stop>) {
+
     }
 
     override fun onReceive(result: LoadResult<JSONObject>) {

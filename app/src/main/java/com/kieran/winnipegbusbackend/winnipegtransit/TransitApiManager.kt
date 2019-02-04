@@ -1,13 +1,12 @@
 package com.kieran.winnipegbusbackend.winnipegtransit
 
-import android.location.Location
 import android.os.AsyncTask
 import com.kieran.winnipegbus.BuildConfig
 import com.kieran.winnipegbusbackend.*
 
-import com.kieran.winnipegbusbackend.enums.SearchQueryType
 import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
 import com.kieran.winnipegbusbackend.exceptions.TransitDataNotFoundException
+import com.kieran.winnipegbusbackend.shared.GeoLocation
 
 import org.json.JSONObject
 import java.lang.Double
@@ -102,27 +101,23 @@ object TransitApiManager {
         return generateStopNumberURL(stopNumber, routeFilter, startTime, endTime)
     }
 
-    fun generateSearchQuery(search: String): SearchQuery {
+    fun generateSearchQuery(search: String): String {
         return try {
             val routeNumber = Integer.parseInt(search)
             generateSearchQuery(routeNumber)
         } catch (e: Exception) {
-            SearchQuery(search, createUrl(STOPS_PARAMETER + COLON + createURLFriendlyString(search), null), SearchQueryType.GENERAL)
+            createUrl(STOPS_PARAMETER + COLON + createURLFriendlyString(search), null)
         }
     }
 
-    fun generateSearchQuery(routeNumber: Int): SearchQuery {
+    fun generateSearchQuery(routeNumber: Int): String {
         val parameters = arrayOf(URLParameter(ROUTE_PARAMETER, Integer.toString(routeNumber))).toList()
-        val url = createUrl(STOPS_PARAMETER, parameters)
-
-        return SearchQuery(Integer.toString(routeNumber), url, SearchQueryType.ROUTE_NUMBER)
+        return createUrl(STOPS_PARAMETER, parameters)
     }
 
-    fun generateSearchQuery(key: RouteKey): SearchQuery {
+    fun generateSearchQuery(key: RouteKey): String {
         val parameters = arrayOf(URLParameter(VARIANT_PARAMETER, key.keyString)).toList()
-        val url = createUrl(STOPS_PARAMETER, parameters)
-
-        return SearchQuery(key.keyString, url, SearchQueryType.ROUTE_NUMBER)
+        return createUrl(STOPS_PARAMETER, parameters)
     }
 
     fun generateStopFeaturesUrl(stopNumber: Int): String {
@@ -137,11 +132,9 @@ object TransitApiManager {
         return s.replace("\\s+".toRegex(), "+")
     }
 
-    fun generateSearchQuery(location: Location, radius: Int): SearchQuery {
-        val totalRadius = Math.round(location.accuracy) + radius
-        val parameters = arrayOf(URLParameter(DISTANCE_PARAMETER, Integer.toString(totalRadius)), URLParameter(LATITUDE_PARAMETER, Double.toString(location.latitude)), URLParameter(LONGITUDE_PARAMETER, Double.toString(location.longitude))).toList()
-        val url = createUrl(STOPS_PARAMETER, parameters)
-        return SearchQuery("NearbyStops", url, SearchQueryType.NEARBY)
+    fun generateSearchQuery(location: GeoLocation, radius: Int): String {
+        val parameters = arrayOf(URLParameter(DISTANCE_PARAMETER, Integer.toString(radius)), URLParameter(LATITUDE_PARAMETER, Double.toString(location.latitude)), URLParameter(LONGITUDE_PARAMETER, Double.toString(location.longitude))).toList()
+        return createUrl(STOPS_PARAMETER, parameters)
     }
 
     fun generateLocationQueryUrl(query: String): String {
