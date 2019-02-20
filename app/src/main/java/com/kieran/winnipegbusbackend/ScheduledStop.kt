@@ -1,6 +1,7 @@
 package com.kieran.winnipegbusbackend
 
 import com.kieran.winnipegbusbackend.enums.CoverageTypes
+import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitTripIdentifier
 
 import org.json.JSONException
 import org.json.JSONObject
@@ -28,7 +29,7 @@ class ScheduledStop(stop: JSONObject, private val parentRoute: RouteSchedule) : 
         private set
     var key: ScheduledStopKey? = null
         private set
-    var routeKey: RouteKey? = null
+    var routeKey: WinnipegTransitTripIdentifier? = null
         private set
     val isTwoBus: Boolean
         get() = TWO_BUS_NUMBERS.contains(busNumber)
@@ -86,7 +87,7 @@ class ScheduledStop(stop: JSONObject, private val parentRoute: RouteSchedule) : 
         try {
             val variant = stop.getJSONObject(VARIANT_TAG)
             routeVariantName = variant.getString(VARIANT_NAME_TAG)
-            routeKey = RouteKey(variant.getString(VARIANT_KEY_TAG))
+            routeKey = WinnipegTransitTripIdentifier(variant.getString(VARIANT_KEY_TAG))
         } catch (ex: JSONException) {
             //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
         }

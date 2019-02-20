@@ -1,6 +1,6 @@
 package com.kieran.winnipegbustests
 
-import com.kieran.winnipegbusbackend.RouteKey
+import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitTripIdentifier
 import com.kieran.winnipegbusbackend.StopSchedule
 import com.kieran.winnipegbusbackend.StopTime
 import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
@@ -25,7 +25,7 @@ class AppTests {
 
     @Test
     fun RouteKeySearchQueryGenerationShouldBeValid() {
-        val key = RouteKey(36, 1, 'M')
+        val key = WinnipegTransitTripIdentifier(36, 1, 'M')
         val url = TransitApiManager.generateSearchQuery(key).queryUrl
 
         Assert.assertNotNull(TransitApiManager.getJson(url))

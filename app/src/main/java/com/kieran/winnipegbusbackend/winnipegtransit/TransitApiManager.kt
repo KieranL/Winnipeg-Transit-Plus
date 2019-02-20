@@ -115,7 +115,7 @@ object TransitApiManager {
         return createUrl(STOPS_PARAMETER, parameters)
     }
 
-    fun generateSearchQuery(key: RouteKey): String {
+    fun generateSearchQuery(key: WinnipegTransitTripIdentifier): String {
         val parameters = arrayOf(URLParameter(VARIANT_PARAMETER, key.keyString)).toList()
         return createUrl(STOPS_PARAMETER, parameters)
     }

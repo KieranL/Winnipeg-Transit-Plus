@@ -16,34 +16,37 @@ import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.views.RouteNumberTextView
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.*
-import com.kieran.winnipegbusbackend.UpcomingStops.HttpUpcomingStopsManager
-import com.kieran.winnipegbusbackend.UpcomingStops.UpcomingStopsManager
+import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
 import com.kieran.winnipegbusbackend.interfaces.TransitService
 import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
+import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitTripIdentifier
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 import org.json.JSONObject
 
 import java.io.FileNotFoundException
+import java.lang.Exception
 import java.util.ArrayList
 import java.util.Collections
 
-class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, TransitApiManager.OnJsonLoadResultReceiveListener, UpcomingStopsManager.OnUpcomingStopsFoundListener {
+class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
     private var upcomingStops: ArrayList<UpcomingStop>? = null
     private var scheduledStop: ScheduledStop? = null
     private var use24hrTime: Boolean = false
     private var adapter: UpcomingStopsAdapter? = null
-    private var tasks: ArrayList<AsyncTask<*, *, *>>? = null
+    private var task: Job? = null
     private var loading = false
     private var swipeRefreshLayout: StyledSwipeRefresh? = null
-    private var upcomingStopsManager: UpcomingStopsManager? = null
     private lateinit var transitService: TransitService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scheduled_stop_info)
         scheduledStop = intent.getSerializableExtra(STOP_EXTRA) as ScheduledStop
-        upcomingStopsManager = HttpUpcomingStopsManager()
         transitService = TransitServiceProvider.getTransitService()
 
         if (scheduledStop != null) {
@@ -58,7 +61,6 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
 
             adapter = UpcomingStopsAdapter(this, R.layout.upcoming_stops_row, upcomingStops!!, use24hrTime)
             listView.adapter = adapter
-            tasks = ArrayList()
 
             swipeRefreshLayout = findViewById<View>(R.id.upcoming_stops_swipeRefresh) as StyledSwipeRefresh
             swipeRefreshLayout!!.setOnRefreshListener(this)
@@ -78,9 +80,8 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
     public override fun onDestroy() {
         super.onDestroy()
 
-        if (tasks != null)
-            for (task in tasks!!)
-                task.cancel(true)
+        if (task != null)
+            task?.cancel()
     }
 
     @SuppressLint("SetTextI18n")
@@ -137,12 +138,28 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
     private fun refresh() {
         if (!loading) {
             if (isOnline) {
-                loading = true
+                if(transitService.supportedFeatures().contains(SupportedFeature.UPCOMING_STOPS)) {
+                    loading = true
 
-                runOnUiThread {
-                    upcomingStops!!.clear()
+                    task = GlobalScope.launch(Dispatchers.IO) {
+                        try {
+                            val stops = transitService.getUpcomingStops(scheduledStop?.routeKey!!, scheduledStop?.key!!, scheduledStop?.estimatedDepartureTime!!)
 
-                    upcomingStopsManager!!.GetUpcomingStopsAsync(scheduledStop!!.routeKey!!, scheduledStop!!.key!!.stopNumber, this)
+                            runOnUiThread {
+                                upcomingStops!!.clear()
+                                upcomingStops!!.addAll(stops)
+                                Collections.sort(upcomingStops)
+                                adapter!!.notifyDataSetChanged()
+                            }
+                        }catch (e: Exception) {
+                            runOnUiThread {
+                            handleException(e)}
+                        }
+
+                        swipeRefreshLayout!!.isRefreshing = false
+                        loading = false
+
+                    }
                 }
             } else {
                 showLongToaster(R.string.network_error)
@@ -154,82 +171,6 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
 
     override fun onRefresh() {
         refresh()
-    }
-
-    override fun onReceive(result: LoadResult<JSONObject>) {
-        if (result.result != null) {
-            val stopSchedule = StopSchedule(result.result)
-            val scheduledStop1 = stopSchedule.getScheduledStopByKey(scheduledStop!!.key!!)
-
-            if (scheduledStop1 != null) {
-                if (scheduledStop1.key!!.stopNumber == scheduledStop!!.key!!.stopNumber) {
-                    scheduledStop = scheduledStop1
-                }
-
-                val upcomingStop = UpcomingStop(stopSchedule, scheduledStop1.estimatedDepartureTime!!, scheduledStop1.key!!)
-                upcomingStops!!.add(upcomingStop)
-            }
-        } else if (result.exception != null) {
-            handleException(result.exception)
-
-            if (result.exception is FileNotFoundException || result.exception is RateLimitedException) {
-                for (task in tasks!!)
-                    task.cancel(true)
-
-                tasks!!.clear()
-            }
-        }
-
-        if (tasks!!.size <= 2) {
-            runOnUiThread {
-                Collections.sort(upcomingStops)
-                adapter!!.notifyDataSetChanged()
-            }
-
-            swipeRefreshLayout!!.isRefreshing = false
-            loading = false
-        }
-
-        removeFinishedTasks()
-    }
-
-    private fun removeFinishedTasks() {
-        val finishedTasks = tasks!!.filterTo(ArrayList()) { it.status == AsyncTask.Status.FINISHED }
-
-        tasks!!.removeAll(finishedTasks)
-    }
-
-    override fun OnUpcomingStopsFound(result: LoadResult<ArrayList<Int>>) {
-        val instance = this
-        if (result.result != null) {
-            if (result.result.size > 0) {
-                for (stopNumber in result.result) {
-
-                    try {
-                        val latest = if (scheduledStop!!.estimatedDepartureTime!!.milliseconds > transitService.getLastQueryTime().milliseconds) scheduledStop!!.estimatedDepartureTime else TransitApiManager.lastQueryTime
-
-                        val task = TransitApiManager.getJsonAsync(TransitApiManager.generateStopNumberURL(stopNumber, scheduledStop!!.routeNumber, latest!!, null), instance)
-                        tasks!!.add(task)
-                    } catch (e: Exception) {
-                        Log.e("Task", "task error")
-                    }
-
-                }
-            }
-
-
-        } else if (result.exception != null) {
-            handleException(result.exception)
-
-            runOnUiThread {
-                Collections.sort(upcomingStops!!)
-                adapter!!.notifyDataSetChanged()
-            }
-
-            swipeRefreshLayout!!.isRefreshing = false
-            loading = false
-            tasks!!.clear()
-        }
     }
 
     companion object {

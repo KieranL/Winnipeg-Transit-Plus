@@ -1,23 +1,25 @@
 package com.kieran.winnipegbusbackend.interfaces
 
-import com.kieran.winnipegbusbackend.Stop
-import com.kieran.winnipegbusbackend.StopFeatures
-import com.kieran.winnipegbusbackend.StopSchedule
-import com.kieran.winnipegbusbackend.StopTime
+import com.kieran.winnipegbusbackend.*
 import com.kieran.winnipegbusbackend.enums.ScheduleType
+import com.kieran.winnipegbusbackend.enums.SupportedFeature
 
 interface TransitService {
-    fun getStopSchedule(stop: StopIdentifier, startTime: StopTime?, endTime: StopTime?, routes: List<RouteIdentifier> = ArrayList()): StopSchedule
+    suspend fun getStopSchedule(stop: StopIdentifier, startTime: StopTime?, endTime: StopTime?, routes: List<RouteIdentifier> = ArrayList()): StopSchedule
 
-    fun getStopDetails(stop: StopIdentifier, stopFeatures: StopFeatures): StopFeatures
+    suspend fun getStopDetails(stop: StopIdentifier, stopFeatures: StopFeatures): StopFeatures
 
-    fun getRouteStops(route: RouteIdentifier): List<Stop>
+    suspend fun getRouteStops(route: RouteIdentifier): List<Stop>
 
-    fun findStop(name: String): List<Stop>
+    suspend fun findStop(name: String): List<Stop>
 
-    fun findClosestStops(location: Location, distance:Int = 1000, stopCount: Int = 1): List<Stop>
+    suspend fun findClosestStops(location: Location, distance:Int = 1000, stopCount: Int = 1): List<Stop>
 
     fun getLastQueryTime(): StopTime
 
     fun getScheduleType(): ScheduleType
+
+    suspend fun getUpcomingStops(key: TripIdentifier, scheduledStopKey: ScheduledStopKey, after: StopTime): List<UpcomingStop>
+
+    fun supportedFeatures(): List<SupportedFeature>
 }

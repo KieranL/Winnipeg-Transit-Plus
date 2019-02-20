@@ -1,9 +1,10 @@
-package com.kieran.winnipegbusbackend
+package com.kieran.winnipegbusbackend.winnipegtransit
 
+import com.kieran.winnipegbusbackend.interfaces.TripIdentifier
 import java.io.Serializable
 
-class RouteKey : Serializable {
-    private var routeNumber: Int = 0
+class WinnipegTransitTripIdentifier : Serializable, TripIdentifier {
+    var routeNumber: Int = 0
     private var routeDirection: Int = 0
     private var variant: Char = 0.toChar()
 
