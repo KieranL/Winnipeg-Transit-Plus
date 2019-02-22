@@ -1,6 +1,5 @@
 package com.kieran.winnipegbusbackend.winnipegtransit
 
-import android.util.Log
 import com.kieran.winnipegbusbackend.*
 import com.kieran.winnipegbusbackend.enums.ScheduleType
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
@@ -39,7 +38,7 @@ object WinnipegTransitService : TransitService {
         return stopFeatures
     }
 
-    override suspend fun getRouteStops(route: RouteIdentifier): List<Stop> {
+    override suspend fun getRouteStops(route: RouteIdentifier): List<FavouriteStop> {
         val url = TransitApiManager.generateSearchQuery((route as WinnipegTransitRouteIdentifier).routeNumber)
         val result = TransitApiManager.getJson(url)
 
@@ -51,7 +50,7 @@ object WinnipegTransitService : TransitService {
             throw result.exception!!
     }
 
-    override suspend fun findStop(name: String): List<Stop> {
+    override suspend fun findStop(name: String): List<FavouriteStop> {
         val url = TransitApiManager.generateSearchQuery(name)
         val result = TransitApiManager.getJson(url)
 
@@ -63,7 +62,7 @@ object WinnipegTransitService : TransitService {
             throw result.exception!!
     }
 
-    override suspend fun findClosestStops(location: Location, distance: Int, stopCount: Int): List<Stop> {
+    override suspend fun findClosestStops(location: Location, distance: Int, stopCount: Int): List<FavouriteStop> {
         val url = TransitApiManager.generateSearchQuery((location as GeoLocation), distance)
         val result = TransitApiManager.getJson(url)
 
@@ -86,7 +85,8 @@ object WinnipegTransitService : TransitService {
     override suspend fun getUpcomingStops(key: TripIdentifier, scheduledStopKey: ScheduledStopKey, after: StopTime): List<UpcomingStop> {
         val upcomingStops = ArrayList<UpcomingStop>()
         val variant = key as WinnipegTransitTripIdentifier
-        val stopNumbers = getUpcomingStopNumbers(variant, scheduledStopKey.stopNumber)
+        val wpgTransitScheduledStopKey = scheduledStopKey as WinnipegTransitScheduledStopKey
+        val stopNumbers = getUpcomingStopNumbers(variant, wpgTransitScheduledStopKey.stopNumber)
         val tasks = ArrayList<Job>()
 
         stopNumbers.map {
@@ -98,7 +98,7 @@ object WinnipegTransitService : TransitService {
 
                     if (result.result != null) {
                         val stopSchedule = StopSchedule(result.result)
-                        val scheduledStop1 = stopSchedule.getScheduledStopByKey(scheduledStopKey)
+                        val scheduledStop1 = stopSchedule.getScheduledStopByKey(wpgTransitScheduledStopKey)
 
                         if (scheduledStop1 != null) {
                             val upcomingStop = UpcomingStop(stopSchedule, scheduledStop1.estimatedDepartureTime!!, scheduledStop1.key!!)

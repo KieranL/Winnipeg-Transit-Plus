@@ -1,8 +1,11 @@
-package com.kieran.winnipegbusbackend
+package com.kieran.winnipegbusbackend.winnipegtransit
 
 import com.google.android.gms.maps.model.LatLng
+import com.kieran.winnipegbusbackend.FavouriteStop
+import com.kieran.winnipegbusbackend.LoadResult
+import com.kieran.winnipegbusbackend.Stop
+import com.kieran.winnipegbusbackend.StopSchedule
 
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 

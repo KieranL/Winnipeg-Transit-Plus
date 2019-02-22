@@ -1,8 +1,9 @@
-package com.kieran.winnipegbusbackend
+package com.kieran.winnipegbusbackend.winnipegtransit
 
+import com.kieran.winnipegbusbackend.interfaces.ScheduledStopKey
 import java.io.Serializable
 
-class ScheduledStopKey(key: String) : Serializable {
+class WinnipegTransitScheduledStopKey(key: String) : Serializable, ScheduledStopKey {
     val busKey: Int
     val stopNumber: Int
 
@@ -17,7 +18,7 @@ class ScheduledStopKey(key: String) : Serializable {
         return "Key: $busKey stop on route: $stopNumber"
     }
 
-    fun equals(another: ScheduledStopKey): Boolean {
+    fun equals(another: WinnipegTransitScheduledStopKey): Boolean {
         return busKey == another.busKey
     }
 }

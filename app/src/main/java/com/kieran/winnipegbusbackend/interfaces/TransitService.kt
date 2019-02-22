@@ -9,11 +9,11 @@ interface TransitService {
 
     suspend fun getStopDetails(stop: StopIdentifier, stopFeatures: StopFeatures): StopFeatures
 
-    suspend fun getRouteStops(route: RouteIdentifier): List<Stop>
+    suspend fun getRouteStops(route: RouteIdentifier): List<FavouriteStop>
 
-    suspend fun findStop(name: String): List<Stop>
+    suspend fun findStop(name: String): List<FavouriteStop>
 
-    suspend fun findClosestStops(location: Location, distance:Int = 1000, stopCount: Int = 1): List<Stop>
+    suspend fun findClosestStops(location: Location, distance:Int = 1000, stopCount: Int = 1): List<FavouriteStop>
 
     fun getLastQueryTime(): StopTime
 
