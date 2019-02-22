@@ -1,5 +1,6 @@
 package com.kieran.winnipegbusbackend.TripPlanner.classes
 
+import com.kieran.winnipegbusbackend.Route
 import com.kieran.winnipegbusbackend.TripPlanner.SegmentFactory
 
 import org.json.JSONArray
@@ -13,6 +14,9 @@ class Trip(tripParameters: TripParameters, trip: JSONObject) {
         private set
     var segments: ArrayList<Segment>
         internal set
+    val routes: List<Route>
+        get() = segments.mapNotNull { (it as? RideSegment)?.route }
+
 
     init {
         segments = ArrayList()

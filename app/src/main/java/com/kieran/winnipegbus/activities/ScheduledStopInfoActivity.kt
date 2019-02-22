@@ -90,7 +90,7 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
         if (scheduledStop != null) {
             val routeNumber = getTextView(R.id.bus_number) as RouteNumberTextView
             routeNumber.text = Integer.toString(scheduledStop.routeNumber)
-            routeNumber.setColour(scheduledStop)
+            routeNumber.setColour(scheduledStop.routeNumber, scheduledStop.coverageType)
 
             setTextViewText(R.id.bus_name, scheduledStop.routeVariantName!!)
 

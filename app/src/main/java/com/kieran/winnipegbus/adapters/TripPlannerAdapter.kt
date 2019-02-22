@@ -6,12 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
+import android.widget.LinearLayout
 import android.widget.TextView
 
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.TripPlanner.classes.Segment
-import com.kieran.winnipegbusbackend.TripPlanner.classes.TransferSegment
-import com.kieran.winnipegbusbackend.TripPlanner.classes.Trip
+import com.kieran.winnipegbus.views.RouteNumberTextView
+import com.kieran.winnipegbusbackend.TripPlanner.classes.*
 
 class TripPlannerAdapter(context: Context, private val trips: List<Trip>) : BaseExpandableListAdapter() {
     private val inflater: LayoutInflater = (context as Activity).layoutInflater
@@ -49,22 +49,32 @@ class TripPlannerAdapter(context: Context, private val trips: List<Trip>) : Base
         var row: View? = convertView
         val holder: TripHolder
 
+        val trip = trips[groupPosition]
         if (row == null) {
             row = inflater.inflate(R.layout.trip_planner_trip_row, parent, false)
 
             holder = TripHolder()
-            holder.timeRange = row!!.findViewById<View>(R.id.trip_time_range) as TextView
-            holder.totalTime = row.findViewById<View>(R.id.trip_time) as TextView
+            holder.timeRange = row!!.findViewById(R.id.trip_time_range)
+            holder.totalTime = row.findViewById(R.id.trip_time)
+            holder.routes = row.findViewById(R.id.trip_routes)
 
             row.tag = holder
         } else {
             holder = row.tag as TripHolder
         }
 
-        val trip = trips[groupPosition]
         val times = trip.times
         holder.timeRange!!.text = "%s - %s".format(times!!.startTime!!.toFormattedString(null, use24hrTime), times.endTime!!.toFormattedString(null, use24hrTime))
         holder.totalTime!!.text = "%d".format(trip.times!!.totalTime)
+        holder.routes?.removeAllViews()
+        trip.routes.forEach {
+            val view = inflater.inflate(R.layout.trip_planner_route_number, null) as RouteNumberTextView
+            view.setColour(it.routeNumber, it.coverageType)
+            view.text = it.routeNumber.toString()
+
+            holder.routes?.addView(view)
+        }
+
 
         return row
     }
@@ -77,8 +87,8 @@ class TripPlannerAdapter(context: Context, private val trips: List<Trip>) : Base
             row = inflater.inflate(R.layout.trip_planner_trip_segment_row, parent, false)
 
             holder = SegmentHolder()
-            holder.string = row!!.findViewById<View>(R.id.segment_string) as TextView
-            holder.time = row.findViewById<View>(R.id.segment_time) as TextView
+            holder.string = row!!.findViewById(R.id.segment_string)
+            holder.time = row.findViewById(R.id.segment_time)
 
             row.tag = holder
         } else {
@@ -100,10 +110,12 @@ class TripPlannerAdapter(context: Context, private val trips: List<Trip>) : Base
         //        else if(segment instanceof WalkSegment)
         //            return R.drawable.ic_walk_dark;
         //        else
-        return if (segment is TransferSegment)
-            R.drawable.ic_clock_dark
-        else
-            R.drawable.ic_clock_dark
+        return when (segment) {
+            is TransferSegment -> R.drawable.ic_clock_dark
+            is WalkSegment -> R.drawable.ic_walk_dark
+            is RideSegment -> R.drawable.ic_bus_dark
+            else -> R.drawable.ic_clock_dark
+        }
     }
 
     override fun isChildSelectable(groupPosition: Int, childPosition: Int): Boolean {
@@ -113,6 +125,7 @@ class TripPlannerAdapter(context: Context, private val trips: List<Trip>) : Base
     private class TripHolder {
         internal var timeRange: TextView? = null
         internal var totalTime: TextView? = null
+        internal var routes: LinearLayout? = null
     }
 
     private class SegmentHolder {

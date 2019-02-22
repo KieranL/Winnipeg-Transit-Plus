@@ -31,59 +31,9 @@ class LocationPickerDialog(private val context: GoogleApiActivity, private val l
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.location_picker_dialog)
-        (findViewById<View>(R.id.location_searchView) as SearchView).isIconified = false
         findViewById<View>(R.id.current_location_button).setOnClickListener(this)
         findViewById<View>(R.id.from_favourites_button).setOnClickListener(this)
-
-        val self = this
-        val originSearchView = findViewById<View>(R.id.location_searchView) as SearchView
-        originSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                submitQuery(query, self)
-
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                return false
-            }
-        })
     }
-
-    private fun submitQuery(query: String, self: LocationPickerDialog) {
-        val url = TransitApiManager.generateLocationQueryUrl(query)
-        TransitApiManager.getJsonAsync(url, object : TransitApiManager.OnJsonLoadResultReceiveListener {
-            override fun onReceive(result: LoadResult<JSONObject>) {
-                val builder = AlertDialog.Builder(context)
-
-                try {
-                    val locationNodes = result.result!!.getJSONArray("locations")
-                    val locations = (0 until locationNodes.length()).map { LocationFactory.createLocation(locationNodes.getJSONObject(it)) }
-
-
-                    if (locations.any()) {
-                        val charSequence = arrayOfNulls<CharSequence>(locations.size)
-
-                        for (i in charSequence.indices)
-                            charSequence[i] = locations[i].title
-
-                        builder.setItems(charSequence) { dialog, which ->
-                            listener.onLocationPicked(locations[which])
-                            self.dismiss()
-                            dismiss()
-                        }
-
-                        builder.create().show()
-                    } else {
-                        Toast.makeText(context, R.string.no_location_found, Toast.LENGTH_SHORT).show()
-                    }
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-            }
-        })
-    }
-
 
     override fun onClick(v: View) {
         when (v.id) {
