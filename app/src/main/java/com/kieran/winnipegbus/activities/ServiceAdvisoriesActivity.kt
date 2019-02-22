@@ -14,8 +14,8 @@ import com.kieran.winnipegbus.adapters.ServiceAdvisoriesAdapter
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.LoadResult
-import com.kieran.winnipegbusbackend.ServiceAdvisories.ServiceAdvisoriesParser
-import com.kieran.winnipegbusbackend.ServiceAdvisories.ServiceAdvisory
+import com.kieran.winnipegbusbackend.winnipegtransit.ServiceAdvisories.ServiceAdvisoriesParser
+import com.kieran.winnipegbusbackend.winnipegtransit.ServiceAdvisories.ServiceAdvisory
 import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
 
 import org.json.JSONObject

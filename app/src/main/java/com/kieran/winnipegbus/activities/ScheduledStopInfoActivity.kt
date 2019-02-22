@@ -158,7 +158,6 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
 
                         swipeRefreshLayout!!.isRefreshing = false
                         loading = false
-
                     }
                 }
             } else {

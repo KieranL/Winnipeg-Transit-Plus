@@ -11,7 +11,8 @@
         android:id="@+id/get_directions_button"
         android:icon="?getDirectionsIcon"
         android:title="@string/get_directions"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom"
+        android:visible="false"/>
     <item
         android:id="@+id/action_refresh"
         android:title="@string/refresh_stop_times_button"

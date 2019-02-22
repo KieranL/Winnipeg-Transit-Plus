@@ -1,6 +1,6 @@
-package com.kieran.winnipegbusbackend.TripPlanner
+package com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner
 
-import com.kieran.winnipegbusbackend.TripPlanner.classes.*
+import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.*
 
 import org.json.JSONException
 import org.json.JSONObject

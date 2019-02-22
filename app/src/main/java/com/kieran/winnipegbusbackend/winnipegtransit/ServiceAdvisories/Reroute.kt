@@ -1,4 +1,4 @@
-package com.kieran.winnipegbusbackend.ServiceAdvisories
+package com.kieran.winnipegbusbackend.winnipegtransit.ServiceAdvisories
 
 import java.io.Serializable
 

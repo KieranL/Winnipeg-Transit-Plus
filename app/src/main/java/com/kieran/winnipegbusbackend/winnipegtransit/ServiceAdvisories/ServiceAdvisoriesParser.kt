@@ -1,8 +1,7 @@
-package com.kieran.winnipegbusbackend.ServiceAdvisories
+package com.kieran.winnipegbusbackend.winnipegtransit.ServiceAdvisories
 
 import com.kieran.winnipegbusbackend.StopTime
 
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 

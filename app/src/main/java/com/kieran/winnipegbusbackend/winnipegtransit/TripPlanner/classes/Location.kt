@@ -1,4 +1,4 @@
-package com.kieran.winnipegbusbackend.TripPlanner.classes
+package com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes
 
 import com.google.android.gms.maps.model.LatLng
 import com.kieran.winnipegbusbackend.SerializableLatLng

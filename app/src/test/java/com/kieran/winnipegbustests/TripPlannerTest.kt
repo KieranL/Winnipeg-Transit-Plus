@@ -1,8 +1,7 @@
 package com.kieran.winnipegbustests
 
 import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
-import com.kieran.winnipegbusbackend.TripPlanner.LocationFactory
-import com.kieran.winnipegbusbackend.TripPlanner.classes.Trip
+import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.LocationFactory
 
 import org.json.JSONException
 import org.junit.Assert

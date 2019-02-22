@@ -24,6 +24,7 @@ import android.webkit.WebViewClient
 import com.kieran.winnipegbusbackend.SearchQuery
 import com.kieran.winnipegbusbackend.TransitServiceProvider
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
+import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.interfaces.TransitService
 
 
@@ -87,6 +88,17 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_home, menu)
+
+        val features = transitService.supportedFeatures()
+
+        if(features.contains(SupportedFeature.TRIP_PLANNING)) {
+            menu.findItem(R.id.trip_planner).isVisible = true
+        }
+
+        if(features.contains(SupportedFeature.SERVICE_ADVISORIES)) {
+            menu.findItem(R.id.service_advisories).isVisible = false
+        }
+
         return true
     }
 

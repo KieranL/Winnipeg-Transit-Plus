@@ -22,8 +22,9 @@ import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.ShakeDetector
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.*
-import com.kieran.winnipegbusbackend.TripPlanner.classes.StopLocation
-import com.kieran.winnipegbusbackend.TripPlanner.classes.TripParameters
+import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.StopLocation
+import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.TripParameters
+import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.interfaces.TransitService
 import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitRouteIdentifier
 import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitStopIdentifier
@@ -198,6 +199,12 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_stop_times, menu)
+
+        val features = transitService.supportedFeatures()
+
+        if(features.contains(SupportedFeature.TRIP_PLANNING)) {
+            menu.findItem(R.id.trip_planner).isVisible = true
+        }
 
         menu.findItem(R.id.add_to_favourites_button).icon = getFavouritesButtonDrawable(FavouriteStopsList.contains(stopNumber))
         onOptionsItemSelected(menu.findItem(R.id.action_refresh)) //manually click the refresh button, this is the only way the swipe refresh loading spinner works correctly on initial load. Not happy with this but it was the only way I could get it to work

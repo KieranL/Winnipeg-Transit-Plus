@@ -1,9 +1,8 @@
-package com.kieran.winnipegbusbackend.TripPlanner.classes
+package com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes
 
 import com.kieran.winnipegbusbackend.Route
-import com.kieran.winnipegbusbackend.TripPlanner.SegmentFactory
+import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.SegmentFactory
 
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 

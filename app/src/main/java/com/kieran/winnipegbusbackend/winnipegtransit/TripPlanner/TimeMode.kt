@@ -1,4 +1,4 @@
-package com.kieran.winnipegbusbackend.TripPlanner
+package com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner
 
 import java.io.Serializable
 

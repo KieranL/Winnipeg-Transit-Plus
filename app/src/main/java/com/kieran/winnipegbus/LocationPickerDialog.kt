@@ -6,16 +6,14 @@ import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.SearchView
 import android.widget.Toast
 
 import com.kieran.winnipegbus.activities.GoogleApiActivity
 import com.kieran.winnipegbusbackend.FavouriteStopsList
 import com.kieran.winnipegbusbackend.LoadResult
 import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
-import com.kieran.winnipegbusbackend.TripPlanner.LocationFactory
-import com.kieran.winnipegbusbackend.TripPlanner.classes.Location
-import com.kieran.winnipegbusbackend.TripPlanner.classes.StopLocation
+import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.Location
+import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.StopLocation
 
 import org.json.JSONException
 import org.json.JSONObject
