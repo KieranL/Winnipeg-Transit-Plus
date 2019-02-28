@@ -119,19 +119,6 @@ class StopSchedule : Stop {
         return StopFeatures(number, name, latLng)
     }
 
-    fun refresh(jsonObject: JSONObject) {
-        var jsonObject = jsonObject
-        routeList.clear()
-
-        try {
-            jsonObject = jsonObject.getJSONObject(STOP_SCHEDULE_TAG)
-            loadRoutes(jsonObject)
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-
-    }
-
     fun getLatLng(): LatLng? {
         return latLng
     }
