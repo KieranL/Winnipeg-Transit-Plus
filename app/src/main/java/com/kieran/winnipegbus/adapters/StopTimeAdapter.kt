@@ -12,17 +12,20 @@ import com.kieran.winnipegbus.activities.BaseActivity
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.views.RouteNumberTextView
 import com.kieran.winnipegbusbackend.ScheduledStop
-import com.kieran.winnipegbusbackend.TransitApiManager
 import android.util.TypedValue
 import android.widget.ImageView
+import com.kieran.winnipegbusbackend.TransitServiceProvider
+import com.kieran.winnipegbusbackend.interfaces.TransitService
 
 
 class StopTimeAdapter(context: Context, private val layoutResourceId: Int, private val scheduledStops: List<ScheduledStop>) : ArrayAdapter<ScheduledStop>(context, layoutResourceId, scheduledStops) {
     private var use24hrTime: Boolean = false
     private val inflater: LayoutInflater = (context as Activity).layoutInflater
+    private var transitService: TransitService
 
     init {
         loadTimeSetting()
+        transitService = TransitServiceProvider.getTransitService()
     }
 
     override fun getView(position: Int, row: View?, parent: ViewGroup): View {
@@ -48,7 +51,7 @@ class StopTimeAdapter(context: Context, private val layoutResourceId: Int, priva
 
         val scheduledStop = scheduledStops[position]
         holder.routeNumber?.text = String.format("%d", scheduledStop.routeNumber)
-        holder.routeNumber?.setColour(scheduledStop)
+        holder.routeNumber?.setColour(scheduledStop.routeNumber, scheduledStop.coverageType)
         holder.routeVariantName?.text = scheduledStop.routeVariantName
         holder.hasBikeRackIcon?.visibility = if (scheduledStop.hasBikeRack) View.VISIBLE else View.GONE
         holder.hasWifiIcon?.visibility = if (scheduledStop.hasWifi) View.VISIBLE else View.GONE
@@ -62,7 +65,7 @@ class StopTimeAdapter(context: Context, private val layoutResourceId: Int, priva
             params.width = spToPx(96f, context)
             holder.timeStatus!!.layoutParams = params
         }else {
-            timeText = scheduledStop.estimatedDepartureTime!!.toFormattedString(TransitApiManager.lastQueryTime, use24hrTime)
+            timeText = scheduledStop.estimatedDepartureTime!!.toFormattedString(transitService.getLastQueryTime(), use24hrTime)
         }
 
         holder.departureTime!!.text = timeText
@@ -74,7 +77,7 @@ class StopTimeAdapter(context: Context, private val layoutResourceId: Int, priva
         use24hrTime = BaseActivity.getTimeSetting(context)
     }
 
-    fun spToPx(sp: Float, context: Context): Int {
+    private fun spToPx(sp: Float, context: Context): Int {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.resources.displayMetrics).toInt()
     }
 

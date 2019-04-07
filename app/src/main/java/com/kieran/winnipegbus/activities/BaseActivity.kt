@@ -22,9 +22,10 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.kieran.winnipegbus.ActivityManager
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.RateLimitedException
 import com.kieran.winnipegbusbackend.Stop
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
+import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
+import com.kieran.winnipegbusbackend.exceptions.TransitDataNotFoundException
 
 import java.io.IOException
 
@@ -211,6 +212,7 @@ abstract class BaseActivity : AppCompatActivity() {
         val resId: Int = when (ex) {
             is RateLimitedException -> R.string.too_many_queries_error
             is IOException -> R.string.network_error
+            is TransitDataNotFoundException -> R.string.data_not_found
             else -> R.string.unknown_error
         }
 

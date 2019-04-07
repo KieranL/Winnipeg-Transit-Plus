@@ -1,6 +1,5 @@
 package com.kieran.winnipegbus.activities
 
-import android.os.AsyncTask
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
@@ -11,22 +10,27 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.MarkerOptions
 import com.kieran.winnipegbus.adapters.StopFeaturesAdapter
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.LoadResult
 import com.kieran.winnipegbusbackend.StopFeatures
-import com.kieran.winnipegbusbackend.TransitApiManager
-
-import org.json.JSONObject
+import com.kieran.winnipegbusbackend.TransitServiceProvider
+import com.kieran.winnipegbusbackend.interfaces.TransitService
+import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitStopIdentifier
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 import java.util.Locale
 
-class StopInfoActivity : MapActivity(), TransitApiManager.OnJsonLoadResultReceiveListener {
+class StopInfoActivity : MapActivity() {
     private var stopFeatures: StopFeatures? = null
     private var adapter: StopFeaturesAdapter? = null
-    private var task: AsyncTask<*, *, *>? = null
+    private var task: Job? = null
+    private lateinit var transitService: TransitService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_stop_info)
+        transitService = TransitServiceProvider.getTransitService()
         stopFeatures = intent.getSerializableExtra(STOP_FEATURES) as StopFeatures
 
         title = String.format(Locale.CANADA, ACTIONBAR_TEXT, stopFeatures!!.number)
@@ -36,7 +40,16 @@ class StopInfoActivity : MapActivity(), TransitApiManager.OnJsonLoadResultReceiv
         adapter = StopFeaturesAdapter(this, R.layout.listview_stop_features_row, stopFeatures!!.getStopFeatures())
         listView.adapter = adapter
 
-        task = TransitApiManager.getJsonAsync(TransitApiManager.generateStopFeaturesUrl(stopFeatures!!.number), this)
+        task = GlobalScope.launch(IO) {
+            try {
+                stopFeatures = transitService.getStopDetails(WinnipegTransitStopIdentifier(stopFeatures!!.number), stopFeatures!!)
+            } catch (e: Exception) {
+                runOnUiThread { handleException(e) }
+            }
+
+            runOnUiThread { showStopFeatures() }
+        }
+
         mapOnCreate()
     }
 
@@ -48,7 +61,7 @@ class StopInfoActivity : MapActivity(), TransitApiManager.OnJsonLoadResultReceiv
     public override fun onDestroy() {
         super.onDestroy()
         if (task != null)
-            task!!.cancel(true)
+            task!!.cancel()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -74,15 +87,6 @@ class StopInfoActivity : MapActivity(), TransitApiManager.OnJsonLoadResultReceiv
             }
             val layout = findViewById<View>(R.id.stop_features_group) as RelativeLayout
             layout.visibility = View.VISIBLE
-        }
-    }
-
-    override fun onReceive(result: LoadResult<JSONObject>) {
-        if (result.result != null) {
-            stopFeatures!!.loadFeatures(result.result)
-            showStopFeatures()
-        } else if (result.exception != null) {
-            handleException(result.exception)
         }
     }
 
