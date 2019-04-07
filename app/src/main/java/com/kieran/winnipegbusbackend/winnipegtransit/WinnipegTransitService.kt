@@ -18,7 +18,6 @@ object WinnipegTransitService : TransitService {
         val url = TransitApiManager.generateStopNumberURL(stopNumber, routes.map { (it as WinnipegTransitRouteIdentifier).routeNumber }, null, endTime)
         val result = TransitApiManager.getJson(url)
 
-
         if (result.result != null)
             return StopSchedule(result.result, stopNumber)
         else
@@ -145,7 +144,8 @@ object WinnipegTransitService : TransitService {
             } catch (ex: JSONException) {
                 throw TransitDataNotFoundException()
             }
+        }else {
+            throw result.exception!!
         }
-        throw TransitDataNotFoundException()
     }
 }

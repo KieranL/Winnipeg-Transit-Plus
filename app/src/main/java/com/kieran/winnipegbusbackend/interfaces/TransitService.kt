@@ -15,11 +15,11 @@ interface TransitService {
 
     suspend fun findClosestStops(location: Location, distance:Int = 1000, stopCount: Int = 1): List<FavouriteStop>
 
+    suspend fun getUpcomingStops(key: TripIdentifier, scheduledStopKey: ScheduledStopKey, after: StopTime): List<UpcomingStop>
+
     fun getLastQueryTime(): StopTime
 
     fun getScheduleType(): ScheduleType
-
-    suspend fun getUpcomingStops(key: TripIdentifier, scheduledStopKey: ScheduledStopKey, after: StopTime): List<UpcomingStop>
 
     fun supportedFeatures(): List<SupportedFeature>
 }

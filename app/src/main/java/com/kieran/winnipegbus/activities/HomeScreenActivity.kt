@@ -96,7 +96,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
         }
 
         if(features.contains(SupportedFeature.SERVICE_ADVISORIES)) {
-            menu.findItem(R.id.service_advisories).isVisible = false
+            menu.findItem(R.id.service_advisories).isVisible = true
         }
 
         return true
