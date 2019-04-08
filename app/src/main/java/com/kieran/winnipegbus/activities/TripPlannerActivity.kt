@@ -20,11 +20,11 @@ import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.common.LoadResult
 import com.kieran.winnipegbusbackend.common.StopTime
-import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
-import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.TimeMode
-import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.Location
-import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.Trip
-import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.TripParameters
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TransitApiManager
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.TimeMode
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.Location
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.Trip
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.TripParameters
 
 import org.json.JSONException
 import org.json.JSONObject

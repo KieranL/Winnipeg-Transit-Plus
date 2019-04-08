@@ -2,8 +2,12 @@ package com.kieran.winnipegbusbackend
 
 
 import com.google.android.gms.maps.model.LatLng
-import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
-import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitScheduledStopKey
+import com.kieran.winnipegbusbackend.common.Stop
+import com.kieran.winnipegbusbackend.common.StopFeatures
+import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TransitApiManager
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitScheduledStopKey
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
 
 import org.json.JSONException
 import org.json.JSONObject
@@ -49,7 +53,7 @@ class StopSchedule : Stop {
 
     }
 
-    constructor(jsonObject: JSONObject, stopNumber: Int) : super(stopNumber) {
+    constructor(jsonObject: JSONObject, stopIdentifier: StopIdentifier) : super(stopIdentifier) {
         var jsonObject = jsonObject
         try {
             jsonObject = jsonObject.getJSONObject(STOP_SCHEDULE_TAG)
@@ -98,7 +102,7 @@ class StopSchedule : Stop {
     @Throws(JSONException::class)
     private fun loadStopNumber(jsonObject: JSONObject) {
         try {
-            number = jsonObject.getInt(TransitApiManager.STOP_NUMBER_TAG)
+            identifier = WinnipegTransitStopIdentifier(jsonObject.getInt(TransitApiManager.STOP_NUMBER_TAG))
         } catch (ex: JSONException) {
             //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
         }
@@ -117,7 +121,7 @@ class StopSchedule : Stop {
     }
 
     fun createStopFeatures(): StopFeatures {
-        return StopFeatures(number, name, latLng)
+        return StopFeatures(identifier, name, latLng)
     }
 
     fun getLatLng(): LatLng? {

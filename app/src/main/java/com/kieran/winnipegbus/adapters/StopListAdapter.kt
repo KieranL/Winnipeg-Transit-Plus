@@ -50,7 +50,7 @@ class StopListAdapter : ArrayAdapter<FavouriteStop> {
         else
             FavouriteStopsList[position]
 
-        holder.stopNumber!!.text = Integer.toString(favouriteStop.number)
+        holder.stopNumber!!.text = favouriteStop.identifier.toString()
         holder.stopName!!.text = favouriteStop.displayName
 
         return row

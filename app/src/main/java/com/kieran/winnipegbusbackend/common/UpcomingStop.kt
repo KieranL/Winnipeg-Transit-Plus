@@ -1,6 +1,5 @@
 package com.kieran.winnipegbusbackend.common
 
-import com.kieran.winnipegbusbackend.Stop
 import com.kieran.winnipegbusbackend.interfaces.ScheduledStopKey
 
 class UpcomingStop(stop: Stop, time: StopTime, key: ScheduledStopKey) : Stop(stop), Comparable<Any> {

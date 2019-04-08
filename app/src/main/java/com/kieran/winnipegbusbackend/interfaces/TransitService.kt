@@ -2,9 +2,11 @@ package com.kieran.winnipegbusbackend.interfaces
 
 import com.kieran.winnipegbusbackend.*
 import com.kieran.winnipegbusbackend.common.FavouriteStop
+import com.kieran.winnipegbusbackend.common.StopFeatures
 import com.kieran.winnipegbusbackend.common.StopTime
 import com.kieran.winnipegbusbackend.common.UpcomingStop
 import com.kieran.winnipegbusbackend.enums.ScheduleType
+import com.kieran.winnipegbusbackend.enums.SearchQueryType
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
 
 interface TransitService {
@@ -25,4 +27,10 @@ interface TransitService {
     fun getScheduleType(): ScheduleType
 
     fun supportedFeatures(): List<SupportedFeature>
+
+    fun getSearchQueryType(searchText: String): SearchQueryType
+
+    fun parseStringToStopIdentifier(text: String): StopIdentifier
+
+    fun parseStringToRouteIdentifier(text: String): RouteIdentifier
 }

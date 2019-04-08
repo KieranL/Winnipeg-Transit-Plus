@@ -11,9 +11,9 @@ import android.widget.Toast
 import com.kieran.winnipegbus.activities.GoogleApiActivity
 import com.kieran.winnipegbusbackend.FavouriteStopsList
 import com.kieran.winnipegbusbackend.common.LoadResult
-import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
-import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.Location
-import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.StopLocation
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TransitApiManager
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.Location
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.StopLocation
 
 import org.json.JSONException
 import org.json.JSONObject
@@ -22,6 +22,7 @@ import android.app.Activity.RESULT_OK
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.kieran.winnipegbus.activities.MapActivity
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
 
 
 class LocationPickerDialog(private val context: GoogleApiActivity, private val listener: OnLocationPickedListener) : Dialog(context), View.OnClickListener {
@@ -49,12 +50,12 @@ class LocationPickerDialog(private val context: GoogleApiActivity, private val l
                 val charSequence = arrayOfNulls<CharSequence>(favouriteStops.size)
 
                 for (i in charSequence.indices)
-                    charSequence[i] = favouriteStops[i].number.toString() + " - " + favouriteStops[i].displayName
+                    charSequence[i] = favouriteStops[i].identifier.toString() + " - " + favouriteStops[i].displayName
 
                 builder.setItems(charSequence) { dialog, which ->
                     val favouriteStop = favouriteStops[which]
                     dismiss()
-                    TransitApiManager.getJsonAsync(TransitApiManager.generateFindStopUrl(favouriteStop.number), object : TransitApiManager.OnJsonLoadResultReceiveListener {
+                    TransitApiManager.getJsonAsync(TransitApiManager.generateFindStopUrl((favouriteStop.identifier as WinnipegTransitStopIdentifier).stopNumber), object : TransitApiManager.OnJsonLoadResultReceiveListener {
                         override fun onReceive(result: LoadResult<JSONObject>) {
                             try {
                                 val stopNode = result.result!!.getJSONObject("stop")

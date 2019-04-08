@@ -1,7 +1,7 @@
 package com.kieran.winnipegbusbackend.common
 
 import com.google.android.gms.maps.model.LatLng
-import com.kieran.winnipegbusbackend.Stop
+import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
 
 import java.io.Serializable
 
@@ -19,11 +19,11 @@ class FavouriteStop : Stop, Serializable {
     val displayName: String
         get() = if (this.alias == null) name else this.alias!!
 
-    constructor(stopName: String, stopNumber: Int, timesUsed: Int) : super(stopName, stopNumber) {
+    constructor(stopName: String, stopIdentifier: StopIdentifier, timesUsed: Int) : super(stopName, stopIdentifier) {
         this.timesUsed = timesUsed
     }
 
-    constructor(stopName: String, stopNumber: Int) : super(stopName, stopNumber) {
+    constructor(stopName: String, stopIdentifier: StopIdentifier) : super(stopName, stopIdentifier) {
         this.timesUsed = 0
     }
 

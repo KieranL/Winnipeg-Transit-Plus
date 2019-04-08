@@ -16,23 +16,17 @@ open class Route : Comparable<Any>, Serializable {
     lateinit var coverageType: CoverageTypes
         protected set
 
+    constructor()
+
     constructor(route: Route) {
         routeNumber = route.routeNumber
         routeName = route.routeName
     }
 
-    constructor(jsonObject: JSONObject) {
-        var jsonObject = jsonObject
-        try {
-            jsonObject = jsonObject.getJSONObject(ROUTE_TAG)
-
-            coverageType = CoverageTypes.getEnum(jsonObject.getString(ROUTE_COVERAGE_TAG))
-            routeName = jsonObject.getString(ROUTE_NAME_TAG)
-            routeNumber = jsonObject.getInt(ROUTE_NUMBER_TAG)
-        } catch (e: JSONException) {
-            //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
-        }
-
+    constructor(routeNumber: Int, routeName: String?, coverageType: CoverageTypes) {
+        this.routeNumber = routeNumber
+        this.routeName = routeName
+        this.coverageType = coverageType
     }
 
     override fun toString(): String {
@@ -44,10 +38,6 @@ open class Route : Comparable<Any>, Serializable {
     }
 
     companion object {
-        private val ROUTE_TAG = "route"
-        private val ROUTE_COVERAGE_TAG = "coverage"
-        private val ROUTE_NUMBER_TAG = "number"
-        private val ROUTE_NAME_TAG = "name"
         val DT_SPIRIT_MAX_RT_NUM = 10
 
         fun isDownTownSpirit(routeNumber: Int): Boolean {

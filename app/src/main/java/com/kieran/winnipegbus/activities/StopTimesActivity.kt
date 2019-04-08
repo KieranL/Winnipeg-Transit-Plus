@@ -24,14 +24,14 @@ import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.*
 import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.common.StaticConfig
-import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.StopLocation
-import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.TripParameters
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.StopLocation
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.TripParameters
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.interfaces.TransitService
-import com.kieran.winnipegbusbackend.Stop
+import com.kieran.winnipegbusbackend.common.Stop
 import com.kieran.winnipegbusbackend.common.StopTime
-import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitRouteIdentifier
-import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitStopIdentifier
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitRouteIdentifier
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -72,7 +72,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         }
 
     override fun onNewIntent(intent: Intent) {
-        val newStopNumber = (intent.getSerializableExtra(STOP) as Stop).number
+        val newStopNumber = ((intent.getSerializableExtra(STOP) as Stop).identifier as WinnipegTransitStopIdentifier).stopNumber
         if (newStopNumber != stopNumber) {
             stopNumber = newStopNumber
             setIntent(intent)
@@ -108,7 +108,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         val stop = intent.getSerializableExtra(STOP) as Stop
         stopName = stop.name
         title.text = stopName
-        stopNumber = stop.number
+        stopNumber = (stop.identifier as WinnipegTransitStopIdentifier).stopNumber
 
         setTitle(String.format(Locale.CANADA, ACTIONBAR_TEXT, stopNumber))
 
@@ -279,7 +279,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         if (FavouriteStopsList.contains(stopNumber)) {
             openDeleteFavouriteDialog(item)
         } else if (stopName != null && stopName != "") {
-            FavouriteStopsList.addToFavourites(FavouriteStop(stopName!!, stopNumber))
+            FavouriteStopsList.addToFavourites(FavouriteStop(stopName!!, WinnipegTransitStopIdentifier(stopNumber)))
             item.icon = getFavouritesButtonDrawable(true)
         } else {
             showLongToaster(R.string.wait_for_load)

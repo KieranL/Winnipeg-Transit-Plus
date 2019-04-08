@@ -2,16 +2,21 @@ package com.kieran.winnipegbusbackend
 
 import com.kieran.winnipegbusbackend.common.StopTime
 import com.kieran.winnipegbusbackend.enums.CoverageTypes
-import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
-import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitScheduledStopKey
-import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitTripIdentifier
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TransitApiManager
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitRouteIdentifier
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitScheduledStopKey
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitTripIdentifier
+import com.kieran.winnipegbusbackend.interfaces.RouteIdentifier
+import com.kieran.winnipegbusbackend.interfaces.ScheduledStopKey
+import com.kieran.winnipegbusbackend.interfaces.TripIdentifier
+import com.kieran.winnipegbusbackend.interfaces.VehicleIdentifier
 
 import org.json.JSONException
 import org.json.JSONObject
 
 import java.io.Serializable
 
-class ScheduledStop(stop: JSONObject, private val parentRoute: RouteSchedule) : Serializable, Comparable<ScheduledStop> {
+class ScheduledStop : Serializable, Comparable<ScheduledStop> {
     var routeVariantName: String? = null
         private set
     var estimatedArrivalTime: StopTime? = null
@@ -28,11 +33,11 @@ class ScheduledStop(stop: JSONObject, private val parentRoute: RouteSchedule) : 
         private set
     var hasWifi: Boolean = false
         private set
-    var busNumber: Int = 0
+    var vehicleIdentifier: VehicleIdentifier
         private set
-    var key: WinnipegTransitScheduledStopKey? = null
+    lateinit var key: ScheduledStopKey
         private set
-    var routeKey: WinnipegTransitTripIdentifier? = null
+    lateinit var routeKey: TripIdentifier
         private set
     val isTwoBus: Boolean
         get() = TWO_BUS_NUMBERS.contains(busNumber)
@@ -40,20 +45,38 @@ class ScheduledStop(stop: JSONObject, private val parentRoute: RouteSchedule) : 
     val timeStatus: String
         get() = if (isCancelled) "Cancelled" else StopTime.getTimeStatus(estimatedDepartureTime!!, scheduledDepartureTime!!)
 
-    val routeNumber: Int
-        get() = parentRoute.routeNumber
+    var routeIdentifier: RouteIdentifier
+        private set
 
-    val coverageType: CoverageTypes
-        get() = parentRoute.coverageType
+    var coverageType: CoverageTypes
+        private set
 
-    init {
+    constructor(stop: JSONObject, parentRoute: RouteSchedule) {
         this.routeVariantName = parentRoute.routeName
+        routeIdentifier = WinnipegTransitRouteIdentifier(parentRoute.routeNumber)
+        coverageType = parentRoute.coverageType
 
         loadTimes(stop)
         loadVariantInfo(stop)
         loadBusInfo(stop)
         loadKey(stop)
         loadCancelledStatus(stop)
+    }
+
+    constructor(routeVariantName: String, estimatedArrivalTime: StopTime?, estimatedDepartureTime: StopTime, scheduledArrivalTime: StopTime?, scheduledDepartureTime: StopTime, isCancelled: Boolean, hasBikeRack: Boolean, hasWifi: Boolean, vehicleIdentifier: VehicleIdentifier, key: ScheduledStopKey, routeKey: TripIdentifier, routeIdentifier: RouteIdentifier, coverageType: CoverageTypes) {
+        this.routeVariantName = routeVariantName
+        this.estimatedArrivalTime = estimatedArrivalTime
+        this.estimatedDepartureTime = estimatedDepartureTime
+        this.scheduledArrivalTime = scheduledArrivalTime
+        this.scheduledDepartureTime = scheduledDepartureTime
+        this.isCancelled = isCancelled
+        this.hasBikeRack = hasBikeRack
+        this.hasWifi = hasWifi
+        this.vehicleIdentifier = vehicleIdentifier
+        this.key = key
+        this.routeKey = routeKey
+        this.routeIdentifier = routeIdentifier
+        this.coverageType = coverageType
     }
 
     private fun loadKey(stop: JSONObject) {

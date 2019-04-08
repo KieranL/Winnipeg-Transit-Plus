@@ -6,6 +6,7 @@ import com.kieran.winnipegbus.activities.BaseActivity
 import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.common.LoadResult
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
 
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -42,11 +43,11 @@ object FavouriteStopsList {
     }
 
     operator fun contains(favouriteStop: FavouriteStop): Boolean {
-        return contains(favouriteStop.number)
+        return contains((favouriteStop.identifier as WinnipegTransitStopIdentifier).stopNumber)
     }
 
     operator fun contains(stopNumber: Int): Boolean {
-        return favouritesList.any { it.number == stopNumber }
+        return favouritesList.any { (it.identifier as WinnipegTransitStopIdentifier).stopNumber == stopNumber }
     }
 
     fun remove(stopNumber: Int) {
@@ -55,7 +56,7 @@ object FavouriteStopsList {
     }
 
     fun getFavouriteStopByStopNumber(stopNumber: Int): FavouriteStop? {
-        return favouritesList.firstOrNull { it.number == stopNumber }
+        return favouritesList.firstOrNull { (it.identifier as WinnipegTransitStopIdentifier).stopNumber == stopNumber }
     }
 
     fun loadFavourites(): Boolean {
@@ -73,7 +74,7 @@ object FavouriteStopsList {
                     val timesUsed = Integer.parseInt(getValue(TIMES_USED_TAG, curr))
                     val alias = getValue(ALIAS_TAG, favouriteStops.item(r))
 
-                    val favouriteStop = FavouriteStop(stopName!!, stopNumber, timesUsed)
+                    val favouriteStop = FavouriteStop(stopName!!, WinnipegTransitStopIdentifier(stopNumber), timesUsed)
                     if (alias != null)
                         favouriteStop.alias = alias
 
@@ -103,7 +104,7 @@ object FavouriteStopsList {
                     val favouriteStop = favouritesList[i]
                     serializer.startTag("", FAVOURITE_STOP_TAG)
                     serializer.startTag("", STOP_NUMBER_TAG)
-                    serializer.text(Integer.toString(favouritesList[i].number))
+                    serializer.text(Integer.toString((favouritesList[i].identifier as WinnipegTransitStopIdentifier).stopNumber))
                     serializer.endTag("", STOP_NUMBER_TAG)
 
                     serializer.startTag("", STOP_NAME_TAG)
@@ -140,8 +141,8 @@ object FavouriteStopsList {
     fun sort(sortType: FavouritesListSortType) {
         Collections.sort(favouritesList) { stop1, stop2 ->
             when (sortType) {
-                FavouritesListSortType.STOP_NUMBER_ASC -> stop1.number - stop2.number
-                FavouritesListSortType.STOP_NUMBER_DESC -> -(stop1.number - stop2.number)
+                FavouritesListSortType.STOP_NUMBER_ASC -> (stop1.identifier as WinnipegTransitStopIdentifier).stopNumber - (stop2.identifier as WinnipegTransitStopIdentifier).stopNumber
+                FavouritesListSortType.STOP_NUMBER_DESC -> -((stop1.identifier as WinnipegTransitStopIdentifier).stopNumber - (stop2.identifier as WinnipegTransitStopIdentifier).stopNumber)
                 FavouritesListSortType.FREQUENCY_ASC -> stop1.timesUsed - stop2.timesUsed
                 FavouritesListSortType.FREQUENCY_DESC -> -(stop1.timesUsed - stop2.timesUsed)
             }

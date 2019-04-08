@@ -9,14 +9,18 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.Stop
+import com.kieran.winnipegbusbackend.common.Stop
+import com.kieran.winnipegbusbackend.TransitServiceProvider
+import com.kieran.winnipegbusbackend.interfaces.TransitService
 
 class StopsMapActivity : MapActivity() {
     private var cameraUpdate: CameraUpdate? = null
+    private lateinit var transitService: TransitService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_route_map)
+        transitService = TransitServiceProvider.getTransitService()
         mapOnCreate()
     }
 
@@ -30,14 +34,14 @@ class StopsMapActivity : MapActivity() {
             for (favouriteStop in SearchResultsActivity.stops) {
                 val markerOptions = MarkerOptions()
                 markerOptions.position(favouriteStop.latLng)
-                markerOptions.title(Integer.toString(favouriteStop.number))
+                markerOptions.title(favouriteStop.identifier.toString())
                 markerOptions.snippet(favouriteStop.name)
                 map!!.addMarker(markerOptions)
             }
         }
 
         map!!.isTrafficEnabled = true
-        map!!.setOnInfoWindowClickListener { marker -> openStopTimes(Stop(marker.snippet, Integer.parseInt(marker.title))) }
+        map!!.setOnInfoWindowClickListener { marker -> openStopTimes(Stop(marker.snippet, transitService.parseStringToStopIdentifier(marker.title))) }
         onConnected()
 
         moveMap()

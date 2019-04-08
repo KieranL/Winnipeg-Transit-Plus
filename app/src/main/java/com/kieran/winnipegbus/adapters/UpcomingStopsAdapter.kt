@@ -35,7 +35,7 @@ class UpcomingStopsAdapter(internal var context: Context, internal var layoutRes
         }
 
         val upcomingStop = upComingStops[position]
-        holder.stopNumber!!.text = Integer.toString(upcomingStop.number)
+        holder.stopNumber!!.text = upcomingStop.identifier.toString()
         holder.stopName!!.text = upcomingStop.name
         holder.time!!.text = upcomingStop.time!!.toFormattedString(null, use24hrTime)
         return row

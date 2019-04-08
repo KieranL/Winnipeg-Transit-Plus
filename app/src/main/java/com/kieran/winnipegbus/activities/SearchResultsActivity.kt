@@ -23,8 +23,7 @@ import com.kieran.winnipegbusbackend.enums.SearchQueryType
 import com.kieran.winnipegbusbackend.interfaces.TransitService
 import com.kieran.winnipegbusbackend.common.GeoLocation
 import com.kieran.winnipegbusbackend.common.SearchQuery
-import com.kieran.winnipegbusbackend.Stop
-import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitRouteIdentifier
+import com.kieran.winnipegbusbackend.common.Stop
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -105,7 +104,11 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
                                     ArrayList()
                                 }
                             }
-                            SearchQueryType.ROUTE_NUMBER -> transitService.getRouteStops(WinnipegTransitRouteIdentifier(searchQuery!!.query.toInt()))
+                            SearchQueryType.ROUTE_NUMBER -> transitService.getRouteStops(transitService.parseStringToRouteIdentifier(searchQuery!!.query))
+                        else -> {
+                            showLongToaster(R.string.no_results_found)
+                            ArrayList()
+                        }
                         }
 
                         onDataReceived(stops)

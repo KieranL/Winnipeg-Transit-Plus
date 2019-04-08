@@ -22,7 +22,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.kieran.winnipegbus.ActivityManager
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.Stop
+import com.kieran.winnipegbusbackend.common.Stop
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
 import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
 import com.kieran.winnipegbusbackend.exceptions.TransitDataNotFoundException

@@ -11,7 +11,7 @@ import android.widget.TextView
 
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.views.RouteNumberTextView
-import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.*
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.*
 
 class TripPlannerAdapter(context: Context, private val trips: List<Trip>) : BaseExpandableListAdapter() {
     private val inflater: LayoutInflater = (context as Activity).layoutInflater

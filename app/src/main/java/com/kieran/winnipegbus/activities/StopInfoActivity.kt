@@ -10,11 +10,10 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.MarkerOptions
 import com.kieran.winnipegbus.adapters.StopFeaturesAdapter
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.StopFeatures
+import com.kieran.winnipegbusbackend.common.StopFeatures
 import com.kieran.winnipegbusbackend.TransitServiceProvider
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.interfaces.TransitService
-import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitStopIdentifier
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -34,7 +33,7 @@ class StopInfoActivity : MapActivity() {
         transitService = TransitServiceProvider.getTransitService()
         stopFeatures = intent.getSerializableExtra(STOP_FEATURES) as StopFeatures
 
-        title = String.format(Locale.CANADA, ACTIONBAR_TEXT, stopFeatures!!.number)
+        title = String.format(Locale.CANADA, ACTIONBAR_TEXT, stopFeatures!!.identifier)
         setTextViewText(R.id.stop_features_title, stopFeatures!!.name)
 
         val listView = findViewById<View>(R.id.listView_stop_features) as ListView
@@ -43,7 +42,7 @@ class StopInfoActivity : MapActivity() {
 
         task = GlobalScope.launch(IO) {
             try {
-                stopFeatures = transitService.getStopDetails(WinnipegTransitStopIdentifier(stopFeatures!!.number), stopFeatures!!)
+                stopFeatures = transitService.getStopDetails(stopFeatures!!.identifier, stopFeatures!!)
             } catch (e: Exception) {
                 runOnUiThread { handleException(e) }
             }
