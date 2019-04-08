@@ -17,11 +17,10 @@ import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationServices
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbusbackend.Stop
-import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
 import android.support.v7.app.AlertDialog
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import com.kieran.winnipegbusbackend.SearchQuery
+import com.kieran.winnipegbusbackend.common.SearchQuery
 import com.kieran.winnipegbusbackend.TransitServiceProvider
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
 import com.kieran.winnipegbusbackend.enums.SupportedFeature

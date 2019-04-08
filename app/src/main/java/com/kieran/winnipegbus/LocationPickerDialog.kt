@@ -10,7 +10,7 @@ import android.widget.Toast
 
 import com.kieran.winnipegbus.activities.GoogleApiActivity
 import com.kieran.winnipegbusbackend.FavouriteStopsList
-import com.kieran.winnipegbusbackend.LoadResult
+import com.kieran.winnipegbusbackend.common.LoadResult
 import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
 import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.Location
 import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.StopLocation

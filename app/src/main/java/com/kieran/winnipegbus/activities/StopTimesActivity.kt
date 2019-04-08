@@ -22,10 +22,14 @@ import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.ShakeDetector
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.*
+import com.kieran.winnipegbusbackend.common.FavouriteStop
+import com.kieran.winnipegbusbackend.common.StaticConfig
 import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.StopLocation
 import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.TripParameters
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.interfaces.TransitService
+import com.kieran.winnipegbusbackend.Stop
+import com.kieran.winnipegbusbackend.common.StopTime
 import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitRouteIdentifier
 import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitStopIdentifier
 import kotlinx.coroutines.Dispatchers

@@ -12,7 +12,7 @@ import android.widget.ListView
 
 import com.kieran.winnipegbus.adapters.StopListAdapter
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.FavouriteStop
+import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.FavouriteStopsList
 
 class FavouritesActivity : BaseActivity(), AdapterView.OnItemClickListener, OnItemLongClickListener {

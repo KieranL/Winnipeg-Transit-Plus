@@ -5,22 +5,14 @@ import org.json.JSONObject
 import java.io.Serializable
 import java.util.*
 
-class RouteSchedule : Route, Serializable {
-    fun compareTo(other: Nothing): Int {
-        return super.compareTo(other)
-    }
-
+class RouteSchedule(jsonObject: JSONObject) : Route(jsonObject), Serializable {
     private var stops: ArrayList<ScheduledStop>? = null
 
     val scheduledStops: List<ScheduledStop>?
         get() = stops
 
-    constructor(routeSchedule: RouteSchedule) : super(routeSchedule) {}
-
-    constructor(jsonObject: JSONObject) : super(jsonObject) {
-
+    init {
         stops = ArrayList()
-
         loadScheduledStops(jsonObject)
     }
 

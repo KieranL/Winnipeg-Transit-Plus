@@ -1,6 +1,6 @@
 package com.kieran.winnipegbustests.integration
 
-import com.kieran.winnipegbusbackend.StopTime
+import com.kieran.winnipegbusbackend.common.StopTime
 import com.kieran.winnipegbusbackend.interfaces.RouteIdentifier
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest

@@ -1,4 +1,4 @@
-package com.kieran.winnipegbusbackend
+package com.kieran.winnipegbusbackend.common
 
 import android.annotation.SuppressLint
 
@@ -114,8 +114,8 @@ class StopTime : Comparable<Any>, Serializable {
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
         dateString += calendar.get(Calendar.YEAR)
-        dateString += "-" + if (month >= 10) month else "0" + month
-        dateString += "-" + if (day >= 10) day else "0" + day
+        dateString += "-" + if (month >= 10) month else "0$month"
+        dateString += "-" + if (day >= 10) day else "0$day"
 
         return dateString
     }
@@ -126,7 +126,7 @@ class StopTime : Comparable<Any>, Serializable {
 
     fun to24hrTimeString(): String {
         val hours = hours
-        return (if (hours < 10) "0" + hoursString else hoursString) + ":" + minutesString
+        return (if (hours < 10) "0$hoursString" else hoursString) + ":" + minutesString
     }
 
     override operator fun compareTo(other: Any): Int {
@@ -146,7 +146,6 @@ class StopTime : Comparable<Any>, Serializable {
     }
 
     companion object {
-        private const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
         private const val DUE_TIME = 0.5
         private const val DUE_STRING = "Due"
         private const val EARLY_TIME = -0.5
@@ -172,16 +171,15 @@ class StopTime : Comparable<Any>, Serializable {
                 LATE_TEXT
         }
 
-        fun convertStringToStopTime(s: String): StopTime? {
+        fun convertStringToStopTime(s: String, format: String): StopTime? {
             @SuppressLint("SimpleDateFormat")
-            val dateFormat = SimpleDateFormat(DATE_FORMAT)
+            val dateFormat = SimpleDateFormat(format)
 
             return try {
                 StopTime(dateFormat.parse(s))
             } catch (e: ParseException) {
                 null
             }
-
         }
     }
 }

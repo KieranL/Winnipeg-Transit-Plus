@@ -2,6 +2,7 @@ package com.kieran.winnipegbusbackend
 
 
 import com.google.android.gms.maps.model.LatLng
+import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
 import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitScheduledStopKey
 
 import org.json.JSONException
@@ -41,7 +42,7 @@ class StopSchedule : Stop {
             loadStopNumber(jsonObject.getJSONObject(STOP_TAG))
             loadStopName(jsonObject.getJSONObject(STOP_TAG))
             loadRoutes(jsonObject)
-            loadLatLng(jsonObject.getJSONObject(STOP_TAG).getJSONObject(Stop.STOP_CENTRE_TAG).getJSONObject(Stop.GEOGRAPHIC_TAG))
+            loadLatLng(jsonObject.getJSONObject(STOP_TAG).getJSONObject(TransitApiManager.STOP_CENTRE_TAG).getJSONObject(TransitApiManager.GEOGRAPHIC_TAG))
         } catch (e: JSONException) {
             //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
         }
@@ -54,7 +55,7 @@ class StopSchedule : Stop {
             jsonObject = jsonObject.getJSONObject(STOP_SCHEDULE_TAG)
             loadStopName(jsonObject.getJSONObject(STOP_TAG))
             loadRoutes(jsonObject)
-            loadLatLng(jsonObject.getJSONObject(STOP_TAG).getJSONObject(Stop.STOP_CENTRE_TAG).getJSONObject(Stop.GEOGRAPHIC_TAG))
+            loadLatLng(jsonObject.getJSONObject(STOP_TAG).getJSONObject(TransitApiManager.STOP_CENTRE_TAG).getJSONObject(TransitApiManager.GEOGRAPHIC_TAG))
         } catch (ex: JSONException) {
             //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
         }
@@ -87,7 +88,7 @@ class StopSchedule : Stop {
     @Throws(JSONException::class)
     private fun loadStopName(jsonObject: JSONObject) {
         try {
-            name = jsonObject.getString(Stop.STOP_NAME_TAG)
+            name = jsonObject.getString(TransitApiManager.STOP_NAME_TAG)
         } catch (ex: JSONException) {
             //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
         }
@@ -97,7 +98,7 @@ class StopSchedule : Stop {
     @Throws(JSONException::class)
     private fun loadStopNumber(jsonObject: JSONObject) {
         try {
-            number = jsonObject.getInt(Stop.STOP_NUMBER_TAG)
+            number = jsonObject.getInt(TransitApiManager.STOP_NUMBER_TAG)
         } catch (ex: JSONException) {
             //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
         }

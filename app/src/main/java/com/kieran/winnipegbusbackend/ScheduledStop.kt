@@ -1,6 +1,8 @@
 package com.kieran.winnipegbusbackend
 
+import com.kieran.winnipegbusbackend.common.StopTime
 import com.kieran.winnipegbusbackend.enums.CoverageTypes
+import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
 import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitScheduledStopKey
 import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitTripIdentifier
 
@@ -101,14 +103,14 @@ class ScheduledStop(stop: JSONObject, private val parentRoute: RouteSchedule) : 
 
             val departure = times.getJSONObject(DEPARTURE_TAG)
 
-            estimatedDepartureTime = StopTime.convertStringToStopTime(departure.getString(ESTIMATED_TAG))
-            scheduledDepartureTime = StopTime.convertStringToStopTime(departure.getString(SCHEDULED_TAG))
+            estimatedDepartureTime = StopTime.convertStringToStopTime(departure.getString(ESTIMATED_TAG), TransitApiManager.API_DATE_FORMAT)
+            scheduledDepartureTime = StopTime.convertStringToStopTime(departure.getString(SCHEDULED_TAG), TransitApiManager.API_DATE_FORMAT)
 
 
             if (times.has(ARRIVAL_TAG)) {
                 val arrival = times.getJSONObject(ARRIVAL_TAG)
-                scheduledArrivalTime = StopTime.convertStringToStopTime(arrival.getString(SCHEDULED_TAG))
-                estimatedArrivalTime = StopTime.convertStringToStopTime(arrival.getString(ESTIMATED_TAG))
+                scheduledArrivalTime = StopTime.convertStringToStopTime(arrival.getString(SCHEDULED_TAG), TransitApiManager.API_DATE_FORMAT)
+                estimatedArrivalTime = StopTime.convertStringToStopTime(arrival.getString(ESTIMATED_TAG), TransitApiManager.API_DATE_FORMAT)
             }
         } catch (ex: JSONException) {
             //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields

@@ -1,6 +1,7 @@
 package com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes
 
-import com.kieran.winnipegbusbackend.StopTime
+import com.kieran.winnipegbusbackend.common.StopTime
+import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
 
 import org.json.JSONException
 import org.json.JSONObject
@@ -17,8 +18,8 @@ class Times(times: JSONObject) {
         try {
             val durations = times.getJSONObject("durations")
 
-            startTime = StopTime.convertStringToStopTime(times.getString("start"))
-            endTime = StopTime.convertStringToStopTime(times.getString("end"))
+            startTime = StopTime.convertStringToStopTime(times.getString("start"), TransitApiManager.API_DATE_FORMAT)
+            endTime = StopTime.convertStringToStopTime(times.getString("end"), TransitApiManager.API_DATE_FORMAT)
 
             totalTime = durations.getInt("total")
             walkingTime = durations.getInt("walking")

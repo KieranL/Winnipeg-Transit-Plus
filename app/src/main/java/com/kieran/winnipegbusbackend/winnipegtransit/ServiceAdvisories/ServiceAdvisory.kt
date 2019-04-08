@@ -1,6 +1,6 @@
 package com.kieran.winnipegbusbackend.winnipegtransit.ServiceAdvisories
 
-import com.kieran.winnipegbusbackend.StopTime
+import com.kieran.winnipegbusbackend.common.StopTime
 
 import java.io.Serializable
 import java.util.ArrayList

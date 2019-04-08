@@ -3,7 +3,6 @@ package com.kieran.winnipegbus.activities
 import android.app.AlertDialog
 import android.content.Intent
 import android.location.Location
-import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.view.Menu
@@ -19,10 +18,12 @@ import com.kieran.winnipegbus.adapters.StopListAdapter
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.*
-import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
+import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
 import com.kieran.winnipegbusbackend.interfaces.TransitService
-import com.kieran.winnipegbusbackend.shared.GeoLocation
+import com.kieran.winnipegbusbackend.common.GeoLocation
+import com.kieran.winnipegbusbackend.common.SearchQuery
+import com.kieran.winnipegbusbackend.Stop
 import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitRouteIdentifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

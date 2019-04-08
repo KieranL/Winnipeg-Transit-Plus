@@ -31,12 +31,4 @@ open class Stop : Serializable {
     override fun toString(): String {
         return Integer.toString(number) + " " + name
     }
-
-    companion object {
-        val STOP_NAME_TAG = "name"
-        val STOP_NUMBER_TAG = "number"
-        val STOP_TAG = "stops"
-        val GEOGRAPHIC_TAG = "geographic"
-        val STOP_CENTRE_TAG = "centre"
-    }
 }

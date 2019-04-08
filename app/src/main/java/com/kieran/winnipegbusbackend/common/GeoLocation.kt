@@ -1,4 +1,4 @@
-package com.kieran.winnipegbusbackend.shared
+package com.kieran.winnipegbusbackend.common
 
 import com.kieran.winnipegbusbackend.interfaces.Location
 

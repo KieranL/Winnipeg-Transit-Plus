@@ -1,4 +1,4 @@
-package com.kieran.winnipegbusbackend
+package com.kieran.winnipegbusbackend.winnipegtransit
 
 class URLParameter {
     private var key: String? = null

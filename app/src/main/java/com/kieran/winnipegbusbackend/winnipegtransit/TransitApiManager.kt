@@ -2,11 +2,12 @@ package com.kieran.winnipegbusbackend.winnipegtransit
 
 import android.os.AsyncTask
 import com.kieran.winnipegbus.BuildConfig
-import com.kieran.winnipegbusbackend.*
 
 import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
 import com.kieran.winnipegbusbackend.exceptions.TransitDataNotFoundException
-import com.kieran.winnipegbusbackend.shared.GeoLocation
+import com.kieran.winnipegbusbackend.common.GeoLocation
+import com.kieran.winnipegbusbackend.common.LoadResult
+import com.kieran.winnipegbusbackend.common.StopTime
 
 import org.json.JSONObject
 import java.lang.Double
@@ -16,6 +17,7 @@ import java.util.*
 import javax.net.ssl.HttpsURLConnection
 
 object TransitApiManager {
+    internal const val API_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
     private val START_TIME_DECREASE = 10000
     private val QUERY_TIME = "query-time"
     private val ROUTE_PARAMETER = "route"
@@ -33,6 +35,15 @@ object TransitApiManager {
     private val SERVICE_ADVISORIES_PARAMETER = "service-advisories"
     private val LOCATIONS_PARAMETER = "locations"
     private val URL_FORMAT = "https://api.winnipegtransit.com/v3/%s.json?usage=short&api-key=" + BuildConfig.winnipeg_transit_api_key + "%s"
+
+    //Stop model json tags
+    val STOP_NAME_TAG = "name"
+    val STOP_NUMBER_TAG = "number"
+    val STOP_TAG = "stops"
+    val GEOGRAPHIC_TAG = "geographic"
+    val STOP_CENTRE_TAG = "centre"
+    //End Stop model json tags
+
     var lastQueryTime: StopTime = StopTime()
         private set
 
@@ -52,7 +63,7 @@ object TransitApiManager {
             stream.close()
 
             val obj = JSONObject(myString)
-            val newQueryTime = StopTime.convertStringToStopTime(obj.getString(QUERY_TIME))
+            val newQueryTime = StopTime.convertStringToStopTime(obj.getString(QUERY_TIME), API_DATE_FORMAT)
 
             if(newQueryTime != null)
                 lastQueryTime = newQueryTime

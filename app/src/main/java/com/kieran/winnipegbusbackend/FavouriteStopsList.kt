@@ -3,6 +3,8 @@ package com.kieran.winnipegbusbackend
 import android.util.Xml
 
 import com.kieran.winnipegbus.activities.BaseActivity
+import com.kieran.winnipegbusbackend.common.FavouriteStop
+import com.kieran.winnipegbusbackend.common.LoadResult
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
 
 import org.w3c.dom.Document

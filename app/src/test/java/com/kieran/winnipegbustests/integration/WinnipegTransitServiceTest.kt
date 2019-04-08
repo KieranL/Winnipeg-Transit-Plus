@@ -1,10 +1,10 @@
 package com.kieran.winnipegbustests.integration
 
 import com.kieran.winnipegbusbackend.StopFeatures
-import com.kieran.winnipegbusbackend.StopTime
+import com.kieran.winnipegbusbackend.common.StopTime
 import com.kieran.winnipegbusbackend.enums.ScheduleType
 import com.kieran.winnipegbusbackend.interfaces.RouteIdentifier
-import com.kieran.winnipegbusbackend.shared.GeoLocation
+import com.kieran.winnipegbusbackend.common.GeoLocation
 import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitRouteIdentifier
 import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitService
 import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitStopIdentifier

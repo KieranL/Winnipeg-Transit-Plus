@@ -21,4 +21,8 @@ class WinnipegTransitScheduledStopKey(key: String) : Serializable, ScheduledStop
     fun equals(another: WinnipegTransitScheduledStopKey): Boolean {
         return busKey == another.busKey
     }
+
+    override fun compareTo(other: Any): Int {
+        return stopNumber - (other as WinnipegTransitScheduledStopKey).stopNumber
+    }
 }

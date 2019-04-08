@@ -1,6 +1,6 @@
 package com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes
 
-import com.kieran.winnipegbusbackend.StopTime
+import com.kieran.winnipegbusbackend.common.StopTime
 import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.TimeMode
 
 import java.io.Serializable

@@ -12,6 +12,7 @@ import com.kieran.winnipegbus.adapters.StopFeaturesAdapter
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbusbackend.StopFeatures
 import com.kieran.winnipegbusbackend.TransitServiceProvider
+import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.interfaces.TransitService
 import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitStopIdentifier
 import kotlinx.coroutines.Dispatchers.IO
@@ -81,7 +82,7 @@ class StopInfoActivity : MapActivity() {
     }
 
     private fun showStopFeatures() {
-        if (stopFeatures!!.numberOfFeatures() > 0) {
+        if (transitService.supportedFeatures().contains(SupportedFeature.STOP_FEATURES) && stopFeatures!!.numberOfFeatures() > 0) {
             runOnUiThread {
                 adapter!!.notifyDataSetChanged()
             }

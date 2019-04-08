@@ -1,12 +1,12 @@
 package com.kieran.winnipegbusbackend.winnipegtransit
 
 import com.kieran.winnipegbusbackend.*
+import com.kieran.winnipegbusbackend.common.*
 import com.kieran.winnipegbusbackend.enums.ScheduleType
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
 import com.kieran.winnipegbusbackend.exceptions.TransitDataNotFoundException
 import com.kieran.winnipegbusbackend.interfaces.*
-import com.kieran.winnipegbusbackend.shared.GeoLocation
 import kotlinx.coroutines.*
 import org.json.JSONException
 import java.io.FileNotFoundException
@@ -31,8 +31,29 @@ object WinnipegTransitService : TransitService {
             throw result.exception
         }
 
-        if (result.result != null)
-            stopFeatures.loadFeatures(result.result)
+        if (result.result != null) {
+            try {
+                val features = result.result.getJSONArray("stop-features")
+                val stopFeatureList = ArrayList<StopFeature>()
+
+                (0 until features.length()).mapNotNullTo(stopFeatureList) {
+                    try {
+                        val featureNode = features.getJSONObject(it)
+                        val featureName = featureNode.getString("name")
+                        val featureCount = featureNode.getInt("count")
+                        StopFeature(featureCount, featureName)
+                    } catch (e: JSONException) {
+                        //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
+                        null
+                    }
+                }
+
+                stopFeatures.loadFeatures(stopFeatureList)
+            } catch (e: JSONException) {
+                //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
+            }
+
+        }
 
         return stopFeatures
     }
@@ -144,7 +165,7 @@ object WinnipegTransitService : TransitService {
             } catch (ex: JSONException) {
                 throw TransitDataNotFoundException()
             }
-        }else {
+        } else {
             throw result.exception!!
         }
     }

@@ -1,6 +1,7 @@
 package com.kieran.winnipegbusbackend.winnipegtransit.ServiceAdvisories
 
-import com.kieran.winnipegbusbackend.StopTime
+import com.kieran.winnipegbusbackend.common.StopTime
+import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
 
 import org.json.JSONException
 import org.json.JSONObject
@@ -54,7 +55,7 @@ object ServiceAdvisoriesParser {
             reRoutesData = bodySections[3].split(BODY_SUBSECTION_REGEX.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         }
 
-        return ServiceAdvisory(title, header, getAffectedStops(affectedStopsData), getReRoutes(reRoutesData), StopTime.convertStringToStopTime(node.getString(UPDATED_AT_TAG))!!)
+        return ServiceAdvisory(title, header, getAffectedStops(affectedStopsData), getReRoutes(reRoutesData), StopTime.convertStringToStopTime(node.getString(UPDATED_AT_TAG), TransitApiManager.API_DATE_FORMAT)!!)
     }
 
     private fun getAffectedStops(nodes: Array<String>): List<AffectedStop> {

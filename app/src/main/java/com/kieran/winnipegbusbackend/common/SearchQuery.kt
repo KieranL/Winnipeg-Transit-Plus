@@ -1,4 +1,4 @@
-package com.kieran.winnipegbusbackend
+package com.kieran.winnipegbusbackend.common
 
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
 

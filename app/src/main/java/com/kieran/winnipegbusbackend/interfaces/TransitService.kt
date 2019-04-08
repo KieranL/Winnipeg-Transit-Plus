@@ -1,6 +1,9 @@
 package com.kieran.winnipegbusbackend.interfaces
 
 import com.kieran.winnipegbusbackend.*
+import com.kieran.winnipegbusbackend.common.FavouriteStop
+import com.kieran.winnipegbusbackend.common.StopTime
+import com.kieran.winnipegbusbackend.common.UpcomingStop
 import com.kieran.winnipegbusbackend.enums.ScheduleType
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
 

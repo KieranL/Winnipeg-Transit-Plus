@@ -1,6 +1,7 @@
-package com.kieran.winnipegbusbackend
+package com.kieran.winnipegbusbackend.common
 
 import com.google.android.gms.maps.model.LatLng
+import com.kieran.winnipegbusbackend.Stop
 
 import java.io.Serializable
 

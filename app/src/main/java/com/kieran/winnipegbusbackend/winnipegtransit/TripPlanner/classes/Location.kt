@@ -1,7 +1,7 @@
 package com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes
 
 import com.google.android.gms.maps.model.LatLng
-import com.kieran.winnipegbusbackend.SerializableLatLng
+import com.kieran.winnipegbusbackend.common.SerializableLatLng
 
 import org.json.JSONException
 import org.json.JSONObject
@@ -34,7 +34,8 @@ open class Location : Serializable {
 
     constructor(location: LatLng?, title: String?) {
         this.title = title ?: ""
-        point = SerializableLatLng(LatLng(location?.latitude ?: 0.0, location?.longitude ?: 0.0))
+        point = SerializableLatLng(LatLng(location?.latitude
+                ?: 0.0, location?.longitude ?: 0.0))
     }
 
     private fun getLatLngFromLocation(location: JSONObject) {
