@@ -35,7 +35,7 @@ import org.json.JSONObject
 class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, LocationListener {
     private var adapter: StopListAdapter? = null
     private var searchQuery: SearchQuery? = null
-    private var loading = false
+    private var loading = true
     private var task: Job? = null
     private var swipeRefreshLayout: StyledSwipeRefresh? = null
     private lateinit var transitService: TransitService
@@ -77,6 +77,7 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
     private fun setupSwipeRefresh() {
         swipeRefreshLayout = findViewById<View>(R.id.search_results_swipeRefresh) as StyledSwipeRefresh
         swipeRefreshLayout!!.setOnRefreshListener(this)
+        swipeRefreshLayout!!.isRefreshing = loading
 
         if (searchQuery!!.searchQueryType != SearchQueryType.NEARBY) {
             swipeRefreshLayout!!.isEnabled = false
@@ -96,9 +97,9 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
                         SearchQueryType.GENERAL -> transitService.findStop(searchQuery!!.query)
                         SearchQueryType.NEARBY -> {
                             val location = latestLocation
-                            if(location != null) {
+                            if (location != null) {
                                 transitService.findClosestStops(GeoLocation(location.latitude, location.longitude), (nearbyStopsDistance + location.accuracy).toInt())
-                            }else {
+                            } else {
                                 ArrayList()
                             }
                         }
@@ -125,8 +126,6 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
         menuInflater.inflate(R.menu.menu_search_results, menu)
         if (searchQuery!!.searchQueryType != SearchQueryType.NEARBY)
             menu.findItem(R.id.loadingIcon).isVisible = false
-
-        refresh()
 
         return true
     }
@@ -198,15 +197,13 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
     }
 
     private fun onDataReceived(newStops: List<FavouriteStop>) {
-        if (loading) {
-            if (newStops.isEmpty()) {
-                runOnUiThread {
-                    showLongToaster(R.string.no_results_found)
-                }
+        if (newStops.isEmpty()) {
+            runOnUiThread {
+                showLongToaster(R.string.no_results_found)
             }
-            stops.clear()
-            stops.addAll(newStops)
         }
+        stops.clear()
+        stops.addAll(newStops)
 
         runOnUiThread {
             adapter!!.notifyDataSetChanged()
