@@ -20,11 +20,11 @@ import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.LoadResult
 import com.kieran.winnipegbusbackend.StopTime
-import com.kieran.winnipegbusbackend.TransitApiManager
-import com.kieran.winnipegbusbackend.TripPlanner.TimeMode
-import com.kieran.winnipegbusbackend.TripPlanner.classes.Location
-import com.kieran.winnipegbusbackend.TripPlanner.classes.Trip
-import com.kieran.winnipegbusbackend.TripPlanner.classes.TripParameters
+import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
+import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.TimeMode
+import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.Location
+import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.Trip
+import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.TripParameters
 
 import org.json.JSONException
 import org.json.JSONObject
@@ -154,12 +154,12 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
         val jsonObject = result.result
         try {
             val plans = jsonObject!!.getJSONArray("plans")
-
-            for (i in 0 until plans.length()) {
-                trips!!.add(Trip(tripParameters, plans.getJSONObject(i)))
-            }
-
             runOnUiThread {
+                for (i in 0 until plans.length()) {
+                    trips!!.add(Trip(tripParameters, plans.getJSONObject(i)))
+                }
+
+
                 adapter!!.notifyDataSetChanged()
             }
             swipeRefresh!!.isRefreshing = false

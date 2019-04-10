@@ -17,18 +17,21 @@ import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationServices
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbusbackend.Stop
-import com.kieran.winnipegbusbackend.TransitApiManager
-import java.net.URL
-import android.content.DialogInterface
+import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
 import android.support.v7.app.AlertDialog
 import android.webkit.WebView
 import android.webkit.WebViewClient
-
+import com.kieran.winnipegbusbackend.SearchQuery
+import com.kieran.winnipegbusbackend.TransitServiceProvider
+import com.kieran.winnipegbusbackend.enums.SearchQueryType
+import com.kieran.winnipegbusbackend.enums.SupportedFeature
+import com.kieran.winnipegbusbackend.interfaces.TransitService
 
 
 class HomeScreenActivity : GoogleApiActivity(), LocationListener {
     private var searchButton: Button? = null
     private var searchField: EditText? = null
+    private lateinit var transitService: TransitService
 
     private val isSearchEnabled: Boolean
         get() = searchField!!.text.isNotEmpty()
@@ -41,7 +44,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        transitService = TransitServiceProvider.getTransitService()
         setContentView(R.layout.activity_home_screen)
         adViewResId = R.id.homeScreenAdView
 
@@ -85,6 +88,17 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_home, menu)
+
+        val features = transitService.supportedFeatures()
+
+        if(features.contains(SupportedFeature.TRIP_PLANNING)) {
+            menu.findItem(R.id.trip_planner).isVisible = true
+        }
+
+        if(features.contains(SupportedFeature.SERVICE_ADVISORIES)) {
+            menu.findItem(R.id.service_advisories).isVisible = true
+        }
+
         return true
     }
 
@@ -146,17 +160,18 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
             if (number >= 10000) {
                 openStopTimes(Stop("", number))
             } else {
-                startSearchResultsActivity()
+                val intent = Intent(this, SearchResultsActivity::class.java)
+                intent.putExtra(SearchResultsActivity.SEARCH_QUERY, SearchQuery(searchField!!.text.toString().trim { it <= ' ' }, SearchQueryType.ROUTE_NUMBER))
+                startActivity(intent)
             }
         } catch (e: Exception) {
             startSearchResultsActivity()
         }
-
     }
 
     private fun startSearchResultsActivity() {
         val intent = Intent(this, SearchResultsActivity::class.java)
-        intent.putExtra(SearchResultsActivity.SEARCH_QUERY, TransitApiManager.generateSearchQuery(searchField!!.text.toString().trim { it <= ' ' }))
+        intent.putExtra(SearchResultsActivity.SEARCH_QUERY, SearchQuery(searchField!!.text.toString().trim { it <= ' ' }, SearchQueryType.GENERAL))
         startActivity(intent)
     }
 
@@ -170,7 +185,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
             val location = latestLocation
 
             if (location != null) {
-                intent.putExtra(SearchResultsActivity.SEARCH_QUERY, TransitApiManager.generateSearchQuery(location, nearbyStopsDistance))
+                intent.putExtra(SearchResultsActivity.SEARCH_QUERY, SearchQuery("Nearby Stops", SearchQueryType.NEARBY))
                 startActivity(intent)
             } else {
                 showShortToaster(GoogleApiActivity.ACQUIRING_LOCATION)

@@ -2,6 +2,7 @@ package com.kieran.winnipegbusbackend
 
 
 import com.google.android.gms.maps.model.LatLng
+import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitScheduledStopKey
 
 import org.json.JSONException
 import org.json.JSONObject
@@ -107,7 +108,7 @@ class StopSchedule : Stop {
         return routeList
     }
 
-    fun getScheduledStopByKey(key: ScheduledStopKey): ScheduledStop? {
+    fun getScheduledStopByKey(key: WinnipegTransitScheduledStopKey): ScheduledStop? {
         for (scheduledStop in scheduledStops)
             if (scheduledStop.key!!.equals(key))
                 return scheduledStop
@@ -116,19 +117,6 @@ class StopSchedule : Stop {
 
     fun createStopFeatures(): StopFeatures {
         return StopFeatures(number, name, latLng)
-    }
-
-    fun refresh(jsonObject: JSONObject) {
-        var jsonObject = jsonObject
-        routeList.clear()
-
-        try {
-            jsonObject = jsonObject.getJSONObject(STOP_SCHEDULE_TAG)
-            loadRoutes(jsonObject)
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-
     }
 
     fun getLatLng(): LatLng? {

@@ -56,4 +56,5 @@
     <string name="privacy_url">http://kieranl.github.io/Winnipeg-Transit-Plus/</string>
     <string name="action_privacy_policy">Privacy Policy</string>
     <string name="does_bus_have_extended_capacity">This bus has a higher passenger capacity</string>
+    <string name="data_not_found">Stop not found.</string>
 </resources>
