@@ -78,10 +78,6 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
         swipeRefreshLayout = findViewById<View>(R.id.search_results_swipeRefresh) as StyledSwipeRefresh
         swipeRefreshLayout!!.setOnRefreshListener(this)
         swipeRefreshLayout!!.isRefreshing = loading
-
-        if (searchQuery!!.searchQueryType != SearchQueryType.NEARBY) {
-            swipeRefreshLayout!!.isEnabled = false
-        }
     }
 
     override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
@@ -92,6 +88,7 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
         if (!loading) {
             if (isOnline) {
                 loading = true
+                swipeRefreshLayout?.isRefreshing = loading
                 task = GlobalScope.launch(Dispatchers.IO) {
                     val stops = when (searchQuery!!.searchQueryType) {
                         SearchQueryType.GENERAL -> transitService.findStop(searchQuery!!.query)
@@ -126,6 +123,11 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
         menuInflater.inflate(R.menu.menu_search_results, menu)
         if (searchQuery!!.searchQueryType != SearchQueryType.NEARBY)
             menu.findItem(R.id.loadingIcon).isVisible = false
+
+        if(searchQuery!!.searchQueryType != SearchQueryType.NEARBY) {
+            loading = false
+            refresh()
+        }
 
         return true
     }
