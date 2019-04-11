@@ -155,8 +155,9 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
                             runOnUiThread {
                             handleException(e)}
                         }
-
-                        swipeRefreshLayout!!.isRefreshing = false
+                        runOnUiThread {
+                            swipeRefreshLayout!!.isRefreshing = false
+                        }
                         loading = false
                     }
                 }
@@ -164,7 +165,9 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
                 showLongToaster(R.string.network_error)
             }
         }
-        swipeRefreshLayout!!.isRefreshing = loading
+        runOnUiThread {
+            swipeRefreshLayout!!.isRefreshing = loading
+        }
         fillTextViews()
     }
 

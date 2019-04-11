@@ -88,7 +88,9 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
         if (!loading) {
             if (isOnline) {
                 loading = true
-                swipeRefreshLayout?.isRefreshing = loading
+                runOnUiThread {
+                    swipeRefreshLayout?.isRefreshing = loading
+                }
                 task = GlobalScope.launch(Dispatchers.IO) {
                     val stops = when (searchQuery!!.searchQueryType) {
                         SearchQueryType.GENERAL -> transitService.findStop(searchQuery!!.query)
@@ -109,7 +111,9 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
                 showLongToaster(R.string.network_error)
             }
         }
-        swipeRefreshLayout!!.isRefreshing = loading
+        runOnUiThread {
+            swipeRefreshLayout!!.isRefreshing = loading
+        }
     }
 
     public override fun onDestroy() {
