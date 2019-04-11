@@ -8,4 +8,10 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
 
+    <CheckBoxPreference
+        android:key="pref_show_favourites_on_home"
+        android:title="@string/pref_title_show_frequent_stops_on_home"
+        android:defaultValue="false"
+        android:widgetLayout="@layout/checkbox"/>
+
 </PreferenceScreen>

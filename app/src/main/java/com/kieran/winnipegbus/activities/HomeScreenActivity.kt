@@ -1,8 +1,10 @@
 package com.kieran.winnipegbus.activities
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v7.app.AlertDialog
 import android.text.Editable
 import android.text.TextWatcher
@@ -25,11 +27,11 @@ import com.kieran.winnipegbusbackend.enums.SearchQueryType
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.interfaces.TransitService
 
-
 class HomeScreenActivity : GoogleApiActivity(), LocationListener {
     private var searchButton: Button? = null
     private var searchField: EditText? = null
     private lateinit var transitService: TransitService
+    private var favouritesFragment: FavouritesFragment? = null
 
     private val isSearchEnabled: Boolean
         get() = searchField!!.text.isNotEmpty()
@@ -66,6 +68,54 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).build()
         connectClient()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        setupFrequentFavourites()
+    }
+
+    private fun setupFrequentFavourites(overrideCheck: Boolean = false) {
+        try {
+            val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+
+            if(!overrideCheck && !prefs.contains(stops_on_home_message_shown_flag)) {
+                val alertDialog = android.app.AlertDialog.Builder(this)
+                alertDialog.setMessage(R.string.enable_stops_on_home_prompt)
+
+                alertDialog.setPositiveButton(R.string.enable) { _, _ ->
+                    val editor = prefs.edit()
+
+                    editor.putBoolean(stops_on_home_message_shown_flag, true)
+                    editor.putBoolean("pref_show_favourites_on_home", true)
+
+                    editor.apply()
+                    setupFrequentFavourites()
+                }
+
+                alertDialog.setNegativeButton(R.string.disable) { _, _ ->
+                    prefs.edit().putBoolean(stops_on_home_message_shown_flag, true).apply()
+                }
+
+                alertDialog.create().show()
+            }
+
+            if (isBooleanSettingEnabled("pref_show_favourites_on_home") || overrideCheck) {
+                if (favouritesFragment == null) {
+                    val fragmentTransaction = fragmentManager.beginTransaction()
+
+                    favouritesFragment = FavouritesFragment()
+                    fragmentTransaction.add(R.id.fragment_container, favouritesFragment).commit()
+                }
+            } else if (favouritesFragment != null) {
+                val fragmentTransaction = fragmentManager.beginTransaction()
+                fragmentTransaction.remove(favouritesFragment).commit()
+                favouritesFragment = null
+            }
+        }catch (e: Exception){
+            // TODO log this when an error logger is built
+        }
     }
 
     private fun createTextWatcher(): TextWatcher {
@@ -200,5 +250,9 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
 
     override fun onLocationChanged(location: Location) {
 
+    }
+
+    companion object {
+        private const val stops_on_home_message_shown_flag = "show_initial_frequent_stops_on_home_notification"
     }
 }

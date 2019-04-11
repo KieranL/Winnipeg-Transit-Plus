@@ -3,13 +3,12 @@
     <string name="search_hint">Search</string>
     <string name="button_send">Go</string>
     <string name="action_settings">Settings</string>
-    <string name="enter_valid_stop_number">Please enter a valid stopSchedule number.</string>
+    <string name="enter_valid_stop_number">Please enter a valid stop number.</string>
     <string name="network_error">Network Error</string>
     <string name="route_number_filter_hint">Route number filter</string>
     <string name="favourites">Favourites</string>
     <string name="title_activity_favourites">Favourites</string>
     <string name="add_widget">Add Widget</string>
-    <string name="configure">Enter a stopSchedule number</string>
     <string name="banner_ad_home_unit_id">ca-app-pub-1189975520647633/7696260309</string>
     <string name="banner_ad_stops_list_unit_id">ca-app-pub-1189975520647633/9812121904</string>
     <string name="banner_ad_stop_times_unit_id">ca-app-pub-1189975520647633/1321335907</string>
@@ -57,4 +56,15 @@
     <string name="action_privacy_policy">Privacy Policy</string>
     <string name="does_bus_have_extended_capacity">This bus has a higher passenger capacity</string>
     <string name="data_not_found">Stop not found.</string>
+    <string name="most_used_favourites">Frequently used favourites</string>
+    <string name="pref_title_show_frequent_stops_on_home">Frequent favourites on Home</string>
+    <string name="enable_stops_on_home_prompt">You view your most frequently used favourite stops on the home screen. It can also turned on or off in the settings if you want to change it later.</string>
+    <string name="enable">Enable</string>
+    <string name="disable">Disable</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="delete">Delete</string>
+    <string name="rename">Rename</string>
+    <string name="edit_favourite_dialog_title">Edit this Favourite?</string>
+    <string name="default_label">Default</string>
 </resources>
