@@ -30,6 +30,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 import org.json.JSONObject
+import java.lang.Exception
 
 
 class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, LocationListener {
@@ -92,20 +93,26 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
                     swipeRefreshLayout?.isRefreshing = loading
                 }
                 task = GlobalScope.launch(Dispatchers.IO) {
-                    val stops = when (searchQuery!!.searchQueryType) {
-                        SearchQueryType.GENERAL -> transitService.findStop(searchQuery!!.query)
-                        SearchQueryType.NEARBY -> {
-                            val location = latestLocation
-                            if (location != null) {
-                                transitService.findClosestStops(GeoLocation(location.latitude, location.longitude), (nearbyStopsDistance + location.accuracy).toInt())
-                            } else {
-                                ArrayList()
+                    try {
+                        val stops = when (searchQuery!!.searchQueryType) {
+                            SearchQueryType.GENERAL -> transitService.findStop(searchQuery!!.query)
+                            SearchQueryType.NEARBY -> {
+                                val location = latestLocation
+                                if (location != null) {
+                                    transitService.findClosestStops(GeoLocation(location.latitude, location.longitude), (nearbyStopsDistance + location.accuracy).toInt())
+                                } else {
+                                    ArrayList()
+                                }
                             }
+                            SearchQueryType.ROUTE_NUMBER -> transitService.getRouteStops(WinnipegTransitRouteIdentifier(searchQuery!!.query.toInt()))
                         }
-                        SearchQueryType.ROUTE_NUMBER -> transitService.getRouteStops(WinnipegTransitRouteIdentifier(searchQuery!!.query.toInt()))
-                    }
 
-                    onDataReceived(stops)
+                        onDataReceived(stops)
+                    }catch (e: Exception){
+                        runOnUiThread {
+                            handleException(e)
+                        }
+                    }
                 }
             } else {
                 showLongToaster(R.string.network_error)
@@ -213,9 +220,9 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
 
         runOnUiThread {
             adapter!!.notifyDataSetChanged()
+            swipeRefreshLayout!!.isRefreshing = false
         }
 
-        swipeRefreshLayout!!.isRefreshing = false
         loading = false
     }
 
