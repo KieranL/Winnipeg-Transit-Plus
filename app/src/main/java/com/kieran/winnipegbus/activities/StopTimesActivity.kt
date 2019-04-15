@@ -180,11 +180,13 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
                     this@StopTimesActivity.stopSchedule = stopSchedule
                 }
             } catch (e: Exception) {
-                runOnUiThread { handleException(e) }
+                runOnUiThread {
+                    handleException(e)
 
-                if (loading) {
-                    if (stopSchedule == null && e is IOException)
-                        title.setText(R.string.network_error)
+                    if (loading) {
+                        if (stopSchedule == null && e is IOException)
+                            title.setText(R.string.network_error)
+                    }
                 }
             }
 

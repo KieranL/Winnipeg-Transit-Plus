@@ -37,7 +37,7 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scheduled_stop_info)
-        scheduledStop = intent.getSerializableExtra(STOP_EXTRA) as ScheduledStop
+        scheduledStop = intent.getSerializableExtra(STOP_EXTRA) as ScheduledStop?
         transitService = TransitServiceProvider.getTransitService()
 
         if (scheduledStop != null) {
@@ -49,7 +49,7 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
             headerView.isClickable = false
             listView.addHeaderView(headerView)
 
-            adapter = UpcomingStopsAdapter(this, R.layout.upcoming_stops_row, upcomingStops!!, use24hrTime)
+            adapter = UpcomingStopsAdapter(this, R.layout.upcoming_stops_row, upcomingStops, use24hrTime)
             listView.adapter = adapter
 
             swipeRefreshLayout = findViewById<View>(R.id.upcoming_stops_swipeRefresh) as StyledSwipeRefresh
@@ -133,30 +133,40 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
 
                     task = GlobalScope.launch(Dispatchers.IO) {
                         try {
-                            val stops = transitService.getUpcomingStops(scheduledStop?.routeKey!!, scheduledStop?.key!!, scheduledStop?.estimatedDepartureTime!!)
+                            val routeKey = scheduledStop?.routeKey
+                            val key = scheduledStop?.key
+                            val estimatedDepartureTime = scheduledStop?.estimatedDepartureTime
 
-                            runOnUiThread {
-                                upcomingStops.clear()
-                                upcomingStops.addAll(stops)
-                                Collections.sort(upcomingStops)
-                                adapter!!.notifyDataSetChanged()
+                            if(routeKey != null && key != null && estimatedDepartureTime != null) {
+                                val stops = transitService.getUpcomingStops(routeKey, key, estimatedDepartureTime)
+
+                                runOnUiThread {
+                                    upcomingStops.clear()
+                                    upcomingStops.addAll(stops)
+                                    Collections.sort(upcomingStops)
+                                    adapter?.notifyDataSetChanged()
+                                }
+                            }else {
+                                runOnUiThread { showShortToaster(R.string.unknown_error) }
                             }
                         }catch (e: Exception) {
                             runOnUiThread {
                             handleException(e)}
                         }
                         runOnUiThread {
-                            swipeRefreshLayout!!.isRefreshing = false
+                            swipeRefreshLayout?.isRefreshing = false
                         }
                         loading = false
                     }
                 }
             } else {
-                showLongToaster(R.string.network_error)
+                runOnUiThread {
+                    showLongToaster(R.string.network_error)
+                }
             }
         }
         runOnUiThread {
-            swipeRefreshLayout!!.isRefreshing = loading
+            swipeRefreshLayout?.isRefreshing = loading
         }
         fillTextViews()
     }
