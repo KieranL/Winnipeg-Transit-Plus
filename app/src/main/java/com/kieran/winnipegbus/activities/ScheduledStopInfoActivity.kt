@@ -13,9 +13,9 @@ import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.adapters.UpcomingStopsAdapter
 import com.kieran.winnipegbus.views.RouteNumberTextView
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
+import com.kieran.winnipegbusbackend.ScheduledStop
 import com.kieran.winnipegbusbackend.TransitServiceProvider
-import com.kieran.winnipegbusbackend.common.ScheduledStop
-import com.kieran.winnipegbusbackend.common.UpcomingStop
+import com.kieran.winnipegbusbackend.UpcomingStop
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.interfaces.TransitService
 import kotlinx.coroutines.Dispatchers
@@ -141,12 +141,14 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
                             if (routeKey != null && key != null && estimatedDepartureTime != null) {
                                 val stops = transitService.getUpcomingStops(routeKey, key, estimatedDepartureTime)
 
+                            if(routeKey != null && key != null && estimatedDepartureTime != null) {
+                                val stops = transitService.getUpcomingStops(routeKey, key, estimatedDepartureTime)
+                                upcomingStops.clear()
+                                upcomingStops.addAll(stops)
+                                upcomingStops.sort()
+
                                 runOnUiThread {
-                                    upcomingStops.clear()
-                                    upcomingStops.addAll(stops)
-                                    Collections.sort(upcomingStops)
-                                    adapter?.notifyDataSetChanged()
-                                }
+                                adapter?.notifyDataSetChanged()}
                             } else {
                                 runOnUiThread { showShortToaster(R.string.unknown_error) }
                             }
@@ -154,6 +156,9 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
                             runOnUiThread {
                                 handleException(e)
                             }
+                        }
+                        runOnUiThread {
+                            swipeRefreshLayout?.isRefreshing = false
                         }
                         runOnUiThread {
                             swipeRefreshLayout?.isRefreshing = false
