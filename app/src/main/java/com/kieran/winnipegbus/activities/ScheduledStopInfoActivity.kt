@@ -1,5 +1,6 @@
 package com.kieran.winnipegbus.activities
 
+
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
@@ -12,17 +13,15 @@ import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.adapters.UpcomingStopsAdapter
 import com.kieran.winnipegbus.views.RouteNumberTextView
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
-import com.kieran.winnipegbusbackend.ScheduledStop
 import com.kieran.winnipegbusbackend.TransitServiceProvider
-import com.kieran.winnipegbusbackend.UpcomingStop
+import com.kieran.winnipegbusbackend.common.ScheduledStop
+import com.kieran.winnipegbusbackend.common.UpcomingStop
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.interfaces.TransitService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-
-
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -81,21 +80,21 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
         val scheduledStop = this.scheduledStop
         if (scheduledStop != null) {
             val routeNumber = getTextView(R.id.bus_number) as RouteNumberTextView
-            routeNumber.text = Integer.toString(scheduledStop.routeNumber)
-            routeNumber.setColour(scheduledStop.routeNumber, scheduledStop.coverageType)
+            routeNumber.text = scheduledStop.routeIdentifier.toString()
+            routeNumber.setColour(scheduledStop.routeIdentifier, scheduledStop.coverageType)
 
-            setTextViewText(R.id.bus_name, scheduledStop.routeVariantName!!)
+            setTextViewText(R.id.bus_name, scheduledStop.routeVariantName)
 
-            setTextViewText(R.id.scheduled_departure, scheduledStop.scheduledDepartureTime!!.toFormattedString(null, use24hrTime))
-            setTextViewText(R.id.estimated_departure, scheduledStop.estimatedDepartureTime!!.toFormattedString(null, use24hrTime))
+            setTextViewText(R.id.scheduled_departure, scheduledStop.scheduledDepartureTime.toFormattedString(null, use24hrTime))
+            setTextViewText(R.id.estimated_departure, scheduledStop.estimatedDepartureTime.toFormattedString(null, use24hrTime))
 
             setTextViewText(R.id.has_bike_rack, String.format(BIKE_RACK, booleanStringValue(scheduledStop.hasBikeRack)))
             setTextViewText(R.id.has_wifi, String.format(WIFI, booleanStringValue(scheduledStop.hasWifi)))
 
             var busNumberText = String.format(BUS_NUMBER, "Unknown")
 
-            if (scheduledStop.busNumber != 0) {
-                busNumberText = String.format(BUS_NUMBER, scheduledStop.busNumber.toString())
+            if (scheduledStop.vehicleIdentifier != null) {
+                busNumberText = String.format(BUS_NUMBER, scheduledStop.vehicleIdentifier.toString())
             }
 
             setTextViewText(R.id.details_bus_number, busNumberText)
@@ -130,7 +129,7 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
     private fun refresh() {
         if (!loading) {
             if (isOnline) {
-                if(transitService.supportedFeatures().contains(SupportedFeature.UPCOMING_STOPS)) {
+                if (transitService.supportedFeatures().contains(SupportedFeature.UPCOMING_STOPS)) {
                     loading = true
 
                     task = GlobalScope.launch(Dispatchers.IO) {
@@ -139,7 +138,7 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
                             val key = scheduledStop?.key
                             val estimatedDepartureTime = scheduledStop?.estimatedDepartureTime
 
-                            if(routeKey != null && key != null && estimatedDepartureTime != null) {
+                            if (routeKey != null && key != null && estimatedDepartureTime != null) {
                                 val stops = transitService.getUpcomingStops(routeKey, key, estimatedDepartureTime)
 
                                 runOnUiThread {
@@ -148,12 +147,13 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
                                     Collections.sort(upcomingStops)
                                     adapter?.notifyDataSetChanged()
                                 }
-                            }else {
+                            } else {
                                 runOnUiThread { showShortToaster(R.string.unknown_error) }
                             }
-                        }catch (e: Exception) {
+                        } catch (e: Exception) {
                             runOnUiThread {
-                            handleException(e)}
+                                handleException(e)
+                            }
                         }
                         runOnUiThread {
                             swipeRefreshLayout?.isRefreshing = false

@@ -2,15 +2,14 @@ package com.kieran.winnipegbus.activities
 
 import android.os.Bundle
 import android.view.Menu
-
 import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.common.Stop
 import com.kieran.winnipegbusbackend.TransitServiceProvider
+import com.kieran.winnipegbusbackend.common.Stop
 import com.kieran.winnipegbusbackend.interfaces.TransitService
 
 class StopsMapActivity : MapActivity() {

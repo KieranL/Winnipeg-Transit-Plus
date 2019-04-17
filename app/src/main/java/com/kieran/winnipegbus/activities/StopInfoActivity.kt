@@ -5,21 +5,19 @@ import android.view.Menu
 import android.view.View
 import android.widget.ListView
 import android.widget.RelativeLayout
-
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.MarkerOptions
-import com.kieran.winnipegbus.adapters.StopFeaturesAdapter
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.common.StopFeatures
+import com.kieran.winnipegbus.adapters.StopFeaturesAdapter
 import com.kieran.winnipegbusbackend.TransitServiceProvider
+import com.kieran.winnipegbusbackend.common.StopFeatures
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.interfaces.TransitService
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-
-import java.util.Locale
+import java.util.*
 
 class StopInfoActivity : MapActivity() {
     private var stopFeatures: StopFeatures? = null

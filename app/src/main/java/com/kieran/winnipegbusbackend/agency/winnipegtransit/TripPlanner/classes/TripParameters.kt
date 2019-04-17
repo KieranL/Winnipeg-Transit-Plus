@@ -1,10 +1,9 @@
 package com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes
 
-import com.kieran.winnipegbusbackend.common.StopTime
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.TimeMode
-
+import com.kieran.winnipegbusbackend.common.StopTime
 import java.io.Serializable
-import java.util.Locale
+import java.util.*
 
 class TripParameters : Serializable {
     var origin: Location? = null

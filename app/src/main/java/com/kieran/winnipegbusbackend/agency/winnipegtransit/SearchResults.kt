@@ -1,14 +1,12 @@
 package com.kieran.winnipegbusbackend.agency.winnipegtransit
 
 import com.google.android.gms.maps.model.LatLng
+import com.kieran.winnipegbusbackend.common.StopSchedule
 import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.common.LoadResult
-import com.kieran.winnipegbusbackend.StopSchedule
-
 import org.json.JSONException
 import org.json.JSONObject
-
-import java.util.ArrayList
+import java.util.*
 
 class SearchResults {
     private val stops: ArrayList<FavouriteStop> = ArrayList()
@@ -44,7 +42,7 @@ class SearchResults {
     private fun getLatLng(stop: JSONObject): LatLng? {
         return try {
             val geographic = stop.getJSONObject(TransitApiManager.STOP_CENTRE_TAG).getJSONObject(TransitApiManager.GEOGRAPHIC_TAG)
-            LatLng(geographic.getDouble(StopSchedule.LATITUDE_TAG), geographic.getDouble(StopSchedule.LONGITUDE_TAG))
+            LatLng(geographic.getDouble(WinnipegTransitService.LATITUDE_TAG), geographic.getDouble(WinnipegTransitService.LONGITUDE_TAG))
         } catch (e: JSONException) {
             null
         }

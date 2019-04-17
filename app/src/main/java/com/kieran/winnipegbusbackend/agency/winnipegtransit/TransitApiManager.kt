@@ -2,16 +2,13 @@ package com.kieran.winnipegbusbackend.agency.winnipegtransit
 
 import android.os.AsyncTask
 import com.kieran.winnipegbus.BuildConfig
-
-import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
-import com.kieran.winnipegbusbackend.exceptions.TransitDataNotFoundException
 import com.kieran.winnipegbusbackend.common.GeoLocation
 import com.kieran.winnipegbusbackend.common.LoadResult
 import com.kieran.winnipegbusbackend.common.StopTime
-
+import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
+import com.kieran.winnipegbusbackend.exceptions.TransitDataNotFoundException
 import org.json.JSONObject
 import java.lang.Double
-
 import java.net.URL
 import java.util.*
 import javax.net.ssl.HttpsURLConnection
@@ -52,9 +49,9 @@ object TransitApiManager {
             val url = URL(path)
             val con: HttpsURLConnection = url.openConnection() as HttpsURLConnection
 
-            if(con.responseCode == 503)
+            if (con.responseCode == 503)
                 return LoadResult(null, RateLimitedException())
-            else if(con.responseCode == 404)
+            else if (con.responseCode == 404)
                 return LoadResult(null, TransitDataNotFoundException())
 
             val stream = con.inputStream
@@ -65,7 +62,7 @@ object TransitApiManager {
             val obj = JSONObject(myString)
             val newQueryTime = StopTime.convertStringToStopTime(obj.getString(QUERY_TIME), API_DATE_FORMAT)
 
-            if(newQueryTime != null)
+            if (newQueryTime != null)
                 lastQueryTime = newQueryTime
 
             LoadResult(obj, null)

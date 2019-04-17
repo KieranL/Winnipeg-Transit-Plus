@@ -1,4 +1,7 @@
 package com.kieran.winnipegbusbackend.interfaces
 
-interface ScheduledStopKey: Comparable<Any> {
+import java.io.Serializable
+
+interface ScheduledStopKey : Serializable, Comparable<Any> {
+    override fun equals(other: Any?): Boolean
 }

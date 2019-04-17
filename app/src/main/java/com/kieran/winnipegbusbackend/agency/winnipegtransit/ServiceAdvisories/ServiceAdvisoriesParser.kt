@@ -1,14 +1,10 @@
 package com.kieran.winnipegbusbackend.agency.winnipegtransit.ServiceAdvisories
 
-import com.kieran.winnipegbusbackend.common.StopTime
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.TransitApiManager
-
+import com.kieran.winnipegbusbackend.common.StopTime
 import org.json.JSONException
 import org.json.JSONObject
-
-import java.util.ArrayList
-import java.util.Arrays
-import java.util.Collections
+import java.util.*
 
 object ServiceAdvisoriesParser {
 

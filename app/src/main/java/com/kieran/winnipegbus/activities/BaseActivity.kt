@@ -159,7 +159,7 @@ abstract class BaseActivity : AppCompatActivity() {
         try {
             val adRequest = AdRequest.Builder()
             adView!!.loadAd(adRequest.build())
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             //Log error when logger is made
         }
     }

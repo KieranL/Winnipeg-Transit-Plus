@@ -1,9 +1,8 @@
 package com.kieran.winnipegbusbackend.agency.winnipegtransit.ServiceAdvisories
 
 import com.kieran.winnipegbusbackend.common.StopTime
-
 import java.io.Serializable
-import java.util.ArrayList
+import java.util.*
 
 class ServiceAdvisory(val title: String, val header: String, val affectedStops: List<AffectedStop>, val reroutes: List<Reroute>, val updatedAt: StopTime) : Serializable, Comparable<Any> {
 

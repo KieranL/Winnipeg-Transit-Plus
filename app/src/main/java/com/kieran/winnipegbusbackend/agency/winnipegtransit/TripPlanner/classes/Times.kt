@@ -1,8 +1,7 @@
 package com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes
 
-import com.kieran.winnipegbusbackend.common.StopTime
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.TransitApiManager
-
+import com.kieran.winnipegbusbackend.common.StopTime
 import org.json.JSONException
 import org.json.JSONObject
 

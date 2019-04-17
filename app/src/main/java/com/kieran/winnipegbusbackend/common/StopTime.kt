@@ -1,13 +1,10 @@
 package com.kieran.winnipegbusbackend.common
 
 import android.annotation.SuppressLint
-
 import java.io.Serializable
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 class StopTime : Comparable<Any>, Serializable {
     var milliseconds: Long = 0
@@ -153,7 +150,8 @@ class StopTime : Comparable<Any>, Serializable {
         private const val EARLY_TEXT = "Early"
         private const val LATE_TEXT = "Late"
         private const val OK_TEXT = "Ok"
-        @Transient private val calendar = Calendar.getInstance()
+        @Transient
+        private val calendar = Calendar.getInstance()
         private val datePickerDateFormat = SimpleDateFormat("EEE, MMM dd", Locale.CANADA)
 
         fun timeBehindMinutes(estimated: StopTime, scheduled: StopTime): Double {

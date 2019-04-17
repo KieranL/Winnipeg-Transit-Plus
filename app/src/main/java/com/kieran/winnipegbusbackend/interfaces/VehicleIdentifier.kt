@@ -1,4 +1,7 @@
 package com.kieran.winnipegbusbackend.interfaces
 
-interface VehicleIdentifier {
+import java.io.Serializable
+
+interface VehicleIdentifier : Serializable {
+    override fun toString(): String
 }

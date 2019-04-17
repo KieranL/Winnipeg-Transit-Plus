@@ -2,8 +2,7 @@ package com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes
 
 import org.json.JSONException
 import org.json.JSONObject
-
-import java.util.Locale
+import java.util.*
 
 class Monument @Throws(JSONException::class)
 constructor(location: JSONObject) : Address(location.getJSONObject("address")) {

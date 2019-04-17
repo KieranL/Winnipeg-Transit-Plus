@@ -1,6 +1,6 @@
 package com.kieran.winnipegbusbackend.interfaces
 
-import com.kieran.winnipegbusbackend.*
+import com.kieran.winnipegbusbackend.common.StopSchedule
 import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.common.StopFeatures
 import com.kieran.winnipegbusbackend.common.StopTime
@@ -18,7 +18,7 @@ interface TransitService {
 
     suspend fun findStop(name: String): List<FavouriteStop>
 
-    suspend fun findClosestStops(location: Location, distance:Int = 1000, stopCount: Int = 1): List<FavouriteStop>
+    suspend fun findClosestStops(location: Location, distance: Int = 1000, stopCount: Int = 1): List<FavouriteStop>
 
     suspend fun getUpcomingStops(key: TripIdentifier, scheduledStopKey: ScheduledStopKey, after: StopTime): List<UpcomingStop>
 

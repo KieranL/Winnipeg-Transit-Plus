@@ -1,13 +1,9 @@
 package com.kieran.winnipegbusbackend.common
 
 import com.google.android.gms.maps.model.LatLng
-import com.kieran.winnipegbusbackend.common.SerializableLatLng
-import com.kieran.winnipegbusbackend.common.Stop
-import com.kieran.winnipegbusbackend.common.StopFeature
 import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
-
 import java.io.Serializable
-import java.util.ArrayList
+import java.util.*
 
 class StopFeatures(stopIdentifier: StopIdentifier, stopName: String, latLng: LatLng?) : Stop(stopName, stopIdentifier), Serializable {
     private val stopFeatures: ArrayList<StopFeature> = ArrayList()

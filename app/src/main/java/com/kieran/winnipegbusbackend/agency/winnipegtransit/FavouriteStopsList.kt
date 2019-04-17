@@ -1,24 +1,18 @@
-package com.kieran.winnipegbusbackend
+package com.kieran.winnipegbusbackend.agency.winnipegtransit
 
 import android.util.Xml
-
 import com.kieran.winnipegbus.activities.BaseActivity
 import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.common.LoadResult
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
-import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
-
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
-
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.util.ArrayList
-import java.util.Collections
-
+import java.util.*
 import javax.xml.parsers.DocumentBuilderFactory
 
 object FavouriteStopsList {

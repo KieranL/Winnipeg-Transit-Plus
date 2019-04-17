@@ -1,5 +1,7 @@
 package com.kieran.winnipegbusbackend.interfaces
 
-interface StopIdentifier {
+import java.io.Serializable
+
+interface StopIdentifier : Serializable {
     override fun toString(): String
 }

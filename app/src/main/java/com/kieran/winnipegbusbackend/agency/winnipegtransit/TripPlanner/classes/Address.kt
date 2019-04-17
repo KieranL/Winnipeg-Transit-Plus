@@ -2,8 +2,7 @@ package com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes
 
 import org.json.JSONException
 import org.json.JSONObject
-
-import java.util.Locale
+import java.util.*
 
 open class Address(location: JSONObject) : Location(location) {
     internal open var key: Int = 0

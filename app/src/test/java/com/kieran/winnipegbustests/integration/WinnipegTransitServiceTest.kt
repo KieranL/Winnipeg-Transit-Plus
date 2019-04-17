@@ -27,6 +27,7 @@ class WinnipegTransitServiceTest : TransitServiceTest {
 
             Assertions.assertNotNull(stopSchedule)
             Assertions.assertNotNull(stopSchedule.getLatLng())
+            Assertions.assertTrue(stopSchedule.scheduledStops.isNotEmpty())
         }
     }
 

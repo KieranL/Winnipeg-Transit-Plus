@@ -1,12 +1,10 @@
 package com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes
 
-import com.kieran.winnipegbusbackend.Route
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.SegmentFactory
-
+import com.kieran.winnipegbusbackend.common.Route
 import org.json.JSONException
 import org.json.JSONObject
-
-import java.util.ArrayList
+import java.util.*
 
 class Trip(tripParameters: TripParameters, trip: JSONObject) {
     var times: Times? = null
@@ -14,7 +12,8 @@ class Trip(tripParameters: TripParameters, trip: JSONObject) {
     var segments: ArrayList<Segment>
         internal set
     val routes: List<Route>
-        get() = segments.mapNotNull { (it as? RideSegment)?.route }
+        get() = ArrayList()
+//        get() = segments.mapNotNull { (it as? RideSegment)?.route }
 
 
     init {

@@ -2,12 +2,10 @@ package com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes
 
 import com.google.android.gms.maps.model.LatLng
 import com.kieran.winnipegbusbackend.common.SerializableLatLng
-
 import org.json.JSONException
 import org.json.JSONObject
-
 import java.io.Serializable
-import java.util.Locale
+import java.util.*
 
 open class Location : Serializable {
     private lateinit var point: SerializableLatLng

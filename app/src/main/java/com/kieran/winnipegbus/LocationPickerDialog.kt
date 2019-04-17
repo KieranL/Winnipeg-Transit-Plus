@@ -1,28 +1,26 @@
 package com.kieran.winnipegbus
 
 import android.app.Activity.RESULT_CANCELED
+import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-
+import com.google.android.gms.location.places.ui.PlacePicker
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.kieran.winnipegbus.activities.GoogleApiActivity
-import com.kieran.winnipegbusbackend.FavouriteStopsList
-import com.kieran.winnipegbusbackend.common.LoadResult
+import com.kieran.winnipegbus.activities.MapActivity
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouriteStopsList
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.TransitApiManager
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.Location
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.StopLocation
-
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
+import com.kieran.winnipegbusbackend.common.LoadResult
 import org.json.JSONException
 import org.json.JSONObject
-import com.google.android.gms.location.places.ui.PlacePicker
-import android.app.Activity.RESULT_OK
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.kieran.winnipegbus.activities.MapActivity
-import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
 
 
 class LocationPickerDialog(private val context: GoogleApiActivity, private val listener: OnLocationPickedListener) : Dialog(context), View.OnClickListener {
@@ -81,7 +79,7 @@ class LocationPickerDialog(private val context: GoogleApiActivity, private val l
 
                 dismiss()
                 listener.onLocationPicked(location)
-            } else if (resultCode != RESULT_CANCELED){
+            } else if (resultCode != RESULT_CANCELED) {
                 Toast.makeText(context, R.string.unable_to_find_place, Toast.LENGTH_SHORT).show()
             }
         }
