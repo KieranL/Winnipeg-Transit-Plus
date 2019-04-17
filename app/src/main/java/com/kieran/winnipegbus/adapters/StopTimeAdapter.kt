@@ -2,19 +2,18 @@ package com.kieran.winnipegbus.adapters
 
 import android.app.Activity
 import android.content.Context
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.TextView
-
-import com.kieran.winnipegbus.activities.BaseActivity
-import com.kieran.winnipegbus.R
-import com.kieran.winnipegbus.views.RouteNumberTextView
-import com.kieran.winnipegbusbackend.ScheduledStop
-import android.util.TypedValue
 import android.widget.ImageView
+import android.widget.TextView
+import com.kieran.winnipegbus.R
+import com.kieran.winnipegbus.activities.BaseActivity
+import com.kieran.winnipegbus.views.RouteNumberTextView
 import com.kieran.winnipegbusbackend.TransitServiceProvider
+import com.kieran.winnipegbusbackend.common.ScheduledStop
 import com.kieran.winnipegbusbackend.interfaces.TransitService
 
 
@@ -50,8 +49,8 @@ class StopTimeAdapter(context: Context, private val layoutResourceId: Int, priva
         }
 
         val scheduledStop = scheduledStops[position]
-        holder.routeNumber?.text = String.format("%d", scheduledStop.routeNumber)
-        holder.routeNumber?.setColour(scheduledStop.routeNumber, scheduledStop.coverageType)
+        holder.routeNumber?.text = String.format("%s", scheduledStop.routeIdentifier.toString())
+        holder.routeNumber?.setColour(scheduledStop.routeIdentifier, scheduledStop.coverageType)
         holder.routeVariantName?.text = scheduledStop.routeVariantName
         holder.hasBikeRackIcon?.visibility = if (scheduledStop.hasBikeRack) View.VISIBLE else View.GONE
         holder.hasWifiIcon?.visibility = if (scheduledStop.hasWifi) View.VISIBLE else View.GONE
@@ -59,13 +58,13 @@ class StopTimeAdapter(context: Context, private val layoutResourceId: Int, priva
         holder.timeStatus?.text = scheduledStop.timeStatus
 
         val timeText: String
-        if(scheduledStop.isCancelled) {
-            timeText = scheduledStop.scheduledDepartureTime!!.toFormattedString(null, use24hrTime)
+        if (scheduledStop.isCancelled) {
+            timeText = scheduledStop.scheduledDepartureTime.toFormattedString(null, use24hrTime)
             val params = holder.timeStatus!!.layoutParams as ViewGroup.LayoutParams
             params.width = spToPx(96f, context)
             holder.timeStatus!!.layoutParams = params
-        }else {
-            timeText = scheduledStop.estimatedDepartureTime!!.toFormattedString(transitService.getLastQueryTime(), use24hrTime)
+        } else {
+            timeText = scheduledStop.estimatedDepartureTime.toFormattedString(transitService.getLastQueryTime(), use24hrTime)
         }
 
         holder.departureTime!!.text = timeText

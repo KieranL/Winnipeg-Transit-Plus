@@ -6,11 +6,10 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.ExpandableListView
 import android.widget.ListView
-
-import com.kieran.winnipegbus.adapters.ReroutesAdapter
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.winnipegtransit.ServiceAdvisories.AffectedStop
-import com.kieran.winnipegbusbackend.winnipegtransit.ServiceAdvisories.ServiceAdvisory
+import com.kieran.winnipegbus.adapters.ReroutesAdapter
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.ServiceAdvisories.AffectedStop
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.ServiceAdvisories.ServiceAdvisory
 
 class ServiceAdvisoryActivity : BaseActivity() {
 

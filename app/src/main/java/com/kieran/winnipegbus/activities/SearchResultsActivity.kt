@@ -3,7 +3,6 @@ package com.kieran.winnipegbus.activities
 import android.app.AlertDialog
 import android.content.Intent
 import android.location.Location
-import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.view.Menu
@@ -11,26 +10,24 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ListView
-
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationServices
-import com.kieran.winnipegbus.adapters.StopListAdapter
 import com.kieran.winnipegbus.R
+import com.kieran.winnipegbus.adapters.StopListAdapter
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
-import com.kieran.winnipegbusbackend.*
-import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
+import com.kieran.winnipegbusbackend.TransitServiceProvider
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouriteStopsList
+import com.kieran.winnipegbusbackend.common.FavouriteStop
+import com.kieran.winnipegbusbackend.common.GeoLocation
+import com.kieran.winnipegbusbackend.common.SearchQuery
+import com.kieran.winnipegbusbackend.common.Stop
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
 import com.kieran.winnipegbusbackend.interfaces.TransitService
-import com.kieran.winnipegbusbackend.shared.GeoLocation
-import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitRouteIdentifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-
-import org.json.JSONObject
-import java.lang.Exception
 
 
 class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, LocationListener {
@@ -104,11 +101,15 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
                                     ArrayList()
                                 }
                             }
-                            SearchQueryType.ROUTE_NUMBER -> transitService.getRouteStops(WinnipegTransitRouteIdentifier(searchQuery!!.query.toInt()))
+                            SearchQueryType.ROUTE_NUMBER -> transitService.getRouteStops(transitService.parseStringToRouteIdentifier(searchQuery!!.query))
+                            else -> {
+                                showLongToaster(R.string.no_results_found)
+                                ArrayList()
+                            }
                         }
 
                         onDataReceived(stops)
-                    }catch (e: Exception){
+                    } catch (e: Exception) {
                         runOnUiThread {
                             handleException(e)
                         }
@@ -135,7 +136,7 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
         if (searchQuery!!.searchQueryType != SearchQueryType.NEARBY)
             menu.findItem(R.id.loadingIcon).isVisible = false
 
-        if(searchQuery!!.searchQueryType != SearchQueryType.NEARBY) {
+        if (searchQuery!!.searchQueryType != SearchQueryType.NEARBY) {
             loading = false
             refresh()
         }
@@ -202,7 +203,7 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
     }
 
     override fun onLocationChanged(location: Location) {
-        if(isOnline) {
+        if (isOnline) {
             task = GlobalScope.launch(Dispatchers.IO) {
                 val stops = transitService.findClosestStops(GeoLocation(location.latitude, location.longitude), (nearbyStopsDistance + location.accuracy).toInt())
 

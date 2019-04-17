@@ -9,18 +9,15 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ListView
-
-import com.kieran.winnipegbus.adapters.ServiceAdvisoriesAdapter
 import com.kieran.winnipegbus.R
+import com.kieran.winnipegbus.adapters.ServiceAdvisoriesAdapter
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
-import com.kieran.winnipegbusbackend.LoadResult
-import com.kieran.winnipegbusbackend.winnipegtransit.ServiceAdvisories.ServiceAdvisoriesParser
-import com.kieran.winnipegbusbackend.winnipegtransit.ServiceAdvisories.ServiceAdvisory
-import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
-
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.ServiceAdvisories.ServiceAdvisoriesParser
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.ServiceAdvisories.ServiceAdvisory
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TransitApiManager
+import com.kieran.winnipegbusbackend.common.LoadResult
 import org.json.JSONObject
-
-import java.util.ArrayList
+import java.util.*
 
 class ServiceAdvisoriesActivity : BaseActivity(), TransitApiManager.OnJsonLoadResultReceiveListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
     private var adapter: ServiceAdvisoriesAdapter? = null

@@ -1,13 +1,13 @@
 package com.kieran.winnipegbustests.integration
 
-import com.kieran.winnipegbusbackend.StopFeatures
-import com.kieran.winnipegbusbackend.StopTime
+import com.kieran.winnipegbusbackend.common.StopFeatures
+import com.kieran.winnipegbusbackend.common.StopTime
 import com.kieran.winnipegbusbackend.enums.ScheduleType
 import com.kieran.winnipegbusbackend.interfaces.RouteIdentifier
-import com.kieran.winnipegbusbackend.shared.GeoLocation
-import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitRouteIdentifier
-import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitService
-import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitStopIdentifier
+import com.kieran.winnipegbusbackend.common.GeoLocation
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitRouteIdentifier
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitService
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
@@ -27,6 +27,7 @@ class WinnipegTransitServiceTest : TransitServiceTest {
 
             Assertions.assertNotNull(stopSchedule)
             Assertions.assertNotNull(stopSchedule.getLatLng())
+            Assertions.assertTrue(stopSchedule.scheduledStops.isNotEmpty())
         }
     }
 
@@ -59,7 +60,7 @@ class WinnipegTransitServiceTest : TransitServiceTest {
         val transitService = WinnipegTransitService
 
         runBlocking {
-            val routeStops = transitService.getStopDetails(WinnipegTransitStopIdentifier(stopNumber), StopFeatures(stopNumber, "test", null))
+            val routeStops = transitService.getStopDetails(WinnipegTransitStopIdentifier(stopNumber), StopFeatures(WinnipegTransitStopIdentifier(stopNumber), "test", null))
             Assertions.assertEquals(stopCount, routeStops.getStopFeatures().size)
         }
     }

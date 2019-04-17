@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.UpcomingStop
+import com.kieran.winnipegbusbackend.common.UpcomingStop
 
 class UpcomingStopsAdapter(internal var context: Context, internal var layoutResourceId: Int, internal var upComingStops: List<UpcomingStop>, private val use24hrTime: Boolean) : ArrayAdapter<UpcomingStop>(context, layoutResourceId, upComingStops) {
     internal var inflater: LayoutInflater
@@ -35,7 +35,7 @@ class UpcomingStopsAdapter(internal var context: Context, internal var layoutRes
         }
 
         val upcomingStop = upComingStops[position]
-        holder.stopNumber!!.text = Integer.toString(upcomingStop.number)
+        holder.stopNumber!!.text = upcomingStop.identifier.toString()
         holder.stopName!!.text = upcomingStop.name
         holder.time!!.text = upcomingStop.time!!.toFormattedString(null, use24hrTime)
         return row

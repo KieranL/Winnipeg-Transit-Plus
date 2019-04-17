@@ -11,27 +11,22 @@ import android.widget.AdapterView
 import android.widget.Button
 import android.widget.ExpandableListView
 import android.widget.Spinner
-
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationServices
-import com.kieran.winnipegbus.adapters.TripPlannerAdapter
 import com.kieran.winnipegbus.LocationPickerDialog
 import com.kieran.winnipegbus.R
+import com.kieran.winnipegbus.adapters.TripPlannerAdapter
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
-import com.kieran.winnipegbusbackend.LoadResult
-import com.kieran.winnipegbusbackend.StopTime
-import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
-import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.TimeMode
-import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.Location
-import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.Trip
-import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.TripParameters
-
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TransitApiManager
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.TimeMode
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.Location
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.Trip
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.TripParameters
+import com.kieran.winnipegbusbackend.common.LoadResult
+import com.kieran.winnipegbusbackend.common.StopTime
 import org.json.JSONException
 import org.json.JSONObject
-
-import java.util.ArrayList
-import java.util.Calendar
-import java.util.GregorianCalendar
+import java.util.*
 
 class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadResultReceiveListener, SwipeRefreshLayout.OnRefreshListener {
     private var tripParameters: TripParameters = TripParameters()

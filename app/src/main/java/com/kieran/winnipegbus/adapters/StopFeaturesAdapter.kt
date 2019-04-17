@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.StopFeature
+import com.kieran.winnipegbusbackend.common.StopFeature
 
 class StopFeaturesAdapter(context: Context, private val layoutResourceId: Int, private val stopFeatures: List<StopFeature>) : ArrayAdapter<StopFeature>(context, layoutResourceId, stopFeatures) {
     private val inflater: LayoutInflater = (context as Activity).layoutInflater

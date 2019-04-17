@@ -9,11 +9,11 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemLongClickListener
 import android.widget.EditText
 import android.widget.ListView
-
-import com.kieran.winnipegbus.adapters.StopListAdapter
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.FavouriteStop
-import com.kieran.winnipegbusbackend.FavouriteStopsList
+import com.kieran.winnipegbus.adapters.StopListAdapter
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouriteStopsList
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
+import com.kieran.winnipegbusbackend.common.FavouriteStop
 
 class FavouritesActivity : BaseActivity(), AdapterView.OnItemClickListener, OnItemLongClickListener {
     private var adapter: StopListAdapter? = null
@@ -81,7 +81,7 @@ class FavouritesActivity : BaseActivity(), AdapterView.OnItemClickListener, OnIt
 
         alertDialog.setMessage("Edit this Favourite?")
         alertDialog.setPositiveButton("Delete") { _, _ ->
-            FavouriteStopsList.remove(adapter!!.getItem(position)!!.number)
+            FavouriteStopsList.remove((adapter!!.getItem(position)!!.identifier as WinnipegTransitStopIdentifier).stopNumber)
             reloadList()
         }
 

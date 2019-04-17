@@ -7,10 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-
-import com.kieran.winnipegbus.activities.BaseActivity
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.winnipegtransit.ServiceAdvisories.ServiceAdvisory
+import com.kieran.winnipegbus.activities.BaseActivity
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.ServiceAdvisories.ServiceAdvisory
 
 class ServiceAdvisoriesAdapter(context: Context, private val layoutResourceId: Int, private val advisories: List<ServiceAdvisory>) : ArrayAdapter<ServiceAdvisory>(context, layoutResourceId, advisories) {
     private val inflater: LayoutInflater

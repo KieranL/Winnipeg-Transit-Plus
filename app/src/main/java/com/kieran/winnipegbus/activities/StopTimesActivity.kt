@@ -16,26 +16,26 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
-
-import com.kieran.winnipegbus.adapters.StopTimeAdapter
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.ShakeDetector
+import com.kieran.winnipegbus.adapters.StopTimeAdapter
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
-import com.kieran.winnipegbusbackend.*
-import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.StopLocation
-import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.TripParameters
+import com.kieran.winnipegbusbackend.common.StopSchedule
+import com.kieran.winnipegbusbackend.TransitServiceProvider
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouriteStopsList
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.StopLocation
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.TripParameters
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
+import com.kieran.winnipegbusbackend.common.*
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
+import com.kieran.winnipegbusbackend.interfaces.RouteIdentifier
 import com.kieran.winnipegbusbackend.interfaces.TransitService
-import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitRouteIdentifier
-import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitStopIdentifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-
 import java.io.IOException
-import java.util.ArrayList
-import java.util.Locale
+import java.util.*
 
 class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, ShakeDetector.OnShakeListener {
     private var stopSchedule: StopSchedule? = null
@@ -44,7 +44,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
     private var loading = false
     private val stops = ArrayList<ScheduledStop>()
     private lateinit var adapter: StopTimeAdapter
-    private val routeNumberFilter = ArrayList<Int>()
+    private val routeNumberFilter = ArrayList<RouteIdentifier>()
     private lateinit var title: TextView
     private var selectedRoutes: BooleanArray? = null
     private val routeFilterRoutes = ArrayList<Route>()
@@ -68,7 +68,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         }
 
     override fun onNewIntent(intent: Intent) {
-        val newStopNumber = (intent.getSerializableExtra(STOP) as Stop).number
+        val newStopNumber = ((intent.getSerializableExtra(STOP) as Stop).identifier as WinnipegTransitStopIdentifier).stopNumber
         if (newStopNumber != stopNumber) {
             stopNumber = newStopNumber
             setIntent(intent)
@@ -104,7 +104,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         val stop = intent.getSerializableExtra(STOP) as Stop
         stopName = stop.name
         title.text = stopName
-        stopNumber = stop.number
+        stopNumber = (stop.identifier as WinnipegTransitStopIdentifier).stopNumber
 
         setTitle(String.format(Locale.CANADA, ACTIONBAR_TEXT, stopNumber))
 
@@ -136,8 +136,8 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         if (sensorManager != null)
             sensorManager!!.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_UI)
 
-        if(isBooleanSettingEnabled("pref_refresh_on_resume", true)) {
-            if(lastUpdated != null && System.currentTimeMillis() - StaticConfig.STOP_TIMES_MIN_AUTO_REFRESH_MILLISECONDS_DELTA > lastUpdated!!.milliseconds)
+        if (isBooleanSettingEnabled("pref_refresh_on_resume", true)) {
+            if (lastUpdated != null && System.currentTimeMillis() - StaticConfig.STOP_TIMES_MIN_AUTO_REFRESH_MILLISECONDS_DELTA > lastUpdated!!.milliseconds)
                 refresh()
         }
     }
@@ -167,7 +167,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
     private fun getTimes() {
         loadStopTimesTask = GlobalScope.launch(Dispatchers.IO) {
             try {
-                val stopSchedule = transitService.getStopSchedule(WinnipegTransitStopIdentifier(stopNumber), null, scheduleEndTime, routeNumberFilter.map{ WinnipegTransitRouteIdentifier(it)})
+                val stopSchedule = transitService.getStopSchedule(WinnipegTransitStopIdentifier(stopNumber), null, scheduleEndTime, routeNumberFilter)
 
                 runOnUiThread {
                     if (loading) {
@@ -204,7 +204,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
 
         val features = transitService.supportedFeatures()
 
-        if(features.contains(SupportedFeature.TRIP_PLANNING)) {
+        if (features.contains(SupportedFeature.TRIP_PLANNING)) {
             menu.findItem(R.id.trip_planner).isVisible = true
         }
 
@@ -258,7 +258,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
                 return true
             }
             R.id.get_directions_button -> {
-                if(!loading) {
+                if (!loading) {
                     val intent = Intent(this, TripPlannerActivity::class.java)
                     val parameters = TripParameters()
 
@@ -275,7 +275,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         if (FavouriteStopsList.contains(stopNumber)) {
             openDeleteFavouriteDialog(item)
         } else if (stopName != null && stopName != "") {
-            FavouriteStopsList.addToFavourites(FavouriteStop(stopName!!, stopNumber))
+            FavouriteStopsList.addToFavourites(FavouriteStop(stopName!!, WinnipegTransitStopIdentifier(stopNumber)))
             item.icon = getFavouritesButtonDrawable(true)
         } else {
             showLongToaster(R.string.wait_for_load)
@@ -319,12 +319,12 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
 
             filterDialog.setMultiChoiceItems(charSequence, selectedRoutes) { _, which, isChecked ->
                 hasFilterChanged = true
-                val routeNumber = routeFilterRoutes[which].routeNumber
+                val routeNumber = routeFilterRoutes[which].routeIdentifier
                 selectedRoutes!![which] = isChecked
                 if (isChecked)
                     routeNumberFilter.add(routeNumber)
                 else
-                    routeNumberFilter.remove(Integer.valueOf(routeNumber))
+                    routeNumberFilter.remove(routeNumber)
             }
 
             filterDialog.setPositiveButton(FILTER_POSITIVE) { _, _ ->

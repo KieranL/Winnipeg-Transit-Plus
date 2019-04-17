@@ -51,8 +51,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
 
         val pref = findPreference("pref_disable_ads") as CheckBoxPreference
         pref.setOnPreferenceChangeListener { preference, _ ->
-            if(!(preference as CheckBoxPreference).isChecked) {
-                val builder  = AlertDialog.Builder(context)
+            if (!(preference as CheckBoxPreference).isChecked) {
+                val builder = AlertDialog.Builder(context)
                 builder.setTitle(R.string.disable_ads_confirmation_title)
                 builder.setMessage(R.string.disable_ads_confirmation)
                 builder.setPositiveButton(R.string.yes, { _: DialogInterface, _: Int ->
