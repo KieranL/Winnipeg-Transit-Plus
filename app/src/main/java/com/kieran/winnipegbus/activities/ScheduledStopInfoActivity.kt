@@ -1,40 +1,31 @@
 package com.kieran.winnipegbus.activities
 
 import android.annotation.SuppressLint
-import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ListView
 import android.widget.TextView
-
-import com.kieran.winnipegbus.adapters.UpcomingStopsAdapter
 import com.kieran.winnipegbus.R
+import com.kieran.winnipegbus.adapters.UpcomingStopsAdapter
 import com.kieran.winnipegbus.views.RouteNumberTextView
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
-import com.kieran.winnipegbusbackend.*
+import com.kieran.winnipegbusbackend.ScheduledStop
+import com.kieran.winnipegbusbackend.TransitServiceProvider
+import com.kieran.winnipegbusbackend.UpcomingStop
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
-import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
 import com.kieran.winnipegbusbackend.interfaces.TransitService
-import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
-import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitTripIdentifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-
-import org.json.JSONObject
-
-import java.io.FileNotFoundException
-import java.lang.Exception
-import java.util.ArrayList
-import java.util.Collections
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
-    private var upcomingStops: ArrayList<UpcomingStop>? = null
+    private var upcomingStops: ArrayList<UpcomingStop> = ArrayList()
     private var scheduledStop: ScheduledStop? = null
     private var use24hrTime: Boolean = false
     private var adapter: UpcomingStopsAdapter? = null
@@ -46,12 +37,11 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scheduled_stop_info)
-        scheduledStop = intent.getSerializableExtra(STOP_EXTRA) as ScheduledStop
+        scheduledStop = intent.getSerializableExtra(STOP_EXTRA) as ScheduledStop?
         transitService = TransitServiceProvider.getTransitService()
 
         if (scheduledStop != null) {
             use24hrTime = timeSetting
-            upcomingStops = ArrayList()
 
             val listView = findViewById<View>(R.id.listView_upcoming_stops) as ListView
             val headerView = layoutInflater.inflate(R.layout.listview_upcoming_stops_header, null)
@@ -59,7 +49,7 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
             headerView.isClickable = false
             listView.addHeaderView(headerView)
 
-            adapter = UpcomingStopsAdapter(this, R.layout.upcoming_stops_row, upcomingStops!!, use24hrTime)
+            adapter = UpcomingStopsAdapter(this, R.layout.upcoming_stops_row, upcomingStops, use24hrTime)
             listView.adapter = adapter
 
             swipeRefreshLayout = findViewById<View>(R.id.upcoming_stops_swipeRefresh) as StyledSwipeRefresh
@@ -143,28 +133,41 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
 
                     task = GlobalScope.launch(Dispatchers.IO) {
                         try {
-                            val stops = transitService.getUpcomingStops(scheduledStop?.routeKey!!, scheduledStop?.key!!, scheduledStop?.estimatedDepartureTime!!)
+                            val routeKey = scheduledStop?.routeKey
+                            val key = scheduledStop?.key
+                            val estimatedDepartureTime = scheduledStop?.estimatedDepartureTime
 
-                            runOnUiThread {
-                                upcomingStops!!.clear()
-                                upcomingStops!!.addAll(stops)
-                                Collections.sort(upcomingStops)
-                                adapter!!.notifyDataSetChanged()
+                            if(routeKey != null && key != null && estimatedDepartureTime != null) {
+                                val stops = transitService.getUpcomingStops(routeKey, key, estimatedDepartureTime)
+
+                                runOnUiThread {
+                                    upcomingStops.clear()
+                                    upcomingStops.addAll(stops)
+                                    Collections.sort(upcomingStops)
+                                    adapter?.notifyDataSetChanged()
+                                }
+                            }else {
+                                runOnUiThread { showShortToaster(R.string.unknown_error) }
                             }
                         }catch (e: Exception) {
                             runOnUiThread {
                             handleException(e)}
                         }
-
-                        swipeRefreshLayout!!.isRefreshing = false
+                        runOnUiThread {
+                            swipeRefreshLayout?.isRefreshing = false
+                        }
                         loading = false
                     }
                 }
             } else {
-                showLongToaster(R.string.network_error)
+                runOnUiThread {
+                    showLongToaster(R.string.network_error)
+                }
             }
         }
-        swipeRefreshLayout!!.isRefreshing = loading
+        runOnUiThread {
+            swipeRefreshLayout?.isRefreshing = loading
+        }
         fillTextViews()
     }
 
