@@ -140,10 +140,11 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
                             if(routeKey != null && key != null && estimatedDepartureTime != null) {
                                 val stops = transitService.getUpcomingStops(routeKey, key, estimatedDepartureTime)
 
+                                upcomingStops.clear()
+                                upcomingStops.addAll(stops)
+                                upcomingStops.sort()
+                                
                                 runOnUiThread {
-                                    upcomingStops.clear()
-                                    upcomingStops.addAll(stops)
-                                    Collections.sort(upcomingStops)
                                     adapter?.notifyDataSetChanged()
                                 }
                             }else {
