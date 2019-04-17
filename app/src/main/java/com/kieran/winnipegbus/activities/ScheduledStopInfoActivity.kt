@@ -22,7 +22,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.util.*
 import kotlin.collections.ArrayList
 
 class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
@@ -138,15 +137,14 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
                             val key = scheduledStop?.key
                             val estimatedDepartureTime = scheduledStop?.estimatedDepartureTime
 
-                            if (routeKey != null && key != null && estimatedDepartureTime != null) {
+                            if(routeKey != null && key != null && estimatedDepartureTime != null) {
                                 val stops = transitService.getUpcomingStops(routeKey, key, estimatedDepartureTime)
+                                upcomingStops.clear()
+                                upcomingStops.addAll(stops)
+                                upcomingStops.sort()
 
                                 runOnUiThread {
-                                    upcomingStops.clear()
-                                    upcomingStops.addAll(stops)
-                                    Collections.sort(upcomingStops)
-                                    adapter?.notifyDataSetChanged()
-                                }
+                                adapter?.notifyDataSetChanged()}
                             } else {
                                 runOnUiThread { showShortToaster(R.string.unknown_error) }
                             }

@@ -29,6 +29,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+import org.json.JSONObject
+import java.lang.Exception
+
 
 class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, LocationListener {
     private var adapter: StopListAdapter? = null
@@ -108,8 +111,7 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
                             }
                         }
 
-                        onDataReceived(stops)
-                    } catch (e: Exception) {
+                    onDataReceived(stops)} catch (e: Exception) {
                         runOnUiThread {
                             handleException(e)
                         }
@@ -203,11 +205,13 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
     }
 
     override fun onLocationChanged(location: Location) {
-        if (isOnline) {
-            task = GlobalScope.launch(Dispatchers.IO) {
-                val stops = transitService.findClosestStops(GeoLocation(location.latitude, location.longitude), (nearbyStopsDistance + location.accuracy).toInt())
+        if (isOnline) {task = GlobalScope.launch(Dispatchers.IO) {try {
+            val stops = transitService.findClosestStops(GeoLocation(location.latitude, location.longitude), (nearbyStopsDistance + location.accuracy).toInt())
 
-                onDataReceived(stops)
+                    onDataReceived(stops)
+                }catch (ex: Exception){
+                    handleException(ex)
+                }
             }
         }
     }

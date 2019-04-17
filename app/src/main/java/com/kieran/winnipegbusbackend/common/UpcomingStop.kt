@@ -9,7 +9,9 @@ class UpcomingStop(stop: Stop, time: StopTime, key: ScheduledStopKey) : Stop(sto
         private set
 
     override operator fun compareTo(other: Any): Int {
-        return key.compareTo(((other as UpcomingStop).key))
+        if(other !is UpcomingStop)
+            return Int.MIN_VALUE
+        return key.compareTo((other.key))
     }
 
 }
