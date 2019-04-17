@@ -18,8 +18,11 @@ class UpcomingStop : Stop, Comparable<Any> {
         this.key = key
     }
 
-    override operator fun compareTo(another: Any): Int {
-        return key!!.stopNumber - (another as UpcomingStop).key!!.stopNumber
+    override operator fun compareTo(other: Any): Int {
+        if(key == null|| other !is UpcomingStop || other.key == null)
+            return Int.MIN_VALUE
+
+        return key!!.stopNumber - other.key!!.stopNumber
     }
 
 }

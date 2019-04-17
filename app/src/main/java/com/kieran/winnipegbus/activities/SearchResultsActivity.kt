@@ -204,9 +204,13 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
     override fun onLocationChanged(location: Location) {
         if(isOnline) {
             task = GlobalScope.launch(Dispatchers.IO) {
-                val stops = transitService.findClosestStops(GeoLocation(location.latitude, location.longitude), (nearbyStopsDistance + location.accuracy).toInt())
+                try {
+                    val stops = transitService.findClosestStops(GeoLocation(location.latitude, location.longitude), (nearbyStopsDistance + location.accuracy).toInt())
 
-                onDataReceived(stops)
+                    onDataReceived(stops)
+                }catch (ex: Exception){
+                    handleException(ex)
+                }
             }
         }
     }
