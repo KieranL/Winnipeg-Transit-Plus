@@ -29,9 +29,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-import org.json.JSONObject
 import java.lang.Exception
-
 
 class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, LocationListener {
     private var adapter: StopListAdapter? = null
@@ -46,7 +44,7 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
         adViewResId = R.id.stopsListAdView
         setContentView(R.layout.activity_search_results)
         transitService = TransitServiceProvider.getTransitService()
-        stops = ArrayList<FavouriteStop>()
+        stops = ArrayList()
 
         val listView = findViewById<View>(R.id.stops_listView) as ListView
 
