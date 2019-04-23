@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
 import android.widget.TextView
 
-import com.kieran.winnipegbusbackend.winnipegtransit.ServiceAdvisories.Reroute
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.ServiceAdvisories.Reroute
 
 class ReroutesAdapter(private val context: Context, private val reroutes: List<Reroute>) : BaseExpandableListAdapter() {
 

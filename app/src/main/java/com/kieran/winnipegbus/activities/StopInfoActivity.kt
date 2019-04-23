@@ -5,21 +5,19 @@ import android.view.Menu
 import android.view.View
 import android.widget.ListView
 import android.widget.RelativeLayout
-
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.MarkerOptions
-import com.kieran.winnipegbus.adapters.StopFeaturesAdapter
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.StopFeatures
+import com.kieran.winnipegbus.adapters.StopFeaturesAdapter
 import com.kieran.winnipegbusbackend.TransitServiceProvider
+import com.kieran.winnipegbusbackend.common.StopFeatures
+import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.interfaces.TransitService
-import com.kieran.winnipegbusbackend.winnipegtransit.WinnipegTransitStopIdentifier
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-
-import java.util.Locale
+import java.util.*
 
 class StopInfoActivity : MapActivity() {
     private var stopFeatures: StopFeatures? = null
@@ -33,7 +31,7 @@ class StopInfoActivity : MapActivity() {
         transitService = TransitServiceProvider.getTransitService()
         stopFeatures = intent.getSerializableExtra(STOP_FEATURES) as StopFeatures
 
-        title = String.format(Locale.CANADA, ACTIONBAR_TEXT, stopFeatures!!.number)
+        title = String.format(Locale.CANADA, ACTIONBAR_TEXT, stopFeatures!!.identifier.toString())
         setTextViewText(R.id.stop_features_title, stopFeatures!!.name)
 
         val listView = findViewById<View>(R.id.listView_stop_features) as ListView
@@ -42,7 +40,7 @@ class StopInfoActivity : MapActivity() {
 
         task = GlobalScope.launch(IO) {
             try {
-                stopFeatures = transitService.getStopDetails(WinnipegTransitStopIdentifier(stopFeatures!!.number), stopFeatures!!)
+                stopFeatures = transitService.getStopDetails(stopFeatures!!.identifier, stopFeatures!!)
             } catch (e: Exception) {
                 runOnUiThread { handleException(e) }
             }
@@ -81,7 +79,7 @@ class StopInfoActivity : MapActivity() {
     }
 
     private fun showStopFeatures() {
-        if (stopFeatures!!.numberOfFeatures() > 0) {
+        if (transitService.supportedFeatures().contains(SupportedFeature.STOP_FEATURES) && stopFeatures!!.numberOfFeatures() > 0) {
             runOnUiThread {
                 adapter!!.notifyDataSetChanged()
             }
@@ -91,7 +89,7 @@ class StopInfoActivity : MapActivity() {
     }
 
     companion object {
-        val ACTIONBAR_TEXT = "Stop %d"
+        val ACTIONBAR_TEXT = "Stop %s"
         val STOP_FEATURES = "stop_features"
     }
 }

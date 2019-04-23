@@ -7,10 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.FavouriteStop
-import com.kieran.winnipegbusbackend.FavouriteStopsList
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouriteStopsList
+import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
 
 class StopListAdapter : ArrayAdapter<FavouriteStop> {
@@ -50,7 +49,7 @@ class StopListAdapter : ArrayAdapter<FavouriteStop> {
         else
             FavouriteStopsList[position]
 
-        holder.stopNumber!!.text = Integer.toString(favouriteStop.number)
+        holder.stopNumber!!.text = favouriteStop.identifier.toString()
         holder.stopName!!.text = favouriteStop.displayName
 
         return row

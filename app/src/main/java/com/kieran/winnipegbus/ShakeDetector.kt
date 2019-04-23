@@ -15,8 +15,8 @@ class ShakeDetector(private val shakeListener: OnShakeListener) : SensorEventLis
     private var moveCount = 0
 
     private// Start by setting the value to the x value
-            // Check if the y value is greater
-            // Check if the z value is greater
+    // Check if the y value is greater
+    // Check if the z value is greater
     val maxCurrentLinearAcceleration: Float
         get() {
             var maxLinearAcceleration = linearAcceleration[X]

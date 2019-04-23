@@ -3,26 +3,24 @@ package com.kieran.winnipegbus.activities
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.EditText
-
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationServices
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.Stop
-import com.kieran.winnipegbusbackend.winnipegtransit.TransitApiManager
-import android.support.v7.app.AlertDialog
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import com.kieran.winnipegbusbackend.SearchQuery
 import com.kieran.winnipegbusbackend.TransitServiceProvider
+import com.kieran.winnipegbusbackend.common.SearchQuery
+import com.kieran.winnipegbusbackend.common.Stop
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.interfaces.TransitService
@@ -91,11 +89,11 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
 
         val features = transitService.supportedFeatures()
 
-        if(features.contains(SupportedFeature.TRIP_PLANNING)) {
+        if (features.contains(SupportedFeature.TRIP_PLANNING)) {
             menu.findItem(R.id.trip_planner).isVisible = true
         }
 
-        if(features.contains(SupportedFeature.SERVICE_ADVISORIES)) {
+        if (features.contains(SupportedFeature.SERVICE_ADVISORIES)) {
             menu.findItem(R.id.service_advisories).isVisible = true
         }
 
@@ -154,24 +152,29 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
     }
 
     fun submitSearch(view: View) {
-        try {
-            val number = Integer.parseInt(searchField!!.text.toString().trim { it <= ' ' })
+        val searchText = searchField!!.text.toString().trim { it <= ' ' }
 
-            if (number >= 10000) {
-                openStopTimes(Stop("", number))
-            } else {
+        when (transitService.getSearchQueryType(searchText)) {
+            SearchQueryType.STOP -> {
+                openStopTimes(Stop(transitService.parseStringToStopIdentifier(searchText)))
+            }
+            SearchQueryType.ROUTE_NUMBER -> {
                 val intent = Intent(this, SearchResultsActivity::class.java)
-                intent.putExtra(SearchResultsActivity.SEARCH_QUERY, SearchQuery(searchField!!.text.toString().trim { it <= ' ' }, SearchQueryType.ROUTE_NUMBER))
+                intent.putExtra(SearchResultsActivity.SEARCH_QUERY, SearchQuery(searchText, SearchQueryType.ROUTE_NUMBER))
                 startActivity(intent)
             }
-        } catch (e: Exception) {
-            startSearchResultsActivity()
+            SearchQueryType.GENERAL -> {
+                startSearchResultsActivity(searchText)
+            }
+            else -> {
+                showLongToaster(R.string.no_results_found)
+            }
         }
     }
 
-    private fun startSearchResultsActivity() {
+    private fun startSearchResultsActivity(searchText: String) {
         val intent = Intent(this, SearchResultsActivity::class.java)
-        intent.putExtra(SearchResultsActivity.SEARCH_QUERY, SearchQuery(searchField!!.text.toString().trim { it <= ' ' }, SearchQueryType.GENERAL))
+        intent.putExtra(SearchResultsActivity.SEARCH_QUERY, SearchQuery(searchText, SearchQueryType.GENERAL))
         startActivity(intent)
     }
 

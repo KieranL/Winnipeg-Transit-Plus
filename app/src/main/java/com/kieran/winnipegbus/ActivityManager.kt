@@ -1,8 +1,7 @@
 package com.kieran.winnipegbus
 
 import android.app.Activity
-
-import java.util.ArrayList
+import java.util.*
 
 object ActivityManager {
     private val activities = ArrayList<Activity>()

@@ -11,7 +11,7 @@ import android.widget.TextView
 
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.views.RouteNumberTextView
-import com.kieran.winnipegbusbackend.winnipegtransit.TripPlanner.classes.*
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.*
 
 class TripPlannerAdapter(context: Context, private val trips: List<Trip>) : BaseExpandableListAdapter() {
     private val inflater: LayoutInflater = (context as Activity).layoutInflater
@@ -69,8 +69,8 @@ class TripPlannerAdapter(context: Context, private val trips: List<Trip>) : Base
         holder.routes?.removeAllViews()
         trip.routes.forEach {
             val view = inflater.inflate(R.layout.trip_planner_route_number, null) as RouteNumberTextView
-            view.setColour(it.routeNumber, it.coverageType)
-            view.text = it.routeNumber.toString()
+            view.setColour(it.routeIdentifier, it.coverageType)
+            view.text = it.routeIdentifier.toString()
 
             holder.routes?.addView(view)
         }
