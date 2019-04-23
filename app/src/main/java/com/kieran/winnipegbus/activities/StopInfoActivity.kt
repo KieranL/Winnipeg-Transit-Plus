@@ -31,7 +31,7 @@ class StopInfoActivity : MapActivity() {
         transitService = TransitServiceProvider.getTransitService()
         stopFeatures = intent.getSerializableExtra(STOP_FEATURES) as StopFeatures
 
-        title = String.format(Locale.CANADA, ACTIONBAR_TEXT, stopFeatures!!.identifier)
+        title = String.format(Locale.CANADA, ACTIONBAR_TEXT, stopFeatures!!.identifier.toString())
         setTextViewText(R.id.stop_features_title, stopFeatures!!.name)
 
         val listView = findViewById<View>(R.id.listView_stop_features) as ListView
@@ -89,7 +89,7 @@ class StopInfoActivity : MapActivity() {
     }
 
     companion object {
-        val ACTIONBAR_TEXT = "Stop %d"
+        val ACTIONBAR_TEXT = "Stop %s"
         val STOP_FEATURES = "stop_features"
     }
 }

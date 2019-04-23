@@ -152,7 +152,7 @@ object WinnipegTransitService : TransitService {
     }
 
     override fun supportedFeatures(): List<SupportedFeature> {
-        return arrayListOf(SupportedFeature.UPCOMING_STOPS)
+        return arrayListOf(SupportedFeature.UPCOMING_STOPS, SupportedFeature.STOP_FEATURES)
     }
 
     override fun getSearchQueryType(searchText: String): SearchQueryType {
