@@ -11,33 +11,37 @@ import android.widget.TextView
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbusbackend.common.UpcomingStop
 
-class UpcomingStopsAdapter(internal var context: Context, internal var layoutResourceId: Int, internal var upComingStops: List<UpcomingStop>, private val use24hrTime: Boolean) : ArrayAdapter<UpcomingStop>(context, layoutResourceId, upComingStops) {
-    internal var inflater: LayoutInflater
-
-    init {
-        inflater = (context as Activity).layoutInflater
-    }
+class UpcomingStopsAdapter(internal var context: Context, private var layoutResourceId: Int, private var upComingStops: List<UpcomingStop>, private val use24hrTime: Boolean) : ArrayAdapter<UpcomingStop>(context, layoutResourceId, upComingStops) {
+    private var inflater: LayoutInflater = (context as Activity).layoutInflater
 
     override fun getView(position: Int, row: View?, parent: ViewGroup): View {
         var row = row
-        val holder: StopHolder
+        val holder: StopHolder?
 
         if (row == null) {
             row = inflater.inflate(layoutResourceId, parent, false)
 
             holder = StopHolder()
-            holder.stopNumber = row!!.findViewById<View>(R.id.upcoming_stop_number) as TextView
-            holder.stopName = row.findViewById<View>(R.id.upcoming_stop_name) as TextView
-            holder.time = row.findViewById<View>(R.id.upcoming_stop_time) as TextView
-            row.tag = holder
+
+            if(row != null) {
+                holder.stopNumber = row.findViewById<View>(R.id.upcoming_stop_number) as TextView
+                holder.stopName = row.findViewById<View>(R.id.upcoming_stop_name) as TextView
+                holder.time = row.findViewById<View>(R.id.upcoming_stop_time) as TextView
+
+                row.tag = holder
+            }else {
+                row = View(context)
+                row.tag = holder
+                return row
+            }
         } else {
-            holder = row.tag as StopHolder
+            holder = row.tag as StopHolder?
         }
 
         val upcomingStop = upComingStops[position]
-        holder.stopNumber!!.text = upcomingStop.identifier.toString()
-        holder.stopName!!.text = upcomingStop.name
-        holder.time!!.text = upcomingStop.time!!.toFormattedString(null, use24hrTime)
+        holder?.stopNumber?.text = upcomingStop.identifier.toString()
+        holder?.stopName?.text = upcomingStop.name
+        holder?.time?.text = upcomingStop.time.toFormattedString(null, use24hrTime)
         return row
     }
 

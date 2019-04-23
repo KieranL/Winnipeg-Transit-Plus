@@ -44,7 +44,6 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
         adViewResId = R.id.stopsListAdView
         setContentView(R.layout.activity_search_results)
         transitService = TransitServiceProvider.getTransitService()
-        stops = ArrayList()
 
         val listView = findViewById<View>(R.id.stops_listView) as ListView
 
@@ -208,7 +207,9 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
 
                     onDataReceived(stops)
                 }catch (ex: Exception){
-                    handleException(ex)
+                    runOnUiThread{
+                        handleException(ex)
+                    }
                 }
             }
         }
@@ -235,6 +236,6 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
         val SEARCH_QUERY = "search_query"
         val NEARBY_STOPS = "Nearby Stops"
         val STOPS_ON_RTE = "Stops on Rte %s"
-        lateinit var stops: ArrayList<FavouriteStop>
+        var stops: ArrayList<FavouriteStop> = ArrayList()
     }
 }
