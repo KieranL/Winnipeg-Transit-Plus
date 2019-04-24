@@ -10,7 +10,6 @@ import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitServi
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -97,10 +96,27 @@ class WinnipegTransitServiceTest : TransitServiceTest {
         Assertions.assertEquals(ScheduleType.LIVE, transitService.getScheduleType())
     }
 
-    @Test
-    @Disabled
-    override fun testGetUpcomingStops() {
-        TODO("Figure out if this can be tested without requiring other service calls") //To change body of created functions use File | Settings | File Templates.
+    @ParameterizedTest
+    @MethodSource("getUpcomingStopsDataSet")
+    override fun testGetUpcomingStops(stopNumber: Int, routeNumber: Int) {
+        val transitService = WinnipegTransitService
+
+        runBlocking {
+            val stopSchedule = transitService.getStopSchedule(WinnipegTransitStopIdentifier(stopNumber), null, null, listOf(WinnipegTransitRouteIdentifier(routeNumber)))
+
+            Assertions.assertNotNull(stopSchedule)
+            Assertions.assertNotNull(stopSchedule.getLatLng())
+            Assertions.assertTrue(stopSchedule.scheduledStops.isNotEmpty())
+
+            val scheduledStop = stopSchedule.scheduledStopsSorted.first()
+
+            val upcomingStops = transitService.getUpcomingStops(scheduledStop.routeKey, scheduledStop.key, scheduledStop.estimatedDepartureTime)
+
+            Assertions.assertNotNull(upcomingStops)
+            Assertions.assertTrue(upcomingStops.isNotEmpty())
+        }
+
+        Thread.sleep(60 * 1000)
     }
 
     companion object {
@@ -144,6 +160,14 @@ class WinnipegTransitServiceTest : TransitServiceTest {
                 Arguments.of(49.8854, -97.1285, 500, 23),
                 Arguments.of(49.9054, -97.1585, 250, 6),
                 Arguments.of(50.9054, -96.1585, 1000, 0)
+        )
+
+        @JvmStatic
+        fun getUpcomingStopsDataSet() = listOf(
+                Arguments.of(20200, 78),
+                Arguments.of(60105, 60),
+                Arguments.of(10098, 29),
+                Arguments.of(10545, 11)
         )
     }
 }
