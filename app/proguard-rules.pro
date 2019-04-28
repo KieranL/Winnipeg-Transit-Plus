@@ -19,3 +19,5 @@
 -dontwarn android.net.http.**
 -dontwarn org.apache.**
 -dontwarn com.google.android.gms.internal.**
+
+-keepattributes *Annotation*,SourceFile,LineNumberTable
