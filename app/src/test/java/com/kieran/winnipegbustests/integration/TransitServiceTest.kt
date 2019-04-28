@@ -27,8 +27,9 @@ interface TransitServiceTest {
     @MethodSource("getNearbyStopsDataSet")
     fun testGetNearbyStopsWithValidLocation(latitude: Double, longitude: Double, distance: Int, stopCount: Int)
 
-    @Test
-    fun testGetUpcomingStops()
+    @ParameterizedTest
+    @MethodSource( "getUpcomingStopsDataSet")
+    fun testGetUpcomingStops(stopNumber: Int, routeNumber: Int)
 
     @Test
     fun testGetLastQueryTime()
@@ -38,4 +39,5 @@ interface TransitServiceTest {
 
     @Test
     fun testGetSupportedFeatures()
+
 }

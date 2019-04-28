@@ -20,39 +20,42 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/route_number_text"
-        android:layout_toLeftOf="@+id/bus_wifi_indicator"
+        android:layout_toLeftOf="@+id/bus_icon_view"
         android:textSize="18sp" />
 
-    <ImageView
-        android:id="@+id/bus_bike_rack_indicator"
+    <LinearLayout
+        android:id="@+id/bus_icon_view"
         android:layout_width="wrap_content"
-        android:layout_height="18sp"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/bus_wifi_indicator"
-        android:visibility="gone"
-        android:contentDescription="@string/does_bus_have_bike_rack"
-        android:src="?attr/busBikeIcon"/>
-
-    <ImageView
-        android:id="@+id/bus_wifi_indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="18sp"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/two_bus_indicator"
-        android:visibility="gone"
-        android:contentDescription="@string/does_bus_have_wifi"
-        android:src="?attr/busWifiIcon"/>
-
-    <ImageView
-        android:id="@+id/two_bus_indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="18sp"
-        android:layout_centerVertical="true"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
         android:layout_toLeftOf="@+id/time_status_text"
-        android:contentDescription="@string/does_bus_have_extended_capacity"
-        android:src="?attr/twoBusIcon"
-        android:visibility="visible" />
+        android:layout_centerVertical="true">
 
+        <ImageView
+            android:id="@+id/bus_bike_rack_indicator"
+            android:layout_width="20sp"
+            android:layout_height="18sp"
+            android:visibility="gone"
+            android:contentDescription="@string/does_bus_have_bike_rack"
+            android:src="?attr/busBikeIcon"/>
+
+        <ImageView
+            android:id="@+id/bus_wifi_indicator"
+            android:layout_width="20sp"
+            android:layout_height="18sp"
+            android:visibility="gone"
+            android:contentDescription="@string/does_bus_have_wifi"
+            android:src="?attr/busWifiIcon"/>
+
+        <ImageView
+            android:id="@+id/two_bus_indicator"
+            android:layout_width="20sp"
+            android:layout_height="18sp"
+            android:contentDescription="@string/does_bus_have_extended_capacity"
+            android:src="?attr/twoBusIcon"
+            android:visibility="gone" />
+    </LinearLayout>
     <TextView
         android:id="@+id/time_status_text"
         android:layout_width="42sp"
