@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="pref_bus_schedule_result_intervals">
-        <item>1 Hour</item>
-        <item>2 Hours</item>
-        <item>3 Hours</item>
-        <item>4 Hours</item>
-        <item>6 Hours</item>
-        <item>12 Hours</item>
-        <item>24 Hours</item>
-    </string-array>
     <string-array name="pref_bus_schedule_result_intervals_values">
         <item>1</item>
         <item>2</item>
@@ -18,5 +9,4 @@
         <item>12</item>
         <item>24</item>
     </string-array>
-
 </resources>

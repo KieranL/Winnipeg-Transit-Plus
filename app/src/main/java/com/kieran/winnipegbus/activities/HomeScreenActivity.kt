@@ -1,6 +1,5 @@
 package com.kieran.winnipegbus.activities
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
@@ -170,7 +169,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
             }
             R.id.action_privacy_policy -> {
                 val alert = AlertDialog.Builder(this)
-                alert.setTitle("Privacy Policy")
+                alert.setTitle(R.string.privacy_policy_modal_title)
 
                 val wv = WebView(this)
                 wv.loadUrl(getString(R.string.privacy_url))
@@ -183,7 +182,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
                 }
 
                 alert.setView(wv)
-                alert.setNegativeButton("Close", { dialog, id -> dialog.dismiss() })
+                alert.setNegativeButton(R.string.close, { dialog, id -> dialog.dismiss() })
                 alert.show()
             }
         }

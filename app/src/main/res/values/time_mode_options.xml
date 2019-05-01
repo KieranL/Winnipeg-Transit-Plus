@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="time_mode_options">
-        <item>Depart After</item>
-        <item>Arrive Before</item>
-        <item>Arrive After</item>
-        <item>Depart Before</item>
-    </string-array>
-</resources>
