@@ -18,39 +18,48 @@ import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouriteStopsList
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
 import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class FavouritesFragment : Fragment(), AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     private lateinit var adapter: StopListAdapter
+    private val topFavourites = ArrayList<FavouriteStop>();
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_favourites, container, false)
         val listView = view.findViewById<ListView>(R.id.stops_listView)
 
-        getFavouritesList()
 
         listView.onItemClickListener = this
         listView.onItemLongClickListener = this
 
-        adapter = StopListAdapter(activity, R.layout.listview_stops_row, 3)
+        adapter = StopListAdapter(activity, R.layout.listview_stops_row, topFavourites)
         listView.adapter = adapter
         return view
     }
 
     override fun onResume() {
         super.onResume()
-        FavouriteStopsList.sort(FavouritesListSortType.FREQUENCY_DESC)
         reloadList()
     }
 
     private fun reloadList() {
-        FavouriteStopsList.isLoadNeeded = true
-        getFavouritesList()
-        adapter.notifyDataSetChanged()
-    }
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                FavouriteStopsList.isLoadNeeded = true
+                val stops = FavouriteStopsList.getFavouriteStopsSorted(FavouritesListSortType.FREQUENCY_DESC, 3)
 
-    private fun getFavouritesList() {
-        FavouriteStopsList.loadFavourites()
-        StopListAdapter.sortPreference = FavouritesListSortType.FREQUENCY_DESC
+                activity.runOnUiThread {
+                    topFavourites.clear()
+                    topFavourites.addAll(stops)
+
+                    adapter.notifyDataSetChanged()
+                }
+            }catch (ex: Exception){
+
+            }
+        }
     }
 
     private fun openStopTimesAndUse(favouriteStop: FavouriteStop?) {

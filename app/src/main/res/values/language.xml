@@ -54,7 +54,8 @@
     <string name="data_not_found">Stop not found.</string>
     <string name="most_used_favourites">Frequently used favourites</string>
     <string name="pref_title_show_frequent_stops_on_home">Frequent favourites on Home</string>
-    <string name="enable_stops_on_home_prompt">You view your most frequently used favourite stops on the home screen. It can also turned on or off in the settings if you want to change it later.</string>
+    <string name="enable_stops_on_home_prompt_title">You can now view your top 3 favourite stops here</string>
+    <string name="enable_stops_on_home_prompt">It can be turned on or off in the settings later if you change your mind.</string>
     <string name="enable">Enable</string>
     <string name="disable">Disable</string>
     <string name="cancel">Cancel</string>

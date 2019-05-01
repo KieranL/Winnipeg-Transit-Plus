@@ -17,7 +17,7 @@ class StopListAdapter : ArrayAdapter<FavouriteStop> {
     private var stops: List<FavouriteStop>? = null
     private var inflater: LayoutInflater? = null
 
-    constructor(context: Context, layoutResourceId: Int, maxItems: Int =-1) : super(context, layoutResourceId, FavouriteStopsList.getFavouriteStopsSorted(sortPreference!!, maxItems)) {
+    constructor(context: Context, layoutResourceId: Int) : super(context, layoutResourceId, FavouriteStopsList.getFavouriteStopsSorted(sortPreference!!)) {
         this.layoutResourceId = layoutResourceId
         inflater = (context as Activity).layoutInflater
     }

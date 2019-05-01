@@ -148,10 +148,10 @@ object FavouriteStopsList {
 
         sort(sortType)
 
-        if(maxItems == -1) {
-            return favouritesList
+        return if(maxItems == -1) {
+            favouritesList
         }else {
-            return favouritesList.take(maxItems)
+            favouritesList.take(maxItems)
         }
     }
 
