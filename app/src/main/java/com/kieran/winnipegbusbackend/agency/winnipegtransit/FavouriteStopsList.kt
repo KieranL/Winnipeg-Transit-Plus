@@ -143,11 +143,16 @@ object FavouriteStopsList {
         }
     }
 
-    fun getFavouriteStopsSorted(sortType: FavouritesListSortType): List<FavouriteStop> {
+    fun getFavouriteStopsSorted(sortType: FavouritesListSortType, maxItems: Int = -1): List<FavouriteStop> {
         loadFavourites()
 
         sort(sortType)
-        return favouritesList
+
+        return if(maxItems == -1) {
+            favouritesList
+        }else {
+            favouritesList.take(maxItems)
+        }
     }
 
     operator fun get(position: Int): FavouriteStop {

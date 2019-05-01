@@ -37,6 +37,17 @@
         android:onClick="submitSearch"
         android:text="@string/button_send" />
 
+    <FrameLayout
+        android:layout_below="@id/search_button"
+        android:layout_above="@id/homeScreenAdView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp"
+        android:id="@+id/fragment_container">
+
+    </FrameLayout>
+
         <com.google.android.gms.ads.AdView
             xmlns:ads="http://schemas.android.com/apk/res-auto"
             android:visibility="gone"

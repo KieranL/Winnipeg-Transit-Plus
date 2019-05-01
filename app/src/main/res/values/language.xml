@@ -3,16 +3,12 @@
     <string name="search_hint">Search</string>
     <string name="button_send">Go</string>
     <string name="action_settings">Settings</string>
-    <string name="enter_valid_stop_number">Please enter a valid stopSchedule number.</string>
+    <string name="enter_valid_stop_number">Please enter a valid stop number.</string>
     <string name="network_error">Network Error</string>
     <string name="route_number_filter_hint">Route number filter</string>
     <string name="favourites">Favourites</string>
     <string name="title_activity_favourites">Favourites</string>
     <string name="add_widget">Add Widget</string>
-    <string name="configure">Enter a stopSchedule number</string>
-    <string name="banner_ad_home_unit_id">ca-app-pub-1189975520647633/7696260309</string>
-    <string name="banner_ad_stops_list_unit_id">ca-app-pub-1189975520647633/9812121904</string>
-    <string name="banner_ad_stop_times_unit_id">ca-app-pub-1189975520647633/1321335907</string>
     <string name="refresh_stop_times_button">Refresh</string>
     <string name="add_to_favourites_button">Add to Favourites</string>
     <string name="title_activity_search_results">Search Results</string>
@@ -30,7 +26,6 @@
     <string name="features_feature">Feature</string>
     <string name="features_count">Count</string>
     <string name="action_notification">Create Notification</string>
-    <string name="banner_ad_stop_features_id">ca-app-pub-1189975520647633/3682591503</string>
     <string name="pref_favourites_sort">pref_favourites_sort_list</string>
     <string name="search_tip">Search by Street name, Route number or Stop number</string>
     <string name="map">Map</string>
@@ -57,4 +52,83 @@
     <string name="action_privacy_policy">Privacy Policy</string>
     <string name="does_bus_have_extended_capacity">This bus has a higher passenger capacity</string>
     <string name="data_not_found">Stop not found.</string>
+    <string name="most_used_favourites">Frequently used favourites</string>
+    <string name="pref_title_show_frequent_stops_on_home">Frequent favourites on Home</string>
+    <string name="enable_stops_on_home_prompt_title">You can now view your top 3 favourite stops here</string>
+    <string name="enable_stops_on_home_prompt">It can be turned on or off in the settings later if you change your mind.</string>
+    <string name="enable">Enable</string>
+    <string name="disable">Disable</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="delete">Delete</string>
+    <string name="rename">Rename</string>
+    <string name="close">Close</string>
+    <string name="edit_favourite_dialog_title">Edit this Favourite?</string>
+    <string name="default_label">Default</string>
+    <string name="privacy_policy_modal_title">Privacy Policy</string>
+
+    <!-- Preference Activity -->
+    <string name="title_activity_settings">Settings</string>
+    <string name="pref_theme_title">Theme</string>
+    <string name="pref_nearby_distance_title">Nearby stops distance</string>
+
+    <string name="pref_header_general">General</string>
+    <string name="pref_title_disable_ads">Disable Ads</string>
+
+    <string name="pref_header_scheduled_stops">Stop Schedule</string>
+    <string name="pref_title_schedule_load_interval">Bus Schedule Results Interval</string>
+
+    <string name="pref_header_favourite_stops">Favourite Stops</string>
+    <string name="pref_title_favourite_stops_sort">Sort type</string>
+    <string name="pref_title_clock_setting">Use 24 Hour Time</string>
+    <string name="pref_key_theme">pref_theme</string>
+    <string name="pref_schedule_load_interval">pref_schedule_load_interval</string>
+    <string name="pref_key_nearby_distance">pref_nearby_distance</string>
+
+    <!-- Preference Option Labels -->
+    <string-array name="pref_theme">
+        <item>Dark</item>
+        <item>Light</item>
+        <item>Rapid Transit</item>
+    </string-array>
+
+    <string-array name="time_mode_options">
+        <item>Depart After</item>
+        <item>Arrive Before</item>
+        <item>Arrive After</item>
+        <item>Depart Before</item>
+    </string-array>
+
+    <string-array name="pref_favourites_sort_type">
+        <item>Stop Number Ascending</item>
+        <item>Stop Number Descending</item>
+        <item>Frequency Ascending</item>
+        <item>Frequency Descending</item>
+    </string-array>
+
+    <string-array name="pref_nearby_distance">
+        <item>200m</item>
+        <item>350m</item>
+        <item>500m</item>
+        <item>750m</item>
+        <item>1km</item>
+    </string-array>
+
+    <string-array name="pref_bus_schedule_result_intervals">
+        <item>1 Hour</item>
+        <item>2 Hours</item>
+        <item>3 Hours</item>
+        <item>4 Hours</item>
+        <item>6 Hours</item>
+        <item>12 Hours</item>
+        <item>24 Hours</item>
+    </string-array>
+
+    <!-- Rater Strings (don't think these are needed anymore) -->
+    <string name="rate_title">Rate this App</string>
+    <string name="rate_explanation">Ratings help me know what you think of the app. Feel free to leave suggestions as well!</string>
+    <string name="rate_now_button">Rate now</string>
+    <string name="rate_later_button">Later</string>
+    <string name="rate_never_button">No thanks</string>
+
 </resources>
