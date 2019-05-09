@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="pref_nearby_distance">
-        <item>200m</item>
-        <item>350m</item>
-        <item>500m</item>
-        <item>750m</item>
-        <item>1km</item>
-    </string-array>
     <string-array name="pref_nearby_distance_values">
         <item>200</item>
         <item>350</item>

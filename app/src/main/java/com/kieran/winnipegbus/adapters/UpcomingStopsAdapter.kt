@@ -15,7 +15,7 @@ class UpcomingStopsAdapter(internal var context: Context, private var layoutReso
     private var inflater: LayoutInflater = (context as Activity).layoutInflater
 
     override fun getView(position: Int, row: View?, parent: ViewGroup?): View {
-        var view: View?
+        val view: View?
         val holder: StopHolder?
 
         if (row == null) {
@@ -30,9 +30,7 @@ class UpcomingStopsAdapter(internal var context: Context, private var layoutReso
 
                 view.tag = holder
             }else {
-                view = View(context)
-                view.tag = holder
-                return view
+                return defaultView(context, holder)
             }
         } else {
             view = row
@@ -40,9 +38,20 @@ class UpcomingStopsAdapter(internal var context: Context, private var layoutReso
         }
 
         val upcomingStop = upComingStops[position]
-        holder?.stopNumber?.text = upcomingStop.identifier.toString()
-        holder?.stopName?.text = upcomingStop.name
-        holder?.time?.text = upcomingStop.time.toFormattedString(null, use24hrTime)
+
+        return if(holder != null) {
+            holder.stopNumber?.text = upcomingStop.identifier.toString()
+            holder.stopName?.text = upcomingStop.name
+            holder.time?.text = upcomingStop.time.toFormattedString(null, use24hrTime)
+            view
+        }else {
+            defaultView(context, holder)
+        }
+    }
+
+    private fun defaultView(context: Context, tag: StopHolder?): View {
+        val view = View(context)
+        view.tag = tag
         return view
     }
 

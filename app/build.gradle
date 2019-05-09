@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     kotlinOptions {
@@ -16,8 +17,8 @@ android {
         applicationId "com.kieran.winnipegbus"
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 47
-        versionName "1.8.6"
+        versionCode 48
+        versionName "1.8.7"
         signingConfig signingConfigs.config
         resValue "string", "google_maps_key", (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
         buildConfigField "String", "winnipeg_transit_api_key", (project.findProperty("WINNIPEG_TRANSIT_API_KEY") ?: "")

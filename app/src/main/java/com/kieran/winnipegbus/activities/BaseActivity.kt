@@ -179,7 +179,7 @@ abstract class BaseActivity : AppCompatActivity() {
         return prefs.getBoolean("pref_disable_ads", false)
     }
 
-    protected fun openStopTimes(stop: Stop) {
+    fun openStopTimes(stop: Stop) {
         val intent = Intent(this, StopTimesActivity::class.java)
         intent.putExtra(StopTimesActivity.STOP, stop)
         startActivity(intent)

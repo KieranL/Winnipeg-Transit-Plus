@@ -9,10 +9,6 @@ open class Stop : Serializable {
     lateinit var identifier: StopIdentifier
         protected set
 
-    constructor() {
-        name = ""
-    }
-
     constructor(stopName: String, stopIdentifier: StopIdentifier) {
         this.name = stopName
         this.identifier = stopIdentifier

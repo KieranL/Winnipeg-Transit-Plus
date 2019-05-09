@@ -3,6 +3,7 @@ package com.kieran.winnipegbus.activities
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v7.app.AlertDialog
 import android.text.Editable
 import android.text.TextWatcher
@@ -19,17 +20,22 @@ import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationServices
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbusbackend.TransitServiceProvider
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouriteStopsList
 import com.kieran.winnipegbusbackend.common.SearchQuery
 import com.kieran.winnipegbusbackend.common.Stop
+import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.interfaces.TransitService
-
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class HomeScreenActivity : GoogleApiActivity(), LocationListener {
     private var searchButton: Button? = null
     private var searchField: EditText? = null
     private lateinit var transitService: TransitService
+    private var favouritesFragment: FavouritesFragment? = null
 
     private val isSearchEnabled: Boolean
         get() = searchField!!.text.isNotEmpty()
@@ -66,6 +72,74 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).build()
         connectClient()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        setupFrequentFavourites()
+    }
+
+    private fun setupFrequentFavourites(overrideCheck: Boolean = false) {
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                FavouriteStopsList.isLoadNeeded = true
+                val stops = FavouriteStopsList.getFavouriteStopsSorted(FavouritesListSortType.FREQUENCY_DESC, 3)
+
+                if(stops.isNotEmpty()) {
+                    runOnUiThread {
+                        initializeFrequentFavourites(overrideCheck)
+                    }
+                }
+            }catch (ex: Exception){
+
+            }
+        }
+    }
+
+    private fun initializeFrequentFavourites(overrideCheck: Boolean) {
+        try {
+            val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+
+            if (!overrideCheck && !prefs.contains(stops_on_home_message_shown_flag)) {
+                val alertDialog = android.app.AlertDialog.Builder(this)
+                alertDialog.setTitle(R.string.enable_stops_on_home_prompt_title)
+                alertDialog.setMessage(R.string.enable_stops_on_home_prompt)
+
+                alertDialog.setPositiveButton(R.string.enable) { dialog, _ ->
+                    val editor = prefs.edit()
+
+                    editor.putBoolean(stops_on_home_message_shown_flag, true)
+                    editor.putBoolean(prefFavouritesOnHome, true)
+
+                    editor.apply()
+                    setupFrequentFavourites()
+                    dialog.dismiss()
+                }
+
+                alertDialog.setNegativeButton(R.string.disable) { dialog, _ ->
+                    prefs.edit().putBoolean(stops_on_home_message_shown_flag, true).apply()
+                    dialog.dismiss()
+                }
+
+                alertDialog.create().show()
+            }
+
+            if (isBooleanSettingEnabled(prefFavouritesOnHome) || overrideCheck) {
+                if (favouritesFragment == null) {
+                    val fragmentTransaction = fragmentManager.beginTransaction()
+
+                    favouritesFragment = FavouritesFragment()
+                    fragmentTransaction.add(R.id.fragment_container, favouritesFragment).commit()
+                }
+            } else if (favouritesFragment != null) {
+                val fragmentTransaction = fragmentManager.beginTransaction()
+                fragmentTransaction.remove(favouritesFragment).commit()
+                favouritesFragment = null
+            }
+        } catch (e: Exception) {
+            // TODO log this when an error logger is built
+        }
     }
 
     private fun createTextWatcher(): TextWatcher {
@@ -120,7 +194,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
             }
             R.id.action_privacy_policy -> {
                 val alert = AlertDialog.Builder(this)
-                alert.setTitle("Privacy Policy")
+                alert.setTitle(R.string.privacy_policy_modal_title)
 
                 val wv = WebView(this)
                 wv.loadUrl(getString(R.string.privacy_url))
@@ -133,7 +207,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
                 }
 
                 alert.setView(wv)
-                alert.setNegativeButton("Close", { dialog, id -> dialog.dismiss() })
+                alert.setNegativeButton(R.string.close, { dialog, id -> dialog.dismiss() })
                 alert.show()
             }
         }
@@ -200,5 +274,10 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
 
     override fun onLocationChanged(location: Location) {
 
+    }
+
+    companion object {
+        private const val stops_on_home_message_shown_flag = "show_initial_frequent_stops_on_home_notification"
+        private const val prefFavouritesOnHome = "pref_show_favourites_on_home"
     }
 }
