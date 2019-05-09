@@ -10,10 +10,12 @@ import android.widget.AdapterView.OnItemLongClickListener
 import android.widget.EditText
 import android.widget.ListView
 import com.kieran.winnipegbus.R
+import com.kieran.winnipegbus.SQLiteFavouritesRepository
 import com.kieran.winnipegbus.adapters.StopListAdapter
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouriteStopsList
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
 import com.kieran.winnipegbusbackend.common.FavouriteStop
+import com.kieran.winnipegbusbackend.favourites.FavouritesService
 
 class FavouritesActivity : BaseActivity(), AdapterView.OnItemClickListener, OnItemLongClickListener {
     private var adapter: StopListAdapter? = null
@@ -55,8 +57,13 @@ class FavouritesActivity : BaseActivity(), AdapterView.OnItemClickListener, OnIt
     }
 
     private fun getFavouritesList() {
-        FavouriteStopsList.loadFavourites()
-        StopListAdapter.sortPreference = sortPreference
+        if(true) {
+            val service = FavouritesService.getInstance(SQLiteFavouritesRepository.getInstance(this))
+            val stops = service.getAll()
+        }else {
+            FavouriteStopsList.loadFavourites()
+            StopListAdapter.sortPreference = sortPreference
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

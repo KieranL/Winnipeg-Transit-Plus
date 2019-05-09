@@ -343,6 +343,9 @@ object WinnipegTransitService : TransitService {
         throw TransitDataNotFoundException()
     }
 
+    override fun getAgencyId(): Int {
+        return 1
+    }
 
     private val STOP_TAG = "stop"
     private val STOP_SCHEDULE_TAG = "stop-schedule"

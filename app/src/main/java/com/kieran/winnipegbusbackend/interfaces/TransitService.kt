@@ -33,4 +33,6 @@ interface TransitService {
     fun parseStringToStopIdentifier(text: String): StopIdentifier
 
     fun parseStringToRouteIdentifier(text: String): RouteIdentifier
+
+    fun getAgencyId(): Int
 }
