@@ -39,15 +39,15 @@ class UpcomingStopsAdapter(internal var context: Context, private var layoutReso
 
         val upcomingStop = upComingStops[position]
 
-        return if(holder != null) {
+        return if(holder != null && upcomingStop != null) {
             val stopNumber = holder.stopNumber
-            if (stopNumber != null) stopNumber.text = upcomingStop.identifier.toString()
+            if (stopNumber != null && upcomingStop.identifier != null) stopNumber.text = upcomingStop.identifier.toString()
 
             val stopName = holder.stopName
-            if (stopName != null) stopName.text = upcomingStop.name
+            if (stopName != null && upcomingStop.name != null) stopName.text = upcomingStop.name
 
             val time = holder.time
-            if (time != null) time.text = upcomingStop.time.toFormattedString(null, use24hrTime)
+            if (time != null && upcomingStop.time != null) time.text = upcomingStop.time.toFormattedString(null, use24hrTime)
 
             view
         }else {
