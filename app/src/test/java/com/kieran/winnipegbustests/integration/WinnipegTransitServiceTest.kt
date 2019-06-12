@@ -25,7 +25,7 @@ class WinnipegTransitServiceTest : TransitServiceTest {
             val stopSchedule = transitService.getStopSchedule(WinnipegTransitStopIdentifier(stop), startTime, endTime, routes)
 
             Assertions.assertNotNull(stopSchedule)
-            Assertions.assertNotNull(stopSchedule.getLatLng())
+            Assertions.assertNotNull(stopSchedule.latLng)
             Assertions.assertTrue(stopSchedule.scheduledStops.isNotEmpty())
         }
     }
@@ -105,7 +105,7 @@ class WinnipegTransitServiceTest : TransitServiceTest {
             val stopSchedule = transitService.getStopSchedule(WinnipegTransitStopIdentifier(stopNumber), null, null, listOf(WinnipegTransitRouteIdentifier(routeNumber)))
 
             Assertions.assertNotNull(stopSchedule)
-            Assertions.assertNotNull(stopSchedule.getLatLng())
+            Assertions.assertNotNull(stopSchedule.latLng)
             Assertions.assertTrue(stopSchedule.scheduledStops.isNotEmpty())
 
             val scheduledStop = stopSchedule.scheduledStopsSorted.first()

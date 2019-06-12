@@ -1,14 +1,14 @@
 package com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes
 
 import com.google.android.gms.maps.model.LatLng
-import com.kieran.winnipegbusbackend.common.SerializableLatLng
+import com.kieran.winnipegbusbackend.common.GeoLocation
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.Serializable
 import java.util.*
 
 open class Location : Serializable {
-    private lateinit var point: SerializableLatLng
+    private lateinit var point: GeoLocation
     var title: String
         internal set
 
@@ -25,22 +25,22 @@ open class Location : Serializable {
         this.title = title
     }
 
-    constructor(location: android.location.Location, title: String) {
+    constructor(location: GeoLocation, title: String) {
         this.title = title
-        point = SerializableLatLng(LatLng(location.latitude, location.longitude))
+        point = location
     }
 
     constructor(location: LatLng?, title: String?) {
         this.title = title ?: ""
-        point = SerializableLatLng(LatLng(location?.latitude
-                ?: 0.0, location?.longitude ?: 0.0))
+        point = GeoLocation(location?.latitude
+                ?: 0.0, location?.longitude ?: 0.0)
     }
 
     private fun getLatLngFromLocation(location: JSONObject) {
         try {
             val centre = location.getJSONObject("centre")
             val geographic = centre.getJSONObject("geographic")
-            point = SerializableLatLng(LatLng(geographic.getDouble("latitude"), geographic.getDouble("longitude")))
+            point = GeoLocation(geographic.getDouble("latitude"), geographic.getDouble("longitude"))
         } catch (e: JSONException) {
 
         }

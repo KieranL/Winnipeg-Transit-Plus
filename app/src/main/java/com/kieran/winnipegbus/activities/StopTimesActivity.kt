@@ -22,13 +22,13 @@ import com.kieran.winnipegbus.adapters.StopTimeAdapter
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.common.StopSchedule
 import com.kieran.winnipegbusbackend.TransitServiceProvider
-import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouriteStopsList
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.StopLocation
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.TripParameters
-import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
 import com.kieran.winnipegbusbackend.common.*
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
+import com.kieran.winnipegbusbackend.favourites.FavouritesService
 import com.kieran.winnipegbusbackend.interfaces.RouteIdentifier
+import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
 import com.kieran.winnipegbusbackend.interfaces.TransitService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -39,7 +39,7 @@ import java.util.*
 
 class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, ShakeDetector.OnShakeListener {
     private var stopSchedule: StopSchedule? = null
-    private var stopNumber: Int = 0
+    private lateinit var stopIdentifier: StopIdentifier
     private var stopName: String? = null
     private var loading = false
     private val stops = ArrayList<ScheduledStop>()
@@ -56,7 +56,6 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
     private var swipeRefreshLayout: StyledSwipeRefresh? = null
     private lateinit var lastUpdatedView: TextView
     private var lastUpdated: StopTime? = null
-    private lateinit var transitService: TransitService
 
     private val scheduleEndTime: StopTime
         get() {
@@ -67,22 +66,11 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
             return endTime
         }
 
-    override fun onNewIntent(intent: Intent) {
-        val newStopNumber = ((intent.getSerializableExtra(STOP) as Stop).identifier as WinnipegTransitStopIdentifier).stopNumber
-        if (newStopNumber != stopNumber) {
-            stopNumber = newStopNumber
-            setIntent(intent)
-            recreate()
-        }
-    }
-
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_stop_times)
-        transitService = TransitServiceProvider.getTransitService()
-        adViewResId = R.id.stopTimesAdView
 
-        FavouriteStopsList.loadFavourites()
+        adViewResId = R.id.stopTimesAdView
 
         val listView = findViewById<ListView>(R.id.stop_times_listview)
 
@@ -104,9 +92,9 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         val stop = intent.getSerializableExtra(STOP) as Stop
         stopName = stop.name
         title.text = stopName
-        stopNumber = (stop.identifier as WinnipegTransitStopIdentifier).stopNumber
+        stopIdentifier = stop.identifier
 
-        setTitle(String.format(Locale.CANADA, ACTIONBAR_TEXT, stopNumber))
+        setTitle(String.format(Locale.CANADA, ACTIONBAR_TEXT, stop.identifier.toString()))
 
         initializeAdsIfEnabled()
         createShakeListener()
@@ -167,7 +155,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
     private fun getTimes() {
         loadStopTimesTask = GlobalScope.launch(Dispatchers.IO) {
             try {
-                val stopSchedule = transitService.getStopSchedule(WinnipegTransitStopIdentifier(stopNumber), null, scheduleEndTime, routeNumberFilter)
+                val stopSchedule = transitService.getStopSchedule(stopIdentifier, null, scheduleEndTime, routeNumberFilter)
 
                 runOnUiThread {
                     if (loading) {
@@ -208,7 +196,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
             menu.findItem(R.id.trip_planner).isVisible = true
         }
 
-        menu.findItem(R.id.add_to_favourites_button).icon = getFavouritesButtonDrawable(FavouriteStopsList.contains(stopNumber))
+        menu.findItem(R.id.add_to_favourites_button).icon = getFavouritesButtonDrawable(favouritesService.contains(stopIdentifier))
         onOptionsItemSelected(menu.findItem(R.id.action_refresh)) //manually click the refresh button, this is the only way the swipe refresh loading spinner works correctly on initial load. Not happy with this but it was the only way I could get it to work
         return true
     }
@@ -272,10 +260,10 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
     }
 
     private fun handleFavouritesClick(item: MenuItem) {
-        if (FavouriteStopsList.contains(stopNumber)) {
+        if (favouritesService.contains(stopIdentifier)) {
             openDeleteFavouriteDialog(item)
         } else if (stopName != null && stopName != "") {
-            FavouriteStopsList.addToFavourites(FavouriteStop(stopName!!, WinnipegTransitStopIdentifier(stopNumber)))
+            favouritesService.add(FavouriteStop(stopName!!, stopIdentifier))
             item.icon = getFavouritesButtonDrawable(true)
         } else {
             showLongToaster(R.string.wait_for_load)
@@ -287,7 +275,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         alertDialog.setMessage(DELETE_THIS_FAVOURITE)
 
         alertDialog.setPositiveButton(R.string.yes) { _, _ ->
-            FavouriteStopsList.remove(stopNumber)
+            favouritesService.delete(stopIdentifier)
             item.icon = getFavouritesButtonDrawable(false)
         }
 
@@ -362,7 +350,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         private const val FILTER_POSITIVE = "Done"
         const val STOP = "stop"
         private const val UPDATED_STRING = "Updated %s"
-        private const val ACTIONBAR_TEXT = "Stop %d"
-        private const val DELETE_THIS_FAVOURITE = "Delete this Favourite?"
+        private const val ACTIONBAR_TEXT = "Stop %s"
+        private const val DELETE_THIS_FAVOURITE = "Delete this DataFavourite?"
     }
 }

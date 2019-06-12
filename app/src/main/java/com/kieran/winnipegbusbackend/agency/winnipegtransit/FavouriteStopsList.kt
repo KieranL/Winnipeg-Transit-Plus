@@ -29,28 +29,12 @@ object FavouriteStopsList {
     var isLoadNeeded = true
     private val XMLFeature = "http://xmlpull.org/v1/doc/features.html#indent-output"
 
-    fun addToFavourites(favouriteStop: FavouriteStop) {
-        if (!contains(favouriteStop)) {
-            favouritesList.add(favouriteStop)
-            saveFavouriteStops()
-        }
-    }
-
     operator fun contains(favouriteStop: FavouriteStop): Boolean {
         return contains((favouriteStop.identifier as WinnipegTransitStopIdentifier).stopNumber)
     }
 
     operator fun contains(stopNumber: Int): Boolean {
         return favouritesList.any { (it.identifier as WinnipegTransitStopIdentifier).stopNumber == stopNumber }
-    }
-
-    fun remove(stopNumber: Int) {
-        favouritesList.remove(getFavouriteStopByStopNumber(stopNumber))
-        saveFavouriteStops()
-    }
-
-    fun getFavouriteStopByStopNumber(stopNumber: Int): FavouriteStop? {
-        return favouritesList.firstOrNull { (it.identifier as WinnipegTransitStopIdentifier).stopNumber == stopNumber }
     }
 
     fun loadFavourites(): Boolean {
@@ -82,54 +66,6 @@ object FavouriteStopsList {
 
         }
         return isLoadNeeded
-    }
-
-    fun saveFavouriteStops(): Boolean {
-        isLoadNeeded = true
-        try {
-            val fos = FileOutputStream(FILES_DIR)
-            val serializer = Xml.newSerializer()
-            serializer.setOutput(fos, "UTF-8")
-            serializer.startTag("", FAVOURITE_STOPS_TAG)
-            serializer.setFeature(XMLFeature, true)
-
-            for (i in favouritesList.indices) {
-                try {
-                    val favouriteStop = favouritesList[i]
-                    serializer.startTag("", FAVOURITE_STOP_TAG)
-                    serializer.startTag("", STOP_NUMBER_TAG)
-                    serializer.text(Integer.toString((favouritesList[i].identifier as WinnipegTransitStopIdentifier).stopNumber))
-                    serializer.endTag("", STOP_NUMBER_TAG)
-
-                    serializer.startTag("", STOP_NAME_TAG)
-                    serializer.text(favouriteStop.name)
-                    serializer.endTag("", STOP_NAME_TAG)
-
-                    if (favouriteStop.alias != null) {
-                        serializer.startTag("", ALIAS_TAG)
-                        serializer.text(favouriteStop.alias)
-                        serializer.endTag("", ALIAS_TAG)
-                    }
-
-                    serializer.startTag("", TIMES_USED_TAG)
-                    serializer.text(Integer.toString(favouriteStop.timesUsed))
-                    serializer.endTag("", TIMES_USED_TAG)
-
-                    serializer.endTag("", FAVOURITE_STOP_TAG)
-                } catch (e: Exception) {
-                    //intentionally blank
-                }
-
-            }
-            serializer.endTag("", FAVOURITE_STOPS_TAG)
-            serializer.endDocument()
-            serializer.flush()
-            fos.close()
-            return true
-        } catch (e: IOException) {
-            return false
-        }
-
     }
 
     fun sort(sortType: FavouritesListSortType) {

@@ -14,12 +14,10 @@ import com.kieran.winnipegbusbackend.interfaces.TransitService
 
 class StopsMapActivity : MapActivity() {
     private var cameraUpdate: CameraUpdate? = null
-    private lateinit var transitService: TransitService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_route_map)
-        transitService = TransitServiceProvider.getTransitService()
         mapOnCreate()
     }
 

@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus
+package com.kieran.winnipegbus.data
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
@@ -8,9 +8,12 @@ import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
 import org.jetbrains.anko.db.*
 
 class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesRepository, ManagedSQLiteOpenHelper(ctx, "transit_db", null, 1) {
-    private val favouriteRowParser = classParser<Favourite>()
-    override fun get(agencyId: Long, id: Long): Favourite? {
-        var favourite: Favourite? = null
+    private val favouriteRowParser = classParser<DataFavourite>()
+    private var isImported: Boolean = false
+    private val INITIALIZED_STOP_IDENTIFIER: StopIdentifier = InitializedIdentifier("init")
+
+    override fun get(agencyId: Long, id: Long): DataFavourite? {
+        var favourite: DataFavourite? = null
 
         use {
             try {
@@ -25,8 +28,8 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
         return favourite
     }
 
-    override fun getAll(agencyId: Long): List<Favourite>? {
-        var favourites: List<Favourite>? = null
+    override fun getAll(agencyId: Long): List<DataFavourite>? {
+        var favourites: List<DataFavourite>? = null
 
         use {
             try {
@@ -41,10 +44,10 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
         return favourites
     }
 
-    override fun create(favourite: Favourite): Favourite? {
+    override fun create(favourite: DataFavourite): DataFavourite? {
         return use {
             return@use try {
-                val id = insert(tableName, "sortOrder" to favourite.sortOrder)
+                val id = insert(tableName, "sortOrder" to favourite.sortOrder) //TODO add all properties
 
                 get(favourite.agencyId, id)
             } catch (ex: SQLiteException) {
@@ -53,7 +56,7 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
         }
     }
 
-    override fun update(favourite: Favourite): Boolean {
+    override fun update(favourite: DataFavourite): Boolean {
         return use {
             return@use try {
                 val returnCode = update(tableName, "sortOrder" to favourite.sortOrder, "homeSortOrder" to favourite.homeSortOrder, "timesUsed" to favourite.timesUsed).whereSimple("id=?", favourite.id.toString()).exec()
@@ -65,8 +68,8 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
         }
     }
 
-    override fun get(agencyId: Long, identifier: StopIdentifier): Favourite? {
-        var favourite: Favourite? = null
+    override fun get(agencyId: Long, identifier: StopIdentifier): DataFavourite? {
+        var favourite: DataFavourite? = null
 
         use {
             try {
@@ -81,16 +84,30 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
         return favourite
     }
 
-    override fun delete(favourite: Favourite): Boolean {
+    override fun delete(agencyId: Long, stopIdentifier: StopIdentifier): Boolean {
         return use {
             return@use try {
-                val rowsDeleted = delete(tableName, "id=?", "id" to favourite.id)
+                val rowsDeleted = delete(tableName, "agencyId=? and agencyIdentifier=?", "agencyId" to agencyId, "agencyIdentifier" to stopIdentifier.toString())
 
                 rowsDeleted > 0
             } catch (ex: SQLiteException) {
                 false
             }
         }
+    }
+
+    override fun hasBeenImported(): Boolean {
+        if(!isImported) {
+            val importedIndicator = get(1, INITIALIZED_STOP_IDENTIFIER)
+
+            isImported = importedIndicator != null
+        }
+
+        return isImported
+    }
+
+    override fun markImported() {
+        create(DataFavourite(-1, 1, null, null, "", null, INITIALIZED_STOP_IDENTIFIER.toString(), 0, null, null, null))
     }
 
     init {
@@ -104,6 +121,12 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
         @Synchronized
         fun getInstance(ctx: Context) = instance
                 ?: SQLiteFavouritesRepository(ctx.applicationContext)
+
+        private data class InitializedIdentifier(val identifier:String): StopIdentifier {
+            override fun toString(): String {
+                return identifier
+            }
+        }
     }
 
     override fun onCreate(db: SQLiteDatabase) {

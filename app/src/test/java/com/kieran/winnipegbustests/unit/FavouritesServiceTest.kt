@@ -1,28 +1,55 @@
 package com.kieran.winnipegbustests.unit
 
-import com.kieran.winnipegbus.Favourite
+import com.kieran.winnipegbus.data.DataFavourite
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
-import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.favourites.FavouritesService
+import com.kieran.winnipegbusbackend.interfaces.FavouritesRepository
+import com.nhaarman.mockitokotlin2.mock
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.MethodSource
+import org.junit.jupiter.api.TestInstance
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FavouritesServiceTest {
-    lateinit var favouritesService: FavouritesService
-    fun testConvertAll() {
+    private lateinit var favouritesService: FavouritesService
 
+    @BeforeAll
+    fun init() {
+        val favouritesRepositoryMock = mock<FavouritesRepository> {}
+
+        this.favouritesService = FavouritesService.getInstance(favouritesRepositoryMock, 1)
+    }
+
+    @Test
+    fun testConvertAll() {
+        val favourites = listOf<DataFavourite>(
+                DataFavourite(1, 1, null, null, "test", null, "12345", 9, 15.05, 97.0123, null),
+                DataFavourite(2, 0, null, null, "test", null, "12345", 9, null, null, null)
+        )
+
+        val converted = favouritesService.convertFromDataClass(favourites)
+        assertNotNull(converted)
+        assertEquals(1, converted.size)
     }
 
     @Test
     fun testConvertSingleSucceeds() {
-        val favourite = Favourite(1,1,null,null, "test", null, "12345", 9, 15.05, 97.0123, null)
-        val converted = favouritesService.convert(favourite)
+        val favourite = DataFavourite(1, 1, null, null, "test", null, "12345", 9, 15.05, 97.0123, null)
+        val converted = favouritesService.convertFromDataClass(favourite)
+
+        assertNotNull(converted)
+        assertEquals("test", converted!!.name)
+        assertEquals("test", converted.displayName)
+        assertEquals(WinnipegTransitStopIdentifier(12345), converted.identifier)
+        assertEquals(9, converted.timesUsed)
     }
 
     @Test
-    fun testConvertSingleFails(favourite: Favourite) {
-        val converted = favouritesService.convert(favourite)
+    fun testConvertSingleFails() {
+        val favourite = DataFavourite(1, 0, null, null, "test", null, "12345", 9, null, null, null)
+        val converted = favouritesService.convertFromDataClass(favourite)
+
+        assertNull(converted)
     }
 }

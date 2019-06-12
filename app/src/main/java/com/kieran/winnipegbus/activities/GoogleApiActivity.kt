@@ -15,7 +15,6 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.kieran.winnipegbus.R
 
-
 abstract class GoogleApiActivity : BaseActivity(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     protected var googleApiClient: GoogleApiClient? = null
 

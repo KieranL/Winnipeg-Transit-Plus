@@ -22,6 +22,7 @@ import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.TimeMode
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.Location
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.Trip
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.TripParameters
+import com.kieran.winnipegbusbackend.common.GeoLocation
 import com.kieran.winnipegbusbackend.common.LoadResult
 import com.kieran.winnipegbusbackend.common.StopTime
 import org.json.JSONException
@@ -168,7 +169,7 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
         val deviceLocation = latestLocation
 
         if (deviceLocation != null && tripParameters.origin == null) {
-            tripParameters.origin = Location(deviceLocation, context.getString(R.string.current_location))
+            tripParameters.origin = Location( GeoLocation(deviceLocation.latitude, deviceLocation.longitude), context.getString(R.string.current_location))
             initializeFields()
         }
     }

@@ -16,20 +16,15 @@ import com.google.android.gms.location.LocationServices
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.adapters.StopListAdapter
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
-import com.kieran.winnipegbusbackend.TransitServiceProvider
-import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouriteStopsList
 import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.common.GeoLocation
 import com.kieran.winnipegbusbackend.common.SearchQuery
 import com.kieran.winnipegbusbackend.common.Stop
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
-import com.kieran.winnipegbusbackend.interfaces.TransitService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-
-import java.lang.Exception
 
 class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, LocationListener {
     private var adapter: StopListAdapter? = null
@@ -37,13 +32,11 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
     private var loading = true
     private var task: Job? = null
     private var swipeRefreshLayout: StyledSwipeRefresh? = null
-    private lateinit var transitService: TransitService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         adViewResId = R.id.stopsListAdView
         setContentView(R.layout.activity_search_results)
-        transitService = TransitServiceProvider.getTransitService()
 
         val listView = findViewById<View>(R.id.stops_listView) as ListView
 
@@ -183,8 +176,8 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
 
         alertDialog.setMessage("Add to Favourites?")
         alertDialog.setPositiveButton("Yes") { dialogInterface, which ->
-            FavouriteStopsList.loadFavourites()
-            FavouriteStopsList.addToFavourites(stops[position])
+            val stop = stops[position]
+            favouritesService.add(FavouriteStop(stop.name, stop.identifier, 0, stop.latLng))
         }
 
         alertDialog.setNegativeButton("No", null)
@@ -202,7 +195,8 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
     }
 
     override fun onLocationChanged(location: Location) {
-        if (isOnline) {task = GlobalScope.launch(Dispatchers.IO) {try {
+        if (isOnline) {
+            task = GlobalScope.launch(Dispatchers.IO) {try {
             val stops = transitService.findClosestStops(GeoLocation(location.latitude, location.longitude), (nearbyStopsDistance + location.accuracy).toInt())
 
                     onDataReceived(stops)
@@ -215,7 +209,7 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
         }
     }
 
-    private fun onDataReceived(newStops: List<FavouriteStop>) {
+    private fun onDataReceived(newStops: List<Stop>) {
         if (newStops.isEmpty()) {
             runOnUiThread {
                 showLongToaster(R.string.no_results_found)
@@ -236,6 +230,6 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
         val SEARCH_QUERY = "search_query"
         val NEARBY_STOPS = "Nearby Stops"
         val STOPS_ON_RTE = "Stops on Rte %s"
-        var stops: ArrayList<FavouriteStop> = ArrayList()
+        var stops: ArrayList<Stop> = ArrayList()
     }
 }

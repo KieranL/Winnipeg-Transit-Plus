@@ -1,6 +1,5 @@
 package com.kieran.winnipegbus.activities
 
-
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
@@ -13,11 +12,9 @@ import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.adapters.UpcomingStopsAdapter
 import com.kieran.winnipegbus.views.RouteNumberTextView
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
-import com.kieran.winnipegbusbackend.TransitServiceProvider
 import com.kieran.winnipegbusbackend.common.ScheduledStop
 import com.kieran.winnipegbusbackend.common.UpcomingStop
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
-import com.kieran.winnipegbusbackend.interfaces.TransitService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -32,13 +29,11 @@ class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshLi
     private var task: Job? = null
     private var loading = false
     private var swipeRefreshLayout: StyledSwipeRefresh? = null
-    private lateinit var transitService: TransitService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scheduled_stop_info)
         scheduledStop = intent.getSerializableExtra(STOP_EXTRA) as ScheduledStop?
-        transitService = TransitServiceProvider.getTransitService()
 
         if (scheduledStop != null) {
             use24hrTime = timeSetting

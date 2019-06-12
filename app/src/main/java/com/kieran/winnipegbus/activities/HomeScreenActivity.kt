@@ -29,12 +29,12 @@ import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.interfaces.TransitService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class HomeScreenActivity : GoogleApiActivity(), LocationListener {
     private var searchButton: Button? = null
     private var searchField: EditText? = null
-    private lateinit var transitService: TransitService
     private var favouritesFragment: FavouritesFragment? = null
 
     private val isSearchEnabled: Boolean
@@ -48,7 +48,6 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        transitService = TransitServiceProvider.getTransitService()
         setContentView(R.layout.activity_home_screen)
         adViewResId = R.id.homeScreenAdView
 
@@ -84,7 +83,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 FavouriteStopsList.isLoadNeeded = true
-                val stops = FavouriteStopsList.getFavouriteStopsSorted(FavouritesListSortType.FREQUENCY_DESC, 3)
+                val stops = favouritesService.getAll(FavouritesListSortType.FREQUENCY_DESC)
 
                 if(stops.isNotEmpty()) {
                     runOnUiThread {

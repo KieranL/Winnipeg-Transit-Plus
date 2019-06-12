@@ -1,17 +1,21 @@
 package com.kieran.winnipegbusbackend.interfaces
 
-import com.kieran.winnipegbus.Favourite
+import com.kieran.winnipegbus.data.DataFavourite
 
 interface FavouritesRepository {
-    fun get(agencyId: Long, id: Long): Favourite?
+    fun get(agencyId: Long, id: Long): DataFavourite?
 
-    fun getAll(agencyId: Long): List<Favourite>?
+    fun getAll(agencyId: Long): List<DataFavourite>?
 
-    fun create(favourite: Favourite): Favourite?
+    fun create(favourite: DataFavourite): DataFavourite?
 
-    fun update(favourite: Favourite): Boolean
+    fun update(favourite: DataFavourite): Boolean
 
-    fun get(agencyId: Long, identifier: StopIdentifier): Favourite?
+    fun get(agencyId: Long, identifier: StopIdentifier): DataFavourite?
 
-    fun delete(favourite: Favourite): Boolean
+    fun delete(agencyId: Long, stopIdentifier: StopIdentifier): Boolean
+
+    fun hasBeenImported(): Boolean
+
+    fun markImported()
 }

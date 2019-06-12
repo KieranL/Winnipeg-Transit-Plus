@@ -4,12 +4,13 @@ import com.google.android.gms.maps.model.LatLng
 import com.kieran.winnipegbusbackend.common.StopSchedule
 import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.common.LoadResult
+import com.kieran.winnipegbusbackend.common.Stop
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
 
 class SearchResults {
-    private val stops: ArrayList<FavouriteStop> = ArrayList()
+    private val stops: ArrayList<Stop> = ArrayList()
 
     fun loadStops(result: LoadResult<JSONObject>): SearchResults {
         if (result.result != null) {
@@ -20,11 +21,11 @@ class SearchResults {
 
                 if (stops.length() > 0)
                     for (s in 0 until stops.length()) {
-                        val stop = stops.getJSONObject(s)
-                        val favouriteStop = FavouriteStop(stop.getString(TransitApiManager.STOP_NAME_TAG), WinnipegTransitStopIdentifier(stop.getInt(TransitApiManager.STOP_NUMBER_TAG)))
-                        this.stops.add(favouriteStop)
+                        val stopJson = stops.getJSONObject(s)
+                        val stop = Stop(stopJson.getString(TransitApiManager.STOP_NAME_TAG), WinnipegTransitStopIdentifier(stopJson.getInt(TransitApiManager.STOP_NUMBER_TAG)))
+                        this.stops.add(stop)
 
-                        favouriteStop.latLng = getLatLng(stop)
+                        stop.latLng = getLatLng(stopJson)
                     }
             } catch (e: JSONException) {
 
@@ -35,7 +36,7 @@ class SearchResults {
         return this
     }
 
-    fun getStops(): List<FavouriteStop> {
+    fun getStops(): List<Stop> {
         return stops
     }
 
@@ -53,7 +54,7 @@ class SearchResults {
         stops.clear()
     }
 
-    operator fun get(position: Int): FavouriteStop {
+    operator fun get(position: Int): Stop {
         return stops[position]
     }
 }

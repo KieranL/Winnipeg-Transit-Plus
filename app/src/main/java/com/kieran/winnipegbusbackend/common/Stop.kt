@@ -8,10 +8,16 @@ open class Stop : Serializable {
         protected set
     lateinit var identifier: StopIdentifier
         protected set
+    @Transient
+    var latLng: GeoLocation? = null //TODO seperate this somehow?
 
-    constructor(stopName: String, stopIdentifier: StopIdentifier) {
+    open val displayName: String
+        get() = name
+
+    constructor(stopName: String, stopIdentifier: StopIdentifier, latLng: GeoLocation? = null) {
         this.name = stopName
         this.identifier = stopIdentifier
+        this.latLng = latLng
     }
 
     constructor(stop: Stop) {

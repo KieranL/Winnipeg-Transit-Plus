@@ -1,6 +1,6 @@
-package com.kieran.winnipegbus
+package com.kieran.winnipegbus.data
 
-data class Favourite(
+data class DataFavourite (
         val id: Long,
         val agencyId: Long,
         val sortOrder: Int?,

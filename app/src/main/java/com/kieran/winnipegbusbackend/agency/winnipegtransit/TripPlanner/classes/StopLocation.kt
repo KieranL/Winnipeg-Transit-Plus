@@ -16,5 +16,5 @@ class StopLocation : Location {
 
     internal var stopNumber: Int = 0
 
-    constructor(location: StopSchedule?) : super(location?.getLatLng(), location?.name)
+    constructor(location: StopSchedule?) : super(location?.latLng!!, location.name)
 }
