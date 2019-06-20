@@ -25,9 +25,10 @@ class FavouriteStop : Stop, Serializable {
         this.timesUsed = 0
     }
 
-    constructor(name: String, identifier: StopIdentifier, timesUsed: Int, latlng: GeoLocation?, id: Long = -1) : super(name, identifier, latlng) {
+    constructor(name: String, identifier: StopIdentifier, timesUsed: Int, latlng: GeoLocation?, id: Long = -1, alias: String? = null) : super(name, identifier, latlng) {
         this.timesUsed = timesUsed
         this.id = id
+        this.alias = alias
     }
 
     fun use() {

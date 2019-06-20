@@ -11,6 +11,7 @@ import android.widget.EditText
 import android.widget.ListView
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.adapters.StopListAdapter
+import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.common.FavouriteStop
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -48,6 +49,9 @@ class FavouritesActivity : BaseActivity(), AdapterView.OnItemClickListener, OnIt
     }
 
     private fun reloadList() {
+        val swipeRefresh = findViewById<StyledSwipeRefresh>(R.id.favourites_swipeRefresh)
+        swipeRefresh.isRefreshing = true
+
         GlobalScope.launch(Dispatchers.IO) {
             val stops = favouritesService.getAll(sortPreference)
 
@@ -55,6 +59,7 @@ class FavouritesActivity : BaseActivity(), AdapterView.OnItemClickListener, OnIt
                 favouriteStops.clear()
                 favouriteStops.addAll(stops)
                 adapter?.notifyDataSetChanged()
+                swipeRefresh.isRefreshing = false
             }
         }
     }

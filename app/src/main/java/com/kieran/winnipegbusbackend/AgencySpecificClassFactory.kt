@@ -7,7 +7,7 @@ object AgencySpecificClassFactory {
     fun createStopIdentifier(agencyId: Long, identifierString: String): StopIdentifier? {
         return try {
             when(agencyId){
-            1L -> WinnipegTransitStopIdentifier(identifierString.toInt())
+            2L -> WinnipegTransitStopIdentifier(identifierString.toInt())
             else -> null
         }
         }catch (ex: Exception){

@@ -23,7 +23,9 @@ class FavouritesService(private val favouritesRepository: FavouritesRepository, 
             runImport()
         }
 
-        return sort(convertFromDataClass(favouritesRepository.getAll(agencyId) ?: throw Exception()), sortPreference)
+        val dataFavourites = favouritesRepository.getAll(agencyId) ?: throw Exception()
+
+        return sort(convertFromDataClass( dataFavourites ), sortPreference)
     }
 
     private fun runImport() {
@@ -54,7 +56,7 @@ class FavouritesService(private val favouritesRepository: FavouritesRepository, 
         val identifier = AgencySpecificClassFactory.createStopIdentifier(favourite.agencyId, favourite.agencyIdentifier)
         val latlng = if (favourite.latitude != null && favourite.longitude != null) GeoLocation(favourite.latitude, favourite.longitude) else null
 
-        return if (identifier != null) FavouriteStop(favourite.name, identifier, favourite.timesUsed, latlng, favourite.id) else null
+        return if (identifier != null) FavouriteStop(favourite.name, identifier, favourite.timesUsed, latlng, favourite.id, favourite.alias) else null
     }
 
     fun convertFromDataClass(favourites: List<DataFavourite>): List<FavouriteStop> {

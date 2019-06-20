@@ -47,8 +47,18 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
     override fun create(favourite: DataFavourite): DataFavourite? {
         return use {
             return@use try {
-                val id = insert(tableName, "sortOrder" to favourite.sortOrder) //TODO add all properties
-
+                val id = insert(
+                        tableName,
+                        "agencyId" to favourite.agencyId,
+                        "sortOrder" to favourite.sortOrder,
+                        "homeSortOrder" to favourite.homeSortOrder,
+                        "name" to favourite.name,
+                        "alias" to favourite.alias,
+                        "agencyIdentifier" to favourite.agencyIdentifier,
+                        "timesUsed" to favourite.timesUsed,
+                        "latitude" to favourite.latitude,
+                        "longitude" to favourite.longitude,
+                        "agencyMetadata" to favourite.agencyMetadata)
                 get(favourite.agencyId, id)
             } catch (ex: SQLiteException) {
                 null
@@ -59,7 +69,19 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
     override fun update(favourite: DataFavourite): Boolean {
         return use {
             return@use try {
-                val returnCode = update(tableName, "sortOrder" to favourite.sortOrder, "homeSortOrder" to favourite.homeSortOrder, "timesUsed" to favourite.timesUsed).whereSimple("id=?", favourite.id.toString()).exec()
+                val returnCode = update(
+                        tableName,
+                        "agencyId" to favourite.agencyId,
+                        "sortOrder" to favourite.sortOrder,
+                        "homeSortOrder" to favourite.homeSortOrder,
+                        "name" to favourite.name,
+                        "alias" to favourite.alias,
+                        "agencyIdentifier" to favourite.agencyIdentifier,
+                        "timesUsed" to favourite.timesUsed,
+                        "latitude" to favourite.latitude,
+                        "longitude" to favourite.longitude,
+                        "agencyMetadata" to favourite.agencyMetadata
+                ).whereSimple("id=?", favourite.id.toString()).exec()
 
                 returnCode > 0
             } catch (ex: SQLiteException) {
@@ -87,7 +109,7 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
     override fun delete(agencyId: Long, stopIdentifier: StopIdentifier): Boolean {
         return use {
             return@use try {
-                val rowsDeleted = delete(tableName, "agencyId=? and agencyIdentifier=?", "agencyId" to agencyId, "agencyIdentifier" to stopIdentifier.toString())
+                val rowsDeleted = delete(tableName, "agencyId={agencyId} and agencyIdentifier={agencyIdentifier}", "agencyId" to agencyId, "agencyIdentifier" to stopIdentifier.toString())
 
                 rowsDeleted > 0
             } catch (ex: SQLiteException) {
@@ -123,6 +145,10 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
                 ?: SQLiteFavouritesRepository(ctx.applicationContext)
 
         private data class InitializedIdentifier(val identifier:String): StopIdentifier {
+            override fun compareTo(other: StopIdentifier): Int {
+                return 0
+            }
+
             override fun toString(): String {
                 return identifier
             }

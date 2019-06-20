@@ -4,7 +4,14 @@
     android:layout_height="match_parent"
     tools:context="com.kieran.winnipegbus.activities.FavouritesActivity">
 
-    <include layout="@layout/listview_stops" />
+
+    <com.kieran.winnipegbus.views.StyledSwipeRefresh
+        android:id="@+id/favourites_swipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:enabled="false">
+        <include layout="@layout/listview_stops"/>
+    </com.kieran.winnipegbus.views.StyledSwipeRefresh>
 
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"

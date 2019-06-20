@@ -221,9 +221,9 @@ object WinnipegTransitService : TransitService {
     }
 
 
-    private fun loadLatLng(jsonObject: JSONObject): LatLng? {
+    private fun loadLatLng(jsonObject: JSONObject): GeoLocation? {
         return try {
-            return LatLng(jsonObject.getDouble(LATITUDE_TAG), jsonObject.getDouble(LONGITUDE_TAG))
+            return GeoLocation(jsonObject.getDouble(LATITUDE_TAG), jsonObject.getDouble(LONGITUDE_TAG))
         } catch (ex: JSONException) {
             null
         }

@@ -30,7 +30,8 @@ class StopsMapActivity : MapActivity() {
         if (SearchResultsActivity.stops != null) {
             for (favouriteStop in SearchResultsActivity.stops) {
                 val markerOptions = MarkerOptions()
-                markerOptions.position(favouriteStop.latLng)
+
+                markerOptions.position(if (favouriteStop.latLng != null)  LatLng(favouriteStop.latLng!!.latitude, favouriteStop.latLng!!.longitude) else null)
                 markerOptions.title(favouriteStop.identifier.toString())
                 markerOptions.snippet(favouriteStop.name)
                 map!!.addMarker(markerOptions)

@@ -53,12 +53,10 @@ class FavouritesFragment: Fragment(), AdapterView.OnItemClickListener, AdapterVi
     }
 
     private fun reloadList() {
+        val swipeRefresh = activity.findViewById<StyledSwipeRefresh>(R.id.favourites_swipeRefresh)
+        swipeRefresh.isRefreshing = true
         GlobalScope.launch(Dispatchers.IO) {
-            val swipeRefresh = activity.findViewById<StyledSwipeRefresh>(R.id.favourites_swipeRefresh)
             try {
-                swipeRefresh.isRefreshing = true
-
-                delay(5000)
                 val stops = favouritesService.getAll(FavouritesListSortType.FREQUENCY_DESC).take(3)
 
                 activity.runOnUiThread {
