@@ -8,7 +8,6 @@ open class Stop : Serializable {
         protected set
     lateinit var identifier: StopIdentifier
         protected set
-    @Transient
     var latLng: GeoLocation? = null //TODO seperate this somehow?
 
     open val displayName: String
