@@ -15,6 +15,11 @@
         android:paddingRight="4dp"
         android:text="@string/most_used_favourites"/>
 
-    <include layout="@layout/listview_stops" />
-
+    <com.kieran.winnipegbus.views.StyledSwipeRefresh
+        android:id="@+id/favourites_swipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:enabled="false">
+        <include layout="@layout/listview_stops"/>
+    </com.kieran.winnipegbus.views.StyledSwipeRefresh>
 </LinearLayout>

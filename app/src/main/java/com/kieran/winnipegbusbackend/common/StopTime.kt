@@ -1,6 +1,5 @@
 package com.kieran.winnipegbusbackend.common
 
-import android.annotation.SuppressLint
 import java.io.Serializable
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -170,7 +169,6 @@ class StopTime : Comparable<Any>, Serializable {
         }
 
         fun convertStringToStopTime(s: String, format: String): StopTime? {
-            @SuppressLint("SimpleDateFormat")
             val dateFormat = SimpleDateFormat(format)
 
             return try {

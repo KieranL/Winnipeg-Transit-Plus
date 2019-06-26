@@ -22,10 +22,14 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.kieran.winnipegbus.ActivityManager
 import com.kieran.winnipegbus.R
+import com.kieran.winnipegbus.data.SQLiteFavouritesRepository
+import com.kieran.winnipegbusbackend.TransitServiceProvider
 import com.kieran.winnipegbusbackend.common.Stop
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
 import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
 import com.kieran.winnipegbusbackend.exceptions.TransitDataNotFoundException
+import com.kieran.winnipegbusbackend.favourites.FavouritesService
+import com.kieran.winnipegbusbackend.interfaces.TransitService
 
 import java.io.IOException
 
@@ -86,6 +90,14 @@ abstract class BaseActivity : AppCompatActivity() {
             val prefs = PreferenceManager.getDefaultSharedPreferences(this)
             return FavouritesListSortType.getEnum(prefs.getString(getString(R.string.pref_favourites_sort), "0"))
         }
+
+    protected val transitService: TransitService by lazy {
+        TransitServiceProvider.getTransitService()
+    }
+
+    protected val favouritesService: FavouritesService by lazy {
+        getFavouritesService(transitService.getAgencyId())
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(themeResId)
@@ -217,6 +229,11 @@ abstract class BaseActivity : AppCompatActivity() {
         }
 
         showShortToaster(resId)
+    }
+
+    fun getFavouritesService(agencyId: Long): FavouritesService {
+        val favouritesRepository = SQLiteFavouritesRepository.getInstance(this)
+        return FavouritesService.getInstance(favouritesRepository, agencyId)
     }
 
     companion object {

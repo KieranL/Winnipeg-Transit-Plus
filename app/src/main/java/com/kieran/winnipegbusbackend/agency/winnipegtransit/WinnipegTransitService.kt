@@ -63,7 +63,7 @@ object WinnipegTransitService : TransitService {
         return stopFeatures
     }
 
-    override suspend fun getRouteStops(route: RouteIdentifier): List<FavouriteStop> {
+    override suspend fun getRouteStops(route: RouteIdentifier): List<Stop> {
         val url = TransitApiManager.generateSearchQuery((route as WinnipegTransitRouteIdentifier).routeNumber)
         val result = TransitApiManager.getJson(url)
 
@@ -75,7 +75,7 @@ object WinnipegTransitService : TransitService {
             throw result.exception!!
     }
 
-    override suspend fun findStop(name: String): List<FavouriteStop> {
+    override suspend fun findStop(name: String): List<Stop> {
         val url = TransitApiManager.generateSearchQuery(name)
         val result = TransitApiManager.getJson(url)
 
@@ -87,7 +87,7 @@ object WinnipegTransitService : TransitService {
             throw result.exception!!
     }
 
-    override suspend fun findClosestStops(location: Location, distance: Int, stopCount: Int): List<FavouriteStop> {
+    override suspend fun findClosestStops(location: Location, distance: Int, stopCount: Int): List<Stop> {
         val url = TransitApiManager.generateSearchQuery((location as GeoLocation), distance)
         val result = TransitApiManager.getJson(url)
 
@@ -221,9 +221,9 @@ object WinnipegTransitService : TransitService {
     }
 
 
-    private fun loadLatLng(jsonObject: JSONObject): LatLng? {
+    private fun loadLatLng(jsonObject: JSONObject): GeoLocation? {
         return try {
-            return LatLng(jsonObject.getDouble(LATITUDE_TAG), jsonObject.getDouble(LONGITUDE_TAG))
+            return GeoLocation(jsonObject.getDouble(LATITUDE_TAG), jsonObject.getDouble(LONGITUDE_TAG))
         } catch (ex: JSONException) {
             null
         }
@@ -343,6 +343,9 @@ object WinnipegTransitService : TransitService {
         throw TransitDataNotFoundException()
     }
 
+    override fun getAgencyId(): Long {
+        return 2
+    }
 
     private val STOP_TAG = "stop"
     private val STOP_SCHEDULE_TAG = "stop-schedule"

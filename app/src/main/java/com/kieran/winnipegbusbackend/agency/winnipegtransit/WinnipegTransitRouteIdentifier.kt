@@ -2,14 +2,7 @@ package com.kieran.winnipegbusbackend.agency.winnipegtransit
 
 import com.kieran.winnipegbusbackend.interfaces.RouteIdentifier
 
-class WinnipegTransitRouteIdentifier(val routeNumber: Int) : RouteIdentifier {
-    override fun equals(other: Any?): Boolean {
-        if (other == null)
-            return false
-
-        return compareTo(other) == 0
-    }
-
+data class WinnipegTransitRouteIdentifier(val routeNumber: Int) : RouteIdentifier {
     override fun toString(): String {
         return routeNumber.toString()
     }

@@ -1,12 +1,11 @@
 package com.kieran.winnipegbusbackend.common
 
 
-import com.google.android.gms.maps.model.LatLng
 import com.kieran.winnipegbusbackend.interfaces.ScheduledStopKey
 import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
 import java.util.*
 
-class StopSchedule(stopName: String, stopIdentifier: StopIdentifier, private var routeList: ArrayList<RouteSchedule>, private var latLng: LatLng?) : Stop(stopName, stopIdentifier) {
+class StopSchedule(stopName: String, stopIdentifier: StopIdentifier, private var routeList: ArrayList<RouteSchedule>, latLng: GeoLocation?) : Stop(stopName, stopIdentifier, latLng) {
 
     val scheduledStops: List<ScheduledStop>
         get() {
@@ -40,9 +39,5 @@ class StopSchedule(stopName: String, stopIdentifier: StopIdentifier, private var
 
     fun createStopFeatures(): StopFeatures {
         return StopFeatures(identifier, name, latLng)
-    }
-
-    fun getLatLng(): LatLng? {
-        return latLng
     }
 }

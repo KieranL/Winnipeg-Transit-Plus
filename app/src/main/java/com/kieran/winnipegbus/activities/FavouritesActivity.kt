@@ -11,30 +11,15 @@ import android.widget.EditText
 import android.widget.ListView
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.adapters.StopListAdapter
-import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouriteStopsList
-import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
+import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.common.FavouriteStop
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class FavouritesActivity : BaseActivity(), AdapterView.OnItemClickListener, OnItemLongClickListener {
     private var adapter: StopListAdapter? = null
-
-    override fun onRestart() {
-        super.onRestart()
-        FavouriteStopsList.sort(sortPreference)
-        reloadList()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        FavouriteStopsList.sort(sortPreference)
-        reloadList()
-    }
-
-    private fun reloadList() {
-        FavouriteStopsList.isLoadNeeded = true
-        getFavouritesList()
-        adapter!!.notifyDataSetChanged()
-    }
+    private val favouriteStops = ArrayList<FavouriteStop>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,18 +30,38 @@ class FavouritesActivity : BaseActivity(), AdapterView.OnItemClickListener, OnIt
         val listView = findViewById<ListView>(R.id.stops_listView)
 
         initializeAdsIfEnabled()
-        getFavouritesList()
 
         listView.onItemClickListener = this
         listView.onItemLongClickListener = this
 
-        adapter = StopListAdapter(this, R.layout.listview_stops_row)
+        adapter = StopListAdapter(this, R.layout.listview_stops_row, favouriteStops)
         listView.adapter = adapter
     }
 
-    private fun getFavouritesList() {
-        FavouriteStopsList.loadFavourites()
-        StopListAdapter.sortPreference = sortPreference
+    override fun onRestart() {
+        super.onRestart()
+        reloadList()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        reloadList()
+    }
+
+    private fun reloadList() {
+        val swipeRefresh = findViewById<StyledSwipeRefresh>(R.id.favourites_swipeRefresh)
+        swipeRefresh.isRefreshing = true
+
+        GlobalScope.launch(Dispatchers.IO) {
+            val stops = favouritesService.getAll(sortPreference)
+
+            runOnUiThread {
+                favouriteStops.clear()
+                favouriteStops.addAll(stops)
+                adapter?.notifyDataSetChanged()
+                swipeRefresh.isRefreshing = false
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -64,15 +69,15 @@ class FavouritesActivity : BaseActivity(), AdapterView.OnItemClickListener, OnIt
         return true
     }
 
-    private fun openStopTimesAndUse(favouriteStop: FavouriteStop?) {
-        favouriteStop!!.use()
-        FavouriteStopsList.saveFavouriteStops()
+    private fun openStopTimesAndUse(favouriteStop: FavouriteStop) {
+        favouriteStop.use()
+        favouritesService.update(favouriteStop)
 
         openStopTimes(favouriteStop)
     }
 
     override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-        openStopTimesAndUse(adapter!!.getItem(position))
+        openStopTimesAndUse(adapter!!.getItem(position) as FavouriteStop)
     }
 
     override fun onItemLongClick(parent: AdapterView<*>, view: View, position: Int, id: Long): Boolean {
@@ -81,22 +86,22 @@ class FavouritesActivity : BaseActivity(), AdapterView.OnItemClickListener, OnIt
 
         alertDialog.setMessage(R.string.edit_favourite_dialog_title)
         alertDialog.setPositiveButton(R.string.delete) { _, _ ->
-            FavouriteStopsList.remove((adapter!!.getItem(position)!!.identifier as WinnipegTransitStopIdentifier).stopNumber)
+            favouritesService.delete((adapter!!.getItem(position)!!.identifier))
             reloadList()
         }
 
         alertDialog.setNeutralButton(R.string.rename) { _, _ ->
             val renameDialog = AlertDialog.Builder(context)
             val editText = EditText(context)
-            val favouriteStop = FavouriteStopsList[position]
+            val favouriteStop = favouriteStops[position]
             editText.setText(favouriteStop.displayName)
             renameDialog.setView(editText)
 
             renameDialog.setNeutralButton(R.string.default_label, null)
 
             renameDialog.setPositiveButton(R.string.ok) { _, _ ->
-                FavouriteStopsList[position].alias = editText.text.toString()
-                FavouriteStopsList.saveFavouriteStops()
+                favouriteStop.alias = editText.text.toString()
+                favouritesService.update(favouriteStop)
                 reloadList()
             }
             renameDialog.setNegativeButton(R.string.cancel, null)

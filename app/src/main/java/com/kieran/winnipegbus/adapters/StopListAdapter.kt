@@ -10,21 +10,13 @@ import android.widget.TextView
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouriteStopsList
 import com.kieran.winnipegbusbackend.common.FavouriteStop
+import com.kieran.winnipegbusbackend.common.Stop
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
 
-class StopListAdapter : ArrayAdapter<FavouriteStop> {
-    private var layoutResourceId: Int = 0
-    private var stops: List<FavouriteStop>? = null
+class StopListAdapter(context: Context, private var layoutResourceId: Int, private var stops: List<Stop>) : ArrayAdapter<Stop>(context, layoutResourceId, stops) {
     private var inflater: LayoutInflater? = null
 
-    constructor(context: Context, layoutResourceId: Int) : super(context, layoutResourceId, FavouriteStopsList.getFavouriteStopsSorted(sortPreference!!)) {
-        this.layoutResourceId = layoutResourceId
-        inflater = (context as Activity).layoutInflater
-    }
-
-    constructor(context: Context, layoutResourceId: Int, stops: List<FavouriteStop>) : super(context, layoutResourceId, stops) {
-        this.stops = stops
-        this.layoutResourceId = layoutResourceId
+    init {
         inflater = (context as Activity).layoutInflater
     }
 
@@ -44,10 +36,7 @@ class StopListAdapter : ArrayAdapter<FavouriteStop> {
             holder = row.tag as StopHolder
         }
 
-        val favouriteStop: FavouriteStop = if (stops != null)
-            stops!![position]
-        else
-            FavouriteStopsList[position]
+        val favouriteStop: Stop = stops[position]
 
         holder.stopNumber!!.text = favouriteStop.identifier.toString()
         holder.stopName!!.text = favouriteStop.displayName
@@ -58,9 +47,5 @@ class StopListAdapter : ArrayAdapter<FavouriteStop> {
     internal class StopHolder {
         var stopNumber: TextView? = null
         var stopName: TextView? = null
-    }
-
-    companion object {
-        var sortPreference: FavouritesListSortType? = null
     }
 }

@@ -6,13 +6,12 @@ import android.view.View
 import android.widget.ListView
 import android.widget.RelativeLayout
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.adapters.StopFeaturesAdapter
-import com.kieran.winnipegbusbackend.TransitServiceProvider
 import com.kieran.winnipegbusbackend.common.StopFeatures
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
-import com.kieran.winnipegbusbackend.interfaces.TransitService
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -23,12 +22,10 @@ class StopInfoActivity : MapActivity() {
     private var stopFeatures: StopFeatures? = null
     private var adapter: StopFeaturesAdapter? = null
     private var task: Job? = null
-    private lateinit var transitService: TransitService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_stop_info)
-        transitService = TransitServiceProvider.getTransitService()
         stopFeatures = intent.getSerializableExtra(STOP_FEATURES) as StopFeatures
 
         title = String.format(Locale.CANADA, ACTIONBAR_TEXT, stopFeatures!!.identifier.toString())
@@ -68,10 +65,11 @@ class StopInfoActivity : MapActivity() {
     }
 
     override fun onConnected(dataBundle: Bundle?) {
-        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(stopFeatures!!.getLatLng(), 17f)
+        val latLng = LatLng(stopFeatures!!.latLng!!.latitude, stopFeatures!!.latLng!!.longitude)
+        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17f)
         map!!.moveCamera(cameraUpdate)
         val markerOptions = MarkerOptions()
-        markerOptions.position(stopFeatures!!.getLatLng())
+        markerOptions.position(latLng)
         map!!.addMarker(markerOptions)
         map!!.isTrafficEnabled = true
 
