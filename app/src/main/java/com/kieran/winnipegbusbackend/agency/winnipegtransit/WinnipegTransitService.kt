@@ -377,6 +377,6 @@ object WinnipegTransitService : TransitService {
     private val BUS_NUMBER_TAG = "key"
     private val CANCELLED_STATUS_TAG = "cancelled"
 
-    val TWO_BUS_NUMBERS = intArrayOf(971, 972, 973, 974, 975, 976, 977, 978, 979, 981, 982, 983, 984, 985, 986, 987, 988, 989, 990)
+    val TWO_BUS_NUMBERS = arrayListOf(971, 972, 973, 974, 975, 976, 977, 978, 979, 981, 982, 983, 984, 985, 986, 987, 988, 989, 990, *(371..399).toList().toTypedArray())
 
 }
