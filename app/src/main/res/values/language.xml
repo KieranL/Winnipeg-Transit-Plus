@@ -84,6 +84,7 @@
     <string name="pref_key_theme">pref_theme</string>
     <string name="pref_schedule_load_interval">pref_schedule_load_interval</string>
     <string name="pref_key_nearby_distance">pref_nearby_distance</string>
+    <string name="pref_title_refresh_on_shake">Refresh on device shake</string>
 
     <!-- Preference Option Labels -->
     <string-array name="pref_theme">

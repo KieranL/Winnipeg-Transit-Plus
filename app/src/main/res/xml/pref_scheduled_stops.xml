@@ -11,6 +11,12 @@
         android:defaultValue="true"
         android:widgetLayout="@layout/checkbox"/>
 
+    <CheckBoxPreference
+        android:key="pref_refresh_on_shake"
+        android:title="@string/pref_title_refresh_on_shake"
+        android:defaultValue="true"
+        android:widgetLayout="@layout/checkbox"/>
+
     <ListPreference
         android:key="@string/pref_schedule_load_interval"
         android:title="@string/pref_title_schedule_load_interval"

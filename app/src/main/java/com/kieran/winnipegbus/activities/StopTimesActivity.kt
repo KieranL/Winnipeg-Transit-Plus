@@ -343,7 +343,9 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
     }
 
     override fun onShake() {
-        refresh()
+        if(isBooleanSettingEnabled("pref_refresh_on_shake")) {
+            refresh()
+        }
     }
 
     companion object {
