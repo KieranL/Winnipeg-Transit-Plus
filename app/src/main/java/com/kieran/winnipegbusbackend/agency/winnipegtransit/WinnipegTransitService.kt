@@ -11,6 +11,7 @@ import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
 import com.kieran.winnipegbusbackend.exceptions.TransitDataNotFoundException
 import com.kieran.winnipegbusbackend.interfaces.*
+import com.rollbar.android.Rollbar
 import kotlinx.coroutines.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -47,15 +48,15 @@ object WinnipegTransitService : TransitService {
                         val featureName = featureNode.getString("name")
                         val featureCount = featureNode.getInt("count")
                         StopFeature(featureCount, featureName)
-                    } catch (e: JSONException) {
-                        //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
+                    } catch (ex: JSONException) {
+                        Rollbar.instance()?.error(ex)
                         null
                     }
                 }
 
                 stopFeatures.loadFeatures(stopFeatureList)
-            } catch (e: JSONException) {
-                //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
+            } catch (ex: JSONException) {
+                Rollbar.instance()?.error(ex)
             }
 
         }
@@ -141,7 +142,8 @@ object WinnipegTransitService : TransitService {
 
                         throw result.exception
                     }
-                } catch (e: Exception) {
+                } catch (ex: Exception) {
+                    Rollbar.instance()?.error(ex)
                 }
 
             }
@@ -193,6 +195,7 @@ object WinnipegTransitService : TransitService {
 
                 return stopNumbers
             } catch (ex: JSONException) {
+                Rollbar.instance()?.error(ex)
                 throw TransitDataNotFoundException()
             }
         } else {
@@ -216,6 +219,7 @@ object WinnipegTransitService : TransitService {
             stopIdentifier = stop ?: loadStopNumber(jsonObject.getJSONObject(STOP_TAG))!!
             return StopSchedule(name!!, stopIdentifier, routes, latLng!!)
         } catch (ex: JSONException) {
+            Rollbar.instance()?.error(ex)
             throw TransitDataNotFoundException()
         }
     }
@@ -225,6 +229,7 @@ object WinnipegTransitService : TransitService {
         return try {
             return GeoLocation(jsonObject.getDouble(LATITUDE_TAG), jsonObject.getDouble(LONGITUDE_TAG))
         } catch (ex: JSONException) {
+            Rollbar.instance()?.error(ex)
             null
         }
 
@@ -234,6 +239,7 @@ object WinnipegTransitService : TransitService {
         return try {
             jsonObject.getString(TransitApiManager.STOP_NAME_TAG)
         } catch (ex: JSONException) {
+            Rollbar.instance()?.error(ex)
             null
         }
 
@@ -243,6 +249,7 @@ object WinnipegTransitService : TransitService {
         return try {
             return WinnipegTransitStopIdentifier(jsonObject.getInt(TransitApiManager.STOP_NUMBER_TAG))
         } catch (ex: JSONException) {
+            Rollbar.instance()?.error(ex)
             null
         }
 
@@ -266,7 +273,7 @@ object WinnipegTransitService : TransitService {
                 routeList.add(routeSchedule)
             }
         } catch (ex: JSONException) {
-            //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
+            Rollbar.instance()?.error(ex)
         }
 
         return routeList
@@ -283,13 +290,13 @@ object WinnipegTransitService : TransitService {
                         try {
                             val scheduledStop = createScheduleStop(it, routeIdentifier, coverageType)
                             scheduledStops.add(scheduledStop)
-                        } catch (e: Exception) {
-                            //blank
+                        } catch (ex: Exception) {
+                            Rollbar.instance()?.error(ex)
                         }
                     }
 
-        } catch (e: JSONException) {
-            e.printStackTrace()
+        } catch (ex: JSONException) {
+            Rollbar.instance()?.error(ex)
         }
 
         return scheduledStops
@@ -335,8 +342,7 @@ object WinnipegTransitService : TransitService {
 
                 return ScheduledStop(routeVariantName, estimatedArrivalTime, estimatedDepartureTime!!, scheduledArrivalTime, scheduledDepartureTime!!, isCancelled, hasBikeRack, hasWifi, busIdentifier, key, routeKey, routeIdentifier, coverageType, isTwoBus)
             } catch (ex: JSONException) {
-                Log.e("what", ex.toString())
-                //Intentionally blank because occasionally Winnipeg Transits API leaves out some fields
+                Rollbar.instance()?.error(ex)
             }
         }
 

@@ -7,6 +7,7 @@ import com.kieran.winnipegbusbackend.common.LoadResult
 import com.kieran.winnipegbusbackend.common.StopTime
 import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
 import com.kieran.winnipegbusbackend.exceptions.TransitDataNotFoundException
+import com.rollbar.android.Rollbar
 import org.json.JSONObject
 import java.lang.Double
 import java.net.URL
@@ -67,6 +68,7 @@ object TransitApiManager {
 
             LoadResult(obj, null)
         } catch (ex: Exception) {
+            Rollbar.instance()?.error(ex, "Error calling Winnipeg Transit API")
             LoadResult(null, ex)
         }
     }
