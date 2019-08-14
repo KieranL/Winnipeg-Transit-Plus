@@ -9,10 +9,7 @@ import com.rollbar.android.Rollbar
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
+import java.io.*
 import java.util.*
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -61,6 +58,8 @@ object FavouriteStopsList {
                         favouritesList.add(favouriteStop)
                 }
                 isLoadNeeded = false
+            }catch (ex: FileNotFoundException) {
+                //skip
             } catch (ex: Exception) {
                 Rollbar.instance()?.error(ex)
                 isLoadNeeded = true

@@ -328,11 +328,11 @@ object WinnipegTransitService : TransitService {
                     isTwoBus =  TWO_BUS_NUMBERS.contains(busNumber)
                 }
 
-                val key = WinnipegTransitScheduledStopKey(stop.getString(STOP_KEY_TAG))
+                val key = WinnipegTransitScheduledStopKey(getJsonString(stop, STOP_KEY_TAG) ?: "")
                 val isCancelled = stop.getBoolean(CANCELLED_STATUS_TAG)
                 val variant = stop.getJSONObject(VARIANT_TAG)
-                val routeVariantName = variant.getString(VARIANT_NAME_TAG)
-                val routeKey = WinnipegTransitTripIdentifier(variant.getString(VARIANT_KEY_TAG))
+                val routeVariantName = getJsonString(variant, VARIANT_NAME_TAG) ?: ""
+                val routeKey = WinnipegTransitTripIdentifier(getJsonString(variant, VARIANT_KEY_TAG) ?: "")
 
                 if (times.has(ARRIVAL_TAG)) {
                     val arrival = times.getJSONObject(ARRIVAL_TAG)
@@ -347,6 +347,15 @@ object WinnipegTransitService : TransitService {
         }
 
         throw TransitDataNotFoundException()
+    }
+
+    private fun getJsonString(json: JSONObject, key: String): String? {
+        return try {
+            json.getString(key)
+        } catch (ex: JSONException) {
+            Rollbar.instance()?.error(ex, "Error getting JSON field $key")
+            throw ex
+        }
     }
 
     override fun getAgencyId(): Long {

@@ -68,7 +68,6 @@ object TransitApiManager {
 
             LoadResult(obj, null)
         } catch (ex: Exception) {
-            Rollbar.instance()?.error(ex, "Error calling Winnipeg Transit API")
             LoadResult(null, ex)
         }
     }
