@@ -27,6 +27,7 @@ import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.interfaces.TransitService
+import com.rollbar.android.Rollbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -71,6 +72,8 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).build()
         connectClient()
+
+        Rollbar.init(this)
     }
 
     override fun onResume() {
@@ -91,7 +94,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
                     }
                 }
             }catch (ex: Exception){
-
+                Rollbar.instance()?.error(ex)
             }
         }
     }
@@ -136,8 +139,8 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
                 fragmentTransaction.remove(favouritesFragment).commit()
                 favouritesFragment = null
             }
-        } catch (e: Exception) {
-            // TODO log this when an error logger is built
+        } catch (ex: Exception) {
+            Rollbar.instance()?.error(ex)
         }
     }
 

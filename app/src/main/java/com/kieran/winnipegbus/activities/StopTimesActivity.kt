@@ -30,6 +30,7 @@ import com.kieran.winnipegbusbackend.favourites.FavouritesService
 import com.kieran.winnipegbusbackend.interfaces.RouteIdentifier
 import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
 import com.kieran.winnipegbusbackend.interfaces.TransitService
+import com.rollbar.android.Rollbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -167,12 +168,13 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
                     title.text = stopName
                     this@StopTimesActivity.stopSchedule = stopSchedule
                 }
-            } catch (e: Exception) {
+            } catch (ex: Exception) {
+                Rollbar.instance()?.error(ex)
                 runOnUiThread {
-                    handleException(e)
+                    handleException(ex)
 
                     if (loading) {
-                        if (stopSchedule == null && e is IOException)
+                        if (stopSchedule == null && ex is IOException)
                             title.setText(R.string.network_error)
                     }
                 }

@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import com.kieran.winnipegbusbackend.interfaces.FavouritesRepository
 import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
+import com.rollbar.android.Rollbar
 import org.jetbrains.anko.db.*
 
 class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesRepository, ManagedSQLiteOpenHelper(ctx, "transit_db", null, 1) {
@@ -21,7 +22,7 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
                     favourite = parseOpt(favouriteRowParser)
                 }
             } catch (ex: SQLiteException) {
-                // Well at least we tried
+                Rollbar.instance()?.error(ex)
             }
         }
 
@@ -37,7 +38,7 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
                     favourites = parseList(favouriteRowParser)
                 }
             } catch (ex: SQLiteException) {
-                // Well at least we tried
+                Rollbar.instance()?.error(ex)
             }
         }
 
@@ -61,6 +62,7 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
                         "agencyMetadata" to favourite.agencyMetadata)
                 get(favourite.agencyId, id)
             } catch (ex: SQLiteException) {
+                Rollbar.instance()?.error(ex)
                 null
             }
         }
@@ -99,7 +101,7 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
                     favourite = parseOpt(favouriteRowParser)
                 }
             } catch (ex: SQLiteException) {
-                // Well at least we tried
+                Rollbar.instance()?.error(ex)
             }
         }
 
@@ -113,6 +115,7 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
 
                 rowsDeleted > 0
             } catch (ex: SQLiteException) {
+                Rollbar.instance()?.error(ex)
                 false
             }
         }

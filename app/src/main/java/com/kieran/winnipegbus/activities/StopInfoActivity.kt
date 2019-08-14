@@ -12,6 +12,7 @@ import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.adapters.StopFeaturesAdapter
 import com.kieran.winnipegbusbackend.common.StopFeatures
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
+import com.rollbar.android.Rollbar
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -38,8 +39,9 @@ class StopInfoActivity : MapActivity() {
         task = GlobalScope.launch(IO) {
             try {
                 stopFeatures = transitService.getStopDetails(stopFeatures!!.identifier, stopFeatures!!)
-            } catch (e: Exception) {
-                runOnUiThread { handleException(e) }
+            } catch (ex: Exception) {
+                Rollbar.instance()?.error(ex)
+                runOnUiThread { handleException(ex) }
             }
 
             runOnUiThread { showStopFeatures() }

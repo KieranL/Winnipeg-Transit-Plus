@@ -14,6 +14,7 @@ import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.kieran.winnipegbus.R
+import com.rollbar.android.Rollbar
 
 abstract class GoogleApiActivity : BaseActivity(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     protected var googleApiClient: GoogleApiClient? = null
@@ -63,8 +64,8 @@ abstract class GoogleApiActivity : BaseActivity(), GoogleApiClient.ConnectionCal
         if (connectionResult.hasResolution()) {
             try {
                 connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST)
-            } catch (e: IntentSender.SendIntentException) {
-                e.printStackTrace()
+            } catch (ex: IntentSender.SendIntentException) {
+                Rollbar.instance()?.error(ex)
             }
 
         } else {
@@ -94,7 +95,8 @@ abstract class GoogleApiActivity : BaseActivity(), GoogleApiClient.ConnectionCal
             locationRequest.fastestInterval = LOCATION_REFRESH_INTERVAL.toLong()
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this as LocationListener)
             locationRequest
-        } catch (e: Exception) {
+        } catch (ex: Exception) {
+            Rollbar.instance()?.error(ex)
             null
         }
 
