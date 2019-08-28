@@ -28,6 +28,7 @@ import com.kieran.winnipegbusbackend.enums.SearchQueryType
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.interfaces.TransitService
 import com.rollbar.android.Rollbar
+import com.rollbar.notifier.config.ConfigBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -73,7 +74,8 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
                 .addOnConnectionFailedListener(this).build()
         connectClient()
 
-        Rollbar.init(this)
+        Rollbar.init(this, null, null, false, true)
+
     }
 
     override fun onResume() {
