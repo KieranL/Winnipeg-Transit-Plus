@@ -54,8 +54,6 @@ class FavouritesFragment: Fragment(), AdapterView.OnItemClickListener, AdapterVi
     }
 
     private fun reloadList() {
-        val swipeRefresh = activity.findViewById<StyledSwipeRefresh>(R.id.favourites_swipeRefresh)
-        swipeRefresh.isRefreshing = true
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 val stops = favouritesService.getAll(FavouritesListSortType.FREQUENCY_DESC).take(3)
@@ -65,12 +63,10 @@ class FavouritesFragment: Fragment(), AdapterView.OnItemClickListener, AdapterVi
                     topFavourites.addAll(stops)
 
                     adapter.notifyDataSetChanged()
-                    swipeRefresh.isRefreshing = false
                 }
             } catch (ex: Exception) {
                 Rollbar.instance()?.error(ex)
                 activity.runOnUiThread {
-                    swipeRefresh.isRefreshing = false
                 }
             }
         }
