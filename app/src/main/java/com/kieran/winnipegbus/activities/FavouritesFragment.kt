@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.Fragment
 import android.content.DialogInterface
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,7 +57,9 @@ class FavouritesFragment: Fragment(), AdapterView.OnItemClickListener, AdapterVi
     private fun reloadList() {
         GlobalScope.launch(Dispatchers.IO) {
             try {
-                val stops = favouritesService.getAll(FavouritesListSortType.FREQUENCY_DESC).take(3)
+                val prefs = PreferenceManager.getDefaultSharedPreferences(getBaseActivity())
+                val numberToShow = prefs.getString("pref_favourites_on_home_count", "3").toInt()
+                val stops = favouritesService.getAll(FavouritesListSortType.FREQUENCY_DESC).take(numberToShow)
 
                 activity.runOnUiThread {
                     topFavourites.clear()
