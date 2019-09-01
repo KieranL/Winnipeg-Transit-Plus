@@ -73,11 +73,11 @@ class FavouritesService(private val favouritesRepository: FavouritesRepository, 
         return convertedFavourites
     }
 
-    fun convertToDataClass(favourite: FavouriteStop, agencyId: Long): DataFavourite {
+    private fun convertToDataClass(favourite: FavouriteStop, agencyId: Long): DataFavourite {
         return DataFavourite(favourite.id, agencyId, null, null, favourite.name, favourite.alias, favourite.identifier.toString(), favourite.timesUsed, favourite.latLng?.latitude, favourite.latLng?.longitude, null)
     }
 
-    fun sort(favouritesList: List<FavouriteStop>, sortType: FavouritesListSortType): List<FavouriteStop> {
+    private fun sort(favouritesList: List<FavouriteStop>, sortType: FavouritesListSortType): List<FavouriteStop> {
         return favouritesList.sortedWith(Comparator{ stop1, stop2 ->
             when (sortType) {
                 FavouritesListSortType.STOP_NUMBER_ASC -> stop1.identifier.compareTo(stop2.identifier)

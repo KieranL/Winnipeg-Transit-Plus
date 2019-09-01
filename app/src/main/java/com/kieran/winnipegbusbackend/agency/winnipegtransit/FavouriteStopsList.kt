@@ -1,6 +1,5 @@
 package com.kieran.winnipegbusbackend.agency.winnipegtransit
 
-import android.util.Xml
 import com.kieran.winnipegbus.activities.BaseActivity
 import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.common.LoadResult

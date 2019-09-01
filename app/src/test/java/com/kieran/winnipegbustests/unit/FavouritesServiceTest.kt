@@ -4,6 +4,7 @@ import com.kieran.winnipegbus.data.DataFavourite
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
 import com.kieran.winnipegbusbackend.favourites.FavouritesService
 import com.kieran.winnipegbusbackend.interfaces.FavouritesRepository
+import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
@@ -13,17 +14,18 @@ import org.junit.jupiter.api.TestInstance
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FavouritesServiceTest {
     private lateinit var favouritesService: FavouritesService
+    private lateinit var favouritesRepoMock: FavouritesRepository
 
     @BeforeAll
     fun init() {
-        val favouritesRepositoryMock = mock<FavouritesRepository> {}
+        favouritesRepoMock = mock {}
 
-        this.favouritesService = FavouritesService.getInstance(favouritesRepositoryMock, 1)
+        this.favouritesService = FavouritesService.getInstance(favouritesRepoMock, 1)
     }
 
     @Test
     fun testConvertAll() {
-        val favourites = listOf<DataFavourite>(
+        val favourites = listOf(
                 DataFavourite(1, 1, null, null, "test", null, "12345", 9, 15.05, 97.0123, null),
                 DataFavourite(2, 0, null, null, "test", null, "12345", 9, null, null, null)
         )
@@ -51,5 +53,15 @@ class FavouritesServiceTest {
         val converted = favouritesService.convertFromDataClass(favourite)
 
         assertNull(converted)
+    }
+
+    @Test
+    fun testGetAll() {
+        favouritesRepoMock = mock {
+            on { hasBeenImported() } doReturn true
+        }
+
+        this.favouritesService = FavouritesService.getInstance(favouritesRepoMock, 1)
+        favouritesService.getAll()
     }
 }
