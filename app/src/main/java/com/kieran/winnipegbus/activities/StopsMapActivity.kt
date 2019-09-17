@@ -8,6 +8,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.kieran.winnipegbus.R
+import com.kieran.winnipegbusbackend.AgencySpecificClassFactory
 import com.kieran.winnipegbusbackend.TransitServiceProvider
 import com.kieran.winnipegbusbackend.common.Stop
 import com.kieran.winnipegbusbackend.interfaces.TransitService
@@ -39,7 +40,7 @@ class StopsMapActivity : MapActivity() {
         }
 
         map!!.isTrafficEnabled = true
-        map!!.setOnInfoWindowClickListener { marker -> openStopTimes(Stop(marker.snippet, transitService.parseStringToStopIdentifier(marker.title))) }
+        map!!.setOnInfoWindowClickListener { marker -> openStopTimes(Stop(marker.snippet, AgencySpecificClassFactory.createStopIdentifier(transitService.getAgencyId(), marker.title)!!)) }
         onConnected()
 
         moveMap()

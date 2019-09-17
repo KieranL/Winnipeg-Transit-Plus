@@ -1,9 +1,9 @@
 package com.kieran.winnipegbustests.unit
 
-import com.kieran.winnipegbus.data.DataFavourite
+import com.kieran.winnipegbusbackend.favourites.DataFavourite
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
 import com.kieran.winnipegbusbackend.favourites.FavouritesService
-import com.kieran.winnipegbusbackend.interfaces.FavouritesRepository
+import com.kieran.winnipegbusbackend.favourites.FavouritesRepository
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import org.junit.jupiter.api.Assertions.*

@@ -19,6 +19,7 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationServices
 import com.kieran.winnipegbus.R
+import com.kieran.winnipegbusbackend.AgencySpecificClassFactory
 import com.kieran.winnipegbusbackend.TransitServiceProvider
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouriteStopsList
 import com.kieran.winnipegbusbackend.common.SearchQuery
@@ -211,7 +212,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
                 }
 
                 alert.setView(wv)
-                alert.setNegativeButton(R.string.close, { dialog, id -> dialog.dismiss() })
+                alert.setNegativeButton(R.string.close) { dialog, _ -> dialog.dismiss() }
                 alert.show()
             }
         }
@@ -234,7 +235,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
 
         when (transitService.getSearchQueryType(searchText)) {
             SearchQueryType.STOP -> {
-                openStopTimes(Stop(transitService.parseStringToStopIdentifier(searchText)))
+                openStopTimes(Stop(AgencySpecificClassFactory.createStopIdentifier(transitService.getAgencyId(), searchText)!!))
             }
             SearchQueryType.ROUTE_NUMBER -> {
                 val intent = Intent(this, SearchResultsActivity::class.java)

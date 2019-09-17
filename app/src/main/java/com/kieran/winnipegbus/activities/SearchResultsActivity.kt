@@ -16,6 +16,7 @@ import com.google.android.gms.location.LocationServices
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.adapters.StopListAdapter
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
+import com.kieran.winnipegbusbackend.AgencySpecificClassFactory
 import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.common.GeoLocation
 import com.kieran.winnipegbusbackend.common.SearchQuery
@@ -95,7 +96,7 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
                                     ArrayList()
                                 }
                             }
-                            SearchQueryType.ROUTE_NUMBER -> transitService.getRouteStops(transitService.parseStringToRouteIdentifier(searchQuery!!.query))
+                            SearchQueryType.ROUTE_NUMBER -> transitService.getRouteStops(AgencySpecificClassFactory.createRouteIdentifier(transitService.getAgencyId(), searchQuery!!.query)!!)
                             else -> {
                                 showLongToaster(R.string.no_results_found)
                                 ArrayList()

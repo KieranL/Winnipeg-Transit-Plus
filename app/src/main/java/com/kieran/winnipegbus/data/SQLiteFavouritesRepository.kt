@@ -3,7 +3,8 @@ package com.kieran.winnipegbus.data
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
-import com.kieran.winnipegbusbackend.interfaces.FavouritesRepository
+import com.kieran.winnipegbusbackend.favourites.DataFavourite
+import com.kieran.winnipegbusbackend.favourites.FavouritesRepository
 import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
 import com.rollbar.android.Rollbar
 import org.jetbrains.anko.db.*

@@ -1,12 +1,10 @@
 package com.kieran.winnipegbusbackend.favourites
 
-import com.kieran.winnipegbus.data.DataFavourite
 import com.kieran.winnipegbusbackend.AgencySpecificClassFactory
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouritesImporter
 import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.common.GeoLocation
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
-import com.kieran.winnipegbusbackend.interfaces.FavouritesRepository
 import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
 
 class FavouritesService(private val favouritesRepository: FavouritesRepository, private val agencyId: Long) {

@@ -26,9 +26,5 @@ interface TransitService {
 
     fun getSearchQueryType(searchText: String): SearchQueryType
 
-    fun parseStringToStopIdentifier(text: String): StopIdentifier
-
-    fun parseStringToRouteIdentifier(text: String): RouteIdentifier
-
     fun getAgencyId(): Long
 }

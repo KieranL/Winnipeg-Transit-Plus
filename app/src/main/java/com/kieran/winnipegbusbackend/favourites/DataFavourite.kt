@@ -1,4 +1,4 @@
-package com.kieran.winnipegbus.data
+package com.kieran.winnipegbusbackend.favourites
 
 data class DataFavourite (
         val id: Long,

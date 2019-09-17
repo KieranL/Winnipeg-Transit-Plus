@@ -1,6 +1,6 @@
-package com.kieran.winnipegbusbackend.interfaces
+package com.kieran.winnipegbusbackend.favourites
 
-import com.kieran.winnipegbus.data.DataFavourite
+import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
 
 interface FavouritesRepository {
     fun get(agencyId: Long, id: Long): DataFavourite?

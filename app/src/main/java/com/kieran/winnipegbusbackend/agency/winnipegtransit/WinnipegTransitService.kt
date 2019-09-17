@@ -171,15 +171,6 @@ object WinnipegTransitService : TransitService {
         }
     }
 
-    override fun parseStringToStopIdentifier(text: String): StopIdentifier {
-        val number = Integer.parseInt(text)
-        return WinnipegTransitStopIdentifier(number)
-    }
-
-    override fun parseStringToRouteIdentifier(text: String): RouteIdentifier {
-        return WinnipegTransitRouteIdentifier(text.toInt())
-    }
-
     private fun getUpcomingStopNumbers(key: WinnipegTransitTripIdentifier, stopOnRoute: Int): List<Int> {
         val queryUrl = TransitApiManager.generateSearchQuery(key)
         val result = TransitApiManager.getJson(queryUrl)
