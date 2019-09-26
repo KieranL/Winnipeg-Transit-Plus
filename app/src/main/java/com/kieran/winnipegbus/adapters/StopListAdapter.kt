@@ -6,12 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.TextView
+import com.google.android.flexbox.FlexboxLayout
 import com.kieran.winnipegbus.R
-import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouriteStopsList
-import com.kieran.winnipegbusbackend.common.FavouriteStop
+import com.kieran.winnipegbus.views.RouteNumberTextView
 import com.kieran.winnipegbusbackend.common.Stop
-import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
+import com.kieran.winnipegbusbackend.enums.CoverageTypes
 
 class StopListAdapter(context: Context, private var layoutResourceId: Int, private var stops: List<Stop>) : ArrayAdapter<Stop>(context, layoutResourceId, stops) {
     private var inflater: LayoutInflater? = null
@@ -30,6 +32,7 @@ class StopListAdapter(context: Context, private var layoutResourceId: Int, priva
             holder = StopHolder()
             holder.stopNumber = row!!.findViewById<View>(R.id.favourites_stop_number) as TextView
             holder.stopName = row.findViewById<View>(R.id.favourites_stop_name) as TextView
+            holder.routeNumbers = row.findViewById<View>(R.id.favourite_filter_stop_numbers) as FlexboxLayout
 
             row.tag = holder
         } else {
@@ -40,6 +43,17 @@ class StopListAdapter(context: Context, private var layoutResourceId: Int, priva
 
         holder.stopNumber!!.text = favouriteStop.identifier.toString()
         holder.stopName!!.text = favouriteStop.displayName
+        holder.routeNumbers?.removeAllViews()
+
+        if(favouriteStop.routes != null) {
+            for (route in favouriteStop.routes!!) {
+                val view = inflater?.inflate(R.layout.route_number, null) as RouteNumberTextView
+                view.text = route.toString()
+                view.setColour(route, CoverageTypes.REGULAR)
+
+                holder.routeNumbers?.addView(view)
+            }
+        }
 
         return row
     }
@@ -47,5 +61,6 @@ class StopListAdapter(context: Context, private var layoutResourceId: Int, priva
     internal class StopHolder {
         var stopNumber: TextView? = null
         var stopName: TextView? = null
+        var routeNumbers: FlexboxLayout? = null
     }
 }

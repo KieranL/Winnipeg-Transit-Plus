@@ -20,16 +20,11 @@ import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.ShakeDetector
 import com.kieran.winnipegbus.adapters.StopTimeAdapter
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
-import com.kieran.winnipegbusbackend.common.StopSchedule
-import com.kieran.winnipegbusbackend.TransitServiceProvider
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.StopLocation
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.TripParameters
 import com.kieran.winnipegbusbackend.common.*
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
-import com.kieran.winnipegbusbackend.favourites.FavouritesService
 import com.kieran.winnipegbusbackend.interfaces.RouteIdentifier
-import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
-import com.kieran.winnipegbusbackend.interfaces.TransitService
 import com.rollbar.android.Rollbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -40,7 +35,6 @@ import java.util.*
 
 class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, ShakeDetector.OnShakeListener {
     private var stopSchedule: StopSchedule? = null
-    private lateinit var stopIdentifier: StopIdentifier
     private var stopName: String? = null
     private var loading = false
     private val stops = ArrayList<ScheduledStop>()
@@ -57,12 +51,14 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
     private var swipeRefreshLayout: StyledSwipeRefresh? = null
     private lateinit var lastUpdatedView: TextView
     private var lastUpdated: StopTime? = null
+    private var favouriteButton: MenuItem? = null
+    private lateinit var favouriteStop: FavouriteStop
 
     private val scheduleEndTime: StopTime
         get() {
             val prefs = PreferenceManager.getDefaultSharedPreferences(this)
             val endTime = StopTime()
-            endTime.increaseHour(Integer.parseInt(prefs.getString(getString(R.string.pref_schedule_load_interval), "2")))
+            endTime.increaseHour(Integer.parseInt(prefs.getString(getString(R.string.pref_schedule_load_interval), "2")!!))
 
             return endTime
         }
@@ -73,7 +69,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
 
         adViewResId = R.id.stopTimesAdView
 
-        val listView = findViewById<ListView>(R.id.stop_times_listview)
+        val listView = findViewById<ListView>(R.id.stop_times_listview)!!
 
         swipeRefreshLayout = findViewById(R.id.stop_times_swipe_refresh)
         swipeRefreshLayout!!.setOnRefreshListener(this)
@@ -90,10 +86,29 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         title = findViewById(R.id.listView_stop_times_header_text)
         lastUpdatedView = findViewById(R.id.stop_times_header_last_updated)
 
-        val stop = intent.getSerializableExtra(STOP) as Stop
+        val stopExtra = intent.getSerializableExtra(STOP)
+
+        val stop = stopExtra as FavouriteStop
+        favouriteStop = stop
+
+        if (favouriteStop.id < 0) {
+            val existingFavourites = favouritesService.getAll()
+
+            val existingFavourite = existingFavourites.find {
+                it.identifier == favouriteStop.identifier && it.routes == null
+            }
+
+            if (existingFavourite != null)
+                favouriteStop = existingFavourite
+        }
+
+        if (stop.routes != null) {
+            routeNumberFilter.addAll(stop.routes!!)
+            selectedRoutes = BooleanArray(routeNumberFilter.size) { true }
+        }
+
         stopName = stop.name
         title.text = stopName
-        stopIdentifier = stop.identifier
 
         setTitle(String.format(Locale.CANADA, ACTIONBAR_TEXT, stop.identifier.toString()))
 
@@ -102,10 +117,10 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         loading = false
     }
 
-    fun createShakeListener() {
-        val PM = packageManager
+    private fun createShakeListener() {
+        val packageManager = packageManager
 
-        if (PM.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER)) {
+        if (packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER)) {
             sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
             accelerometer = sensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
             shakeDetector = ShakeDetector(this)
@@ -156,7 +171,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
     private fun getTimes() {
         loadStopTimesTask = GlobalScope.launch(Dispatchers.IO) {
             try {
-                val stopSchedule = transitService.getStopSchedule(stopIdentifier, null, scheduleEndTime, routeNumberFilter)
+                val stopSchedule = transitService.getStopSchedule(favouriteStop.identifier, null, scheduleEndTime, routeNumberFilter)
 
                 runOnUiThread {
                     if (loading) {
@@ -184,10 +199,12 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
                 lastUpdated = StopTime()
                 lastUpdatedView.text = String.format(UPDATED_STRING, lastUpdated!!.toFormattedString(null, timeSetting))
                 swipeRefreshLayout!!.isRefreshing = false
+                favouriteButton?.icon = getFavouritesButtonDrawable()
                 loading = false
             }
         }
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_stop_times, menu)
@@ -198,21 +215,53 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
             menu.findItem(R.id.trip_planner).isVisible = true
         }
 
-        menu.findItem(R.id.add_to_favourites_button).icon = getFavouritesButtonDrawable(favouritesService.contains(stopIdentifier))
+        favouriteButton = menu.findItem(R.id.add_to_favourites_button)
+        favouriteButton?.icon = getFavouritesButtonDrawable()
         onOptionsItemSelected(menu.findItem(R.id.action_refresh)) //manually click the refresh button, this is the only way the swipe refresh loading spinner works correctly on initial load. Not happy with this but it was the only way I could get it to work
         return true
     }
 
-    private fun getFavouritesButtonDrawable(isFavoured: Boolean): Drawable {
+    private fun getFavouritesButtonDrawable(): Drawable {
         val themeId = themeResId
         val drawableId: Int
+        val filterMatches = doesFilterMatchRoutes()
 
-        drawableId = if (isFavoured)
-            if (themeId == R.style.Light) R.drawable.ic_favourite_stops_light else R.drawable.ic_favourite_stops_dark
+        drawableId = if (favouriteStop.id > 0)
+            if (filterMatches && favouriteStop.routes != null)
+                if (themeId == R.style.Light) R.drawable.ic_filtered_favourite_light else R.drawable.ic_filtered_favourite_dark
+            else if (favouriteStop.routes == null && !routeNumberFilter.any())
+                if (themeId == R.style.Light) R.drawable.ic_favourite_stops_light else R.drawable.ic_favourite_stops_dark
+            else
+                if (themeId == R.style.Light) R.drawable.ic_add_to_favourites_light else R.drawable.ic_add_to_favourites_dark
         else
             if (themeId == R.style.Light) R.drawable.ic_add_to_favourites_light else R.drawable.ic_add_to_favourites_dark
 
         return resources.getDrawable(drawableId)
+    }
+
+    private fun doesFilterMatchRoutes(): Boolean {
+        if (stopSchedule == null || favouriteStop.routes == null)
+            return false
+
+        if (favouriteStop.routes!!.count() != stopSchedule!!.getRouteList().count())
+            return false
+
+        for (routeIdentifier in favouriteStop.routes!!) {
+            var found = false
+
+            for (route in stopSchedule!!.getRouteList()) {
+                if (route.routeIdentifier == routeIdentifier) {
+                    found = true
+                    break
+                }
+            }
+
+            if (!found) {
+                return false
+            }
+        }
+
+        return true
     }
 
     private fun refresh() {
@@ -262,11 +311,17 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
     }
 
     private fun handleFavouritesClick(item: MenuItem) {
-        if (favouritesService.contains(stopIdentifier)) {
+        if (favouriteStop.id > 0 && ((favouriteStop.routes == null && !routeNumberFilter.any()) || doesFilterMatchRoutes())) {
             openDeleteFavouriteDialog(item)
         } else if (stopName != null && stopName != "") {
-            favouritesService.add(FavouriteStop(stopName!!, stopIdentifier))
-            item.icon = getFavouritesButtonDrawable(true)
+            val newFavouriteStop = favouritesService.add(FavouriteStop(stopName!!, favouriteStop.identifier, routes = routeNumberFilter))
+
+            if (newFavouriteStop != null) {
+                favouriteStop = newFavouriteStop
+                item.icon = getFavouritesButtonDrawable()
+            } else {
+                showShortToaster(R.string.unknown_error)
+            }
         } else {
             showLongToaster(R.string.wait_for_load)
         }
@@ -277,8 +332,9 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         alertDialog.setMessage(DELETE_THIS_FAVOURITE)
 
         alertDialog.setPositiveButton(R.string.yes) { _, _ ->
-            favouritesService.delete(stopIdentifier)
-            item.icon = getFavouritesButtonDrawable(false)
+            favouritesService.delete(favouriteStop.id)
+            favouriteStop = FavouriteStop(favouriteStop.name, favouriteStop.identifier)
+            item.icon = getFavouritesButtonDrawable()
         }
 
         alertDialog.setNegativeButton(R.string.no, null)
@@ -301,8 +357,9 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
 
             val charSequence = arrayOfNulls<CharSequence>(routeFilterRoutes.size)
 
-            if (selectedRoutes == null)
+            if (selectedRoutes == null || (selectedRoutes!!.size < stopSchedule!!.getRouteList().size))
                 selectedRoutes = BooleanArray(routeFilterRoutes.size)
+
 
             for (i in charSequence.indices)
                 charSequence[i] = routeFilterRoutes[i].toString()
@@ -345,7 +402,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
     }
 
     override fun onShake() {
-        if(isBooleanSettingEnabled("pref_refresh_on_shake")) {
+        if (isBooleanSettingEnabled("pref_refresh_on_shake")) {
             refresh()
         }
     }
@@ -355,6 +412,6 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         const val STOP = "stop"
         private const val UPDATED_STRING = "Updated %s"
         private const val ACTIONBAR_TEXT = "Stop %s"
-        private const val DELETE_THIS_FAVOURITE = "Delete this DataFavourite?"
+        private const val DELETE_THIS_FAVOURITE = "Delete this Favourite?"
     }
 }

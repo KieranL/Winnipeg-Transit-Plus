@@ -19,8 +19,10 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationServices
 import com.kieran.winnipegbus.R
+import com.kieran.winnipegbusbackend.AgencySpecificClassFactory
 import com.kieran.winnipegbusbackend.TransitServiceProvider
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouriteStopsList
+import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.common.SearchQuery
 import com.kieran.winnipegbusbackend.common.Stop
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
@@ -234,7 +236,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
 
         when (transitService.getSearchQueryType(searchText)) {
             SearchQueryType.STOP -> {
-                openStopTimes(Stop(transitService.parseStringToStopIdentifier(searchText)))
+                openStopTimes(FavouriteStop("", AgencySpecificClassFactory.createStopIdentifier(transitService.getAgencyId(), searchText)!!))
             }
             SearchQueryType.ROUTE_NUMBER -> {
                 val intent = Intent(this, SearchResultsActivity::class.java)

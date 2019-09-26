@@ -61,6 +61,7 @@ dependencies {
     implementation "org.jetbrains.anko:anko-sqlite:$anko_version"
     implementation 'com.rollbar:rollbar-java:1.+'
     implementation 'com.rollbar:rollbar-android:1.+@aar'
+    implementation 'com.google.android:flexbox:1.0.0'
 }
 repositories {
     mavenCentral()

@@ -82,7 +82,7 @@ class FavouritesActivity : BaseActivity(), AdapterView.OnItemClickListener, OnIt
 
         alertDialog.setMessage(R.string.edit_favourite_dialog_title)
         alertDialog.setPositiveButton(R.string.delete) { _, _ ->
-            favouritesService.delete((adapter!!.getItem(position)!!.identifier))
+            favouritesService.delete((adapter!!.getItem(position)!!.id))
             reloadList()
         }
 

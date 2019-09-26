@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.kieran.winnipegbus.views.RouteNumberTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/route_number_text"
+    android:layout_width="64sp"
+    android:layout_height="36sp"
+    android:gravity="center_horizontal"
+    android:textSize="18sp"
+    android:textStyle="bold"
+    android:paddingStart="4dp"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp"
+    android:paddingEnd="4dp"/>

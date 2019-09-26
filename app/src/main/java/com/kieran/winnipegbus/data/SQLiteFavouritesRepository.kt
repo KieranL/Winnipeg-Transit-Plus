@@ -8,26 +8,10 @@ import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
 import com.rollbar.android.Rollbar
 import org.jetbrains.anko.db.*
 
-class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesRepository, ManagedSQLiteOpenHelper(ctx, "transit_db", null, 1) {
+class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesRepository, ManagedSQLiteOpenHelper(ctx, "transit_db", null, 2) {
     private val favouriteRowParser = classParser<DataFavourite>()
     private var isImported: Boolean = false
     private val INITIALIZED_STOP_IDENTIFIER: StopIdentifier = InitializedIdentifier("init")
-
-    override fun get(agencyId: Long, id: Long): DataFavourite? {
-        var favourite: DataFavourite? = null
-
-        use {
-            try {
-                select(tableName).whereSimple("id=? and agencyId=?", id.toString(), agencyId.toString()).exec {
-                    favourite = parseOpt(favouriteRowParser)
-                }
-            } catch (ex: SQLiteException) {
-                Rollbar.instance()?.error(ex)
-            }
-        }
-
-        return favourite
-    }
 
     override fun getAll(agencyId: Long): List<DataFavourite>? {
         var favourites: List<DataFavourite>? = null
@@ -59,7 +43,8 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
                         "timesUsed" to favourite.timesUsed,
                         "latitude" to favourite.latitude,
                         "longitude" to favourite.longitude,
-                        "agencyMetadata" to favourite.agencyMetadata)
+                        "agencyMetadata" to favourite.agencyMetadata,
+                        "routes" to favourite.routes)
                 get(favourite.agencyId, id)
             } catch (ex: SQLiteException) {
                 Rollbar.instance()?.error(ex)
@@ -82,7 +67,8 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
                         "timesUsed" to favourite.timesUsed,
                         "latitude" to favourite.latitude,
                         "longitude" to favourite.longitude,
-                        "agencyMetadata" to favourite.agencyMetadata
+                        "agencyMetadata" to favourite.agencyMetadata,
+                        "routes" to favourite.routes
                 ).whereSimple("id=?", favourite.id.toString()).exec()
 
                 returnCode > 0
@@ -92,12 +78,43 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
         }
     }
 
-    override fun get(agencyId: Long, identifier: StopIdentifier): DataFavourite? {
-        var favourite: DataFavourite? = null
+    override fun get(agencyId: Long, identifier: StopIdentifier): List<DataFavourite>? {
+        var favourites: List<DataFavourite>? = null
 
         use {
             try {
                 select(tableName).whereSimple("agencyId=? and agencyIdentifier=?", agencyId.toString(), identifier.toString()).exec {
+                    if(count > 0) {
+                        favourites = parseList(favouriteRowParser)
+                    }
+                }
+            } catch (ex: SQLiteException) {
+                Rollbar.instance()?.error(ex)
+            }
+        }
+
+        return favourites
+    }
+
+    override fun delete(agencyId: Long, stopIdentifier: StopIdentifier): Boolean {
+        return use {
+            return@use try {
+                val rowsDeleted = delete(tableName, "agencyId={agencyId} and agencyIdentifier={agencyIdentifier}", "agencyId" to agencyId, "agencyIdentifier" to stopIdentifier.toString())
+
+                rowsDeleted > 0
+            } catch (ex: SQLiteException) {
+                Rollbar.instance()?.error(ex)
+                false
+            }
+        }
+    }
+
+    override fun get(agencyId: Long, id: Long): DataFavourite? {
+        var favourite: DataFavourite? = null
+
+        use {
+            try {
+                select(tableName).whereSimple("id=? and agencyId=?", id.toString(), agencyId.toString()).exec {
                     favourite = parseOpt(favouriteRowParser)
                 }
             } catch (ex: SQLiteException) {
@@ -108,10 +125,10 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
         return favourite
     }
 
-    override fun delete(agencyId: Long, stopIdentifier: StopIdentifier): Boolean {
+    override fun delete(agencyId: Long, id: Long): Boolean {
         return use {
             return@use try {
-                val rowsDeleted = delete(tableName, "agencyId={agencyId} and agencyIdentifier={agencyIdentifier}", "agencyId" to agencyId, "agencyIdentifier" to stopIdentifier.toString())
+                val rowsDeleted = delete(tableName, "agencyId={agencyId} and id={id}", "agencyId" to agencyId, "id" to id)
 
                 rowsDeleted > 0
             } catch (ex: SQLiteException) {
@@ -132,7 +149,7 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
     }
 
     override fun markImported() {
-        create(DataFavourite(-1, 1, null, null, "", null, INITIALIZED_STOP_IDENTIFIER.toString(), 0, null, null, null))
+        create(DataFavourite(-1, 1, null, null, "", null, INITIALIZED_STOP_IDENTIFIER.toString(), 0, null, null, null, null))
     }
 
     init {
@@ -170,10 +187,13 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
                 "timesUsed" to INTEGER,
                 "latitude" to REAL,
                 "longitude" to REAL,
-                "agencyMetadata" to TEXT)
+                "agencyMetadata" to TEXT,
+                "routes" to TEXT)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-
+        if (oldVersion == 1 && newVersion == 2) {
+            db.execSQL("ALTER TABLE favourites ADD COLUMN routes TEXT;")
+        }
     }
 }
