@@ -8,4 +8,6 @@ interface RouteIdentifier : Serializable, Comparable<Any> {
     override operator fun compareTo(other: Any): Int
 
     override fun equals(other: Any?): Boolean
+
+    fun toDataString(): String
 }

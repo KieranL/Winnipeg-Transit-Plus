@@ -1,5 +1,6 @@
 package com.kieran.winnipegbusbackend.common
 
+import com.kieran.winnipegbusbackend.interfaces.RouteIdentifier
 import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
 import java.io.Serializable
 
@@ -9,6 +10,9 @@ open class Stop : Serializable {
     lateinit var identifier: StopIdentifier
         protected set
     var latLng: GeoLocation? = null //TODO seperate this somehow?
+    var id: Long = -1
+
+    var routes: Collection<RouteIdentifier>? = null
 
     open val displayName: String
         get() = name

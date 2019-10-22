@@ -10,4 +10,8 @@ data class WinnipegTransitRouteIdentifier(val routeNumber: Int) : RouteIdentifie
     override operator fun compareTo(other: Any): Int {
         return routeNumber - (other as WinnipegTransitRouteIdentifier).routeNumber
     }
+
+    override fun toDataString(): String {
+        return routeNumber.toString()
+    }
 }

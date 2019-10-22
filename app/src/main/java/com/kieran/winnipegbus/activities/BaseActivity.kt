@@ -24,6 +24,7 @@ import com.kieran.winnipegbus.ActivityManager
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.data.SQLiteFavouritesRepository
 import com.kieran.winnipegbusbackend.TransitServiceProvider
+import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.common.Stop
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
 import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
@@ -192,7 +193,7 @@ abstract class BaseActivity : AppCompatActivity() {
         return prefs.getBoolean("pref_disable_ads", false)
     }
 
-    fun openStopTimes(stop: Stop) {
+    fun openStopTimes(stop: FavouriteStop) {
         val intent = Intent(this, StopTimesActivity::class.java)
         intent.putExtra(StopTimesActivity.STOP, stop)
         startActivity(intent)

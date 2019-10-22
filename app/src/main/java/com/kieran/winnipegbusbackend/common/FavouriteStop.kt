@@ -1,5 +1,6 @@
 package com.kieran.winnipegbusbackend.common
 
+import com.kieran.winnipegbusbackend.interfaces.RouteIdentifier
 import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
 
 import java.io.Serializable
@@ -12,7 +13,6 @@ class FavouriteStop : Stop, Serializable {
             field = null
         else
             field = alias
-    var id: Long = -1
 
     override val displayName: String
         get() = if (this.alias == null) name else this.alias!!
@@ -25,10 +25,11 @@ class FavouriteStop : Stop, Serializable {
         this.timesUsed = 0
     }
 
-    constructor(name: String, identifier: StopIdentifier, timesUsed: Int, latlng: GeoLocation?, id: Long = -1, alias: String? = null) : super(name, identifier, latlng) {
+    constructor(name: String, identifier: StopIdentifier, timesUsed: Int = 0, latlng: GeoLocation? = null, id: Long = -1, alias: String? = null, routes: Collection<RouteIdentifier>? = null) : super(name, identifier, latlng) {
         this.timesUsed = timesUsed
         this.id = id
         this.alias = alias
+        this.routes = routes
     }
 
     fun use() {

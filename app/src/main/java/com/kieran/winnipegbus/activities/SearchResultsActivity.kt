@@ -73,7 +73,8 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
     }
 
     override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-        openStopTimes(parent.getItemAtPosition(position) as Stop)
+        val stop = parent.getItemAtPosition(position) as Stop
+        openStopTimes(FavouriteStop(stop.name, stop.identifier))
     }
 
     private fun refresh() {

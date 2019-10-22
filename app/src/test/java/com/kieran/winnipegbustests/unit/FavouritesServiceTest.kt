@@ -18,14 +18,14 @@ class FavouritesServiceTest {
     fun init() {
         val favouritesRepositoryMock = mock<FavouritesRepository> {}
 
-        this.favouritesService = FavouritesService.getInstance(favouritesRepositoryMock, 1)
+        this.favouritesService = FavouritesService.getInstance(favouritesRepositoryMock, 2)
     }
 
     @Test
     fun testConvertAll() {
         val favourites = listOf<DataFavourite>(
-                DataFavourite(1, 1, null, null, "test", null, "12345", 9, 15.05, 97.0123, null),
-                DataFavourite(2, 0, null, null, "test", null, "12345", 9, null, null, null)
+                DataFavourite(1, 2, null, null, "test", null, "12345", 9, 15.05, 97.0123, null, "1;2"),
+                DataFavourite(2, 0, null, null, "test", null, "12345", 9, null, null, null, null)
         )
 
         val converted = favouritesService.convertFromDataClass(favourites)
@@ -35,7 +35,7 @@ class FavouritesServiceTest {
 
     @Test
     fun testConvertSingleSucceeds() {
-        val favourite = DataFavourite(1, 1, null, null, "test", null, "12345", 9, 15.05, 97.0123, null)
+        val favourite = DataFavourite(1, 2, null, null, "test", null, "12345", 9, 15.05, 97.0123, null, null)
         val converted = favouritesService.convertFromDataClass(favourite)
 
         assertNotNull(converted)
@@ -47,7 +47,7 @@ class FavouritesServiceTest {
 
     @Test
     fun testConvertSingleFails() {
-        val favourite = DataFavourite(1, 0, null, null, "test", null, "12345", 9, null, null, null)
+        val favourite = DataFavourite(1, 0, null, null, "test", null, "12345", 9, null, null, null, null)
         val converted = favouritesService.convertFromDataClass(favourite)
 
         assertNull(converted)

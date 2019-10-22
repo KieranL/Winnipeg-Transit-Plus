@@ -11,5 +11,6 @@ data class DataFavourite (
         val timesUsed: Int,
         val latitude: Double?,
         val longitude: Double?,
-        val agencyMetadata: String?
+        val agencyMetadata: String?,
+        val routes: String?
 )

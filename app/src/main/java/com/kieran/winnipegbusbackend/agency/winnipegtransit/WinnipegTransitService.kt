@@ -1,8 +1,5 @@
 package com.kieran.winnipegbusbackend.agency.winnipegtransit
 
-import android.util.Log
-import com.google.android.gms.maps.model.LatLng
-import com.kieran.winnipegbusbackend.common.StopSchedule
 import com.kieran.winnipegbusbackend.common.*
 import com.kieran.winnipegbusbackend.enums.CoverageTypes
 import com.kieran.winnipegbusbackend.enums.ScheduleType
@@ -360,6 +357,14 @@ object WinnipegTransitService : TransitService {
 
     override fun getAgencyId(): Long {
         return 2
+    }
+
+    fun isRapidTransit(routeNumber: Int): Boolean {
+        return routeNumber >= 137
+    }
+
+    fun isExpress(routeNumber: Int): Boolean {
+        return arrayListOf(21, 22, 24, 25, 28, 30, 31, 32, 34, 35, 36, 40, 41, 42, 46, 48, 54, 57, 58, 59, 64, 65, 67).contains(routeNumber)
     }
 
     private val STOP_TAG = "stop"
