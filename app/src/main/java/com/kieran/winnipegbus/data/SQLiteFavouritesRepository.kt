@@ -188,12 +188,22 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
                 "latitude" to REAL,
                 "longitude" to REAL,
                 "agencyMetadata" to TEXT,
-                "routes" to TEXT)
+                "routes" to TEXT
+        )
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (oldVersion == 1 && newVersion == 2) {
-            db.execSQL("ALTER TABLE favourites ADD COLUMN routes TEXT;")
+        when (oldVersion) {
+            1 -> {
+                addRoutesColumn(db)
+            }
+            2 -> {
+                //save this for later so I don't forget how it works https://stackoverflow.com/questions/21881992/when-is-sqliteopenhelper-oncreate-onupgrade-run
+            }
         }
+    }
+
+    private fun addRoutesColumn(db: SQLiteDatabase) {
+        db.execSQL("ALTER TABLE favourites ADD COLUMN routes TEXT;")
     }
 }

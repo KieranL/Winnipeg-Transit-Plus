@@ -43,6 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
         android:gravity="right"
         android:paddingTop="24dp"
         android:textSize="20sp" />

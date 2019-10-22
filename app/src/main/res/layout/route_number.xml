@@ -6,8 +6,4 @@
     android:layout_height="36sp"
     android:gravity="center_horizontal"
     android:textSize="18sp"
-    android:textStyle="bold"
-    android:paddingStart="4dp"
-    android:paddingLeft="4dp"
-    android:paddingRight="4dp"
-    android:paddingEnd="4dp"/>
+    android:textStyle="bold" />
