@@ -380,6 +380,12 @@ class StopTimesActivity : BaseActivity(), androidx.swiperefreshlayout.widget.Swi
                 }
             }
 
+            filterDialog.setNeutralButton(R.string.clear_filter) { _, _ ->
+                routeNumberFilter.clear()
+                selectedRoutes = BooleanArray(routeFilterRoutes.size)
+                refresh()
+            }
+
             filterDialog.create().show()
         } else {
             showLongToaster(R.string.wait_for_load)

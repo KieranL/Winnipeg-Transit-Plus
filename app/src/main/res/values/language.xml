@@ -66,6 +66,7 @@
     <string name="edit_favourite_dialog_title">Edit this Favourite?</string>
     <string name="default_label">Default</string>
     <string name="privacy_policy_modal_title">Privacy Policy</string>
+    <string name="clear_filter">Clear</string>
 
     <!-- Preference Activity -->
     <string name="title_activity_settings">Settings</string>
