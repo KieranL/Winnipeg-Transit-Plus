@@ -2,7 +2,7 @@ package com.kieran.winnipegbus.activities
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.v4.widget.SwipeRefreshLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -21,7 +21,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.collections.ArrayList
 
-class ScheduledStopInfoActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
+class ScheduledStopInfoActivity : BaseActivity(), androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener {
     private var upcomingStops: ArrayList<UpcomingStop> = ArrayList()
     private var scheduledStop: ScheduledStop? = null
     private var use24hrTime: Boolean = false

@@ -9,9 +9,9 @@ import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.provider.Settings
-import android.support.annotation.StringRes
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
+import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
 import android.text.TextUtils
 import android.view.MenuItem
 import android.view.View

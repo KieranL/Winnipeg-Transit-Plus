@@ -5,8 +5,8 @@ import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Location
 import android.preference.PreferenceManager
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GooglePlayServicesUtil
 import com.google.android.gms.common.api.GoogleApiClient

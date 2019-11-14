@@ -4,7 +4,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.widget.SwipeRefreshLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.view.Menu
 import android.view.View
 import android.widget.AdapterView
@@ -30,7 +30,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
 
-class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadResultReceiveListener, SwipeRefreshLayout.OnRefreshListener {
+class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadResultReceiveListener, androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener {
     private var tripParameters: TripParameters = TripParameters()
     private var trips: ArrayList<Trip>? = null
     private var adapter: TripPlannerAdapter? = null

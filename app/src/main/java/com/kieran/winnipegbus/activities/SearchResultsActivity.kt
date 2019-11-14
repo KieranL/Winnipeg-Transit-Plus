@@ -4,7 +4,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
-import android.support.v4.widget.SwipeRefreshLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -27,7 +27,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, LocationListener {
+class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener, androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener, LocationListener {
     private var adapter: StopListAdapter? = null
     private var searchQuery: SearchQuery? = null
     private var loading = true

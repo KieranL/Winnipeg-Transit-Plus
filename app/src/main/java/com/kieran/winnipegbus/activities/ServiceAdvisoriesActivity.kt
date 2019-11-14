@@ -3,7 +3,7 @@ package com.kieran.winnipegbus.activities
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
-import android.support.v4.widget.SwipeRefreshLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -19,7 +19,7 @@ import com.kieran.winnipegbusbackend.common.LoadResult
 import org.json.JSONObject
 import java.util.*
 
-class ServiceAdvisoriesActivity : BaseActivity(), TransitApiManager.OnJsonLoadResultReceiveListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
+class ServiceAdvisoriesActivity : BaseActivity(), TransitApiManager.OnJsonLoadResultReceiveListener, AdapterView.OnItemClickListener, androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener {
     private var adapter: ServiceAdvisoriesAdapter? = null
     private var swipeRefreshLayout: StyledSwipeRefresh? = null
     private var loading = false

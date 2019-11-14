@@ -9,7 +9,7 @@ import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.v4.widget.SwipeRefreshLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.*
 
-class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, ShakeDetector.OnShakeListener {
+class StopTimesActivity : BaseActivity(), androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, ShakeDetector.OnShakeListener {
     private var stopSchedule: StopSchedule? = null
     private var stopName: String? = null
     private var loading = false

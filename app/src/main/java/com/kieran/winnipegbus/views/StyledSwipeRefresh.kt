@@ -1,12 +1,12 @@
 package com.kieran.winnipegbus.views
 
 import android.content.Context
-import android.support.v4.widget.SwipeRefreshLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.util.AttributeSet
 
 import com.kieran.winnipegbus.R
 
-class StyledSwipeRefresh : SwipeRefreshLayout {
+class StyledSwipeRefresh : androidx.swiperefreshlayout.widget.SwipeRefreshLayout {
     constructor(context: Context) : super(context) {
         initialize()
     }
