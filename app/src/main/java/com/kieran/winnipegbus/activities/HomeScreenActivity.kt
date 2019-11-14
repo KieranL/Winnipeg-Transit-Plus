@@ -29,8 +29,8 @@ import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.interfaces.TransitService
-import com.rollbar.android.Rollbar
-import com.rollbar.notifier.config.ConfigBuilder
+//import com.rollbar.android.Rollbar
+//import com.rollbar.notifier.config.ConfigBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -76,7 +76,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
                 .addOnConnectionFailedListener(this).build()
         connectClient()
 
-        Rollbar.init(this, null, null, false, true)
+//        Rollbar.init(this, null, null, false, true)
 
     }
 
@@ -98,7 +98,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
                     }
                 }
             }catch (ex: Exception){
-                Rollbar.instance()?.error(ex)
+//                Rollbar.instance()?.error(ex)
             }
         }
     }
@@ -108,7 +108,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
             val prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
             if (!overrideCheck && !prefs.contains(stops_on_home_message_shown_flag)) {
-                val alertDialog = android.app.AlertDialog.Builder(this)
+                val alertDialog = AlertDialog.Builder(this)
                 alertDialog.setTitle(R.string.enable_stops_on_home_prompt_title)
                 alertDialog.setMessage(R.string.enable_stops_on_home_prompt)
 
@@ -144,7 +144,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
                 favouritesFragment = null
             }
         } catch (ex: Exception) {
-            Rollbar.instance()?.error(ex)
+//            Rollbar.instance()?.error(ex)
         }
     }
 

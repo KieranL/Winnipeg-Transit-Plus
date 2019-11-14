@@ -21,3 +21,5 @@
 -dontwarn com.google.android.gms.internal.**
 
 -keepattributes *Annotation*,SourceFile,LineNumberTable
+
+-ignorewarnings

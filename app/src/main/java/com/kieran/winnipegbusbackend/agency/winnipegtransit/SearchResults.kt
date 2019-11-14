@@ -1,7 +1,7 @@
 package com.kieran.winnipegbusbackend.agency.winnipegtransit
 
 import com.kieran.winnipegbusbackend.common.*
-import com.rollbar.android.Rollbar
+//import com.rollbar.android.Rollbar
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
@@ -24,7 +24,7 @@ class SearchResults {
                         stop.latLng = getLatLng(stopJson)
                     }
             } catch (ex: JSONException) {
-                Rollbar.instance()?.error(ex)
+//                Rollbar.instance()?.error(ex)
             }
         }
 
@@ -40,7 +40,7 @@ class SearchResults {
             val geographic = stop.getJSONObject(TransitApiManager.STOP_CENTRE_TAG).getJSONObject(TransitApiManager.GEOGRAPHIC_TAG)
             GeoLocation(geographic.getDouble(WinnipegTransitService.LATITUDE_TAG), geographic.getDouble(WinnipegTransitService.LONGITUDE_TAG))
         } catch (ex: JSONException) {
-            Rollbar.instance()?.error(ex)
+//            Rollbar.instance()?.error(ex)
             null
         }
 

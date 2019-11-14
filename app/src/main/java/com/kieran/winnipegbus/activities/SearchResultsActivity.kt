@@ -21,7 +21,7 @@ import com.kieran.winnipegbusbackend.common.GeoLocation
 import com.kieran.winnipegbusbackend.common.SearchQuery
 import com.kieran.winnipegbusbackend.common.Stop
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
-import com.rollbar.android.Rollbar
+//import com.rollbar.android.Rollbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -105,7 +105,7 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
 
                     onDataReceived(stops)
                     } catch (ex: Exception) {
-                        Rollbar.instance()?.error(ex)
+//                        Rollbar.instance()?.error(ex)
                         runOnUiThread {
                             handleException(ex)
                         }
@@ -205,7 +205,7 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
 
                     onDataReceived(stops)
                 } catch (ex: Exception){
-                Rollbar.instance()?.error(ex)
+//                Rollbar.instance()?.error(ex)
                     runOnUiThread{
                         handleException(ex)
                     }

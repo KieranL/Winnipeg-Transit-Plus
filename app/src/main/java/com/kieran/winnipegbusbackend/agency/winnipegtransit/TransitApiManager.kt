@@ -7,7 +7,6 @@ import com.kieran.winnipegbusbackend.common.LoadResult
 import com.kieran.winnipegbusbackend.common.StopTime
 import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
 import com.kieran.winnipegbusbackend.exceptions.TransitDataNotFoundException
-import com.rollbar.android.Rollbar
 import org.json.JSONObject
 import java.lang.Double
 import java.net.URL

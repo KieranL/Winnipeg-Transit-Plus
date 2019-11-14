@@ -5,7 +5,7 @@ import com.kieran.winnipegbus.activities.BaseActivity
 import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.common.LoadResult
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
-import com.rollbar.android.Rollbar
+//import com.rollbar.android.Rollbar
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -61,7 +61,7 @@ object FavouriteStopsList {
             }catch (ex: FileNotFoundException) {
                 //skip
             } catch (ex: Exception) {
-                Rollbar.instance()?.error(ex)
+//                Rollbar.instance()?.error(ex)
                 isLoadNeeded = true
             }
 
@@ -101,7 +101,7 @@ object FavouriteStopsList {
             val node = (originalNode as Element).getElementsByTagName(tag).item(0).firstChild
             node.nodeValue
         } catch (ex: Exception) {
-            Rollbar.instance()?.error(ex)
+//            Rollbar.instance()?.error(ex)
             null
         }
 
@@ -115,7 +115,7 @@ object FavouriteStopsList {
 
             LoadResult(XMLDocument, null)
         } catch (ex: Exception) {
-            Rollbar.instance()?.error(ex)
+//            Rollbar.instance()?.error(ex)
             LoadResult<Document>(null, ex)
         }
 

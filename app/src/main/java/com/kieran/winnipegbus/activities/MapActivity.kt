@@ -17,10 +17,10 @@ abstract class MapActivity : GoogleApiActivity(), GoogleApiClient.ConnectionCall
     }
 
     fun mapOnCreate() {
+        @Suppress("CAST_NEVER_SUCCEEDS")
         mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        if (mapFragment != null) {
-            mapFragment!!.getMapAsync { map -> loadMap(map) }
-        }
+
+        mapFragment?.getMapAsync { map -> loadMap(map) }
     }
 
     protected fun loadMap(googleMap: GoogleMap) {

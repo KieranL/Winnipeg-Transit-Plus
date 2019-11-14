@@ -25,7 +25,7 @@ import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.
 import com.kieran.winnipegbusbackend.common.*
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.interfaces.RouteIdentifier
-import com.rollbar.android.Rollbar
+//import com.rollbar.android.Rollbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -184,7 +184,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
                     this@StopTimesActivity.stopSchedule = stopSchedule
                 }
             } catch (ex: Exception) {
-                Rollbar.instance()?.error(ex)
+//                Rollbar.instance()?.error(ex)
                 runOnUiThread {
                     handleException(ex)
 

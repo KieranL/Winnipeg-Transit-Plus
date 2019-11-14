@@ -25,7 +25,7 @@ import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.
 import com.kieran.winnipegbusbackend.common.GeoLocation
 import com.kieran.winnipegbusbackend.common.LoadResult
 import com.kieran.winnipegbusbackend.common.StopTime
-import com.rollbar.android.Rollbar
+//import com.rollbar.android.Rollbar
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
@@ -161,7 +161,7 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
             }
             swipeRefresh!!.isRefreshing = false
         } catch (ex: JSONException) {
-            Rollbar.instance()?.error(ex)
+//            Rollbar.instance()?.error(ex)
         }
     }
 

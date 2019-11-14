@@ -19,7 +19,7 @@ import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
 import com.kieran.winnipegbusbackend.favourites.FavouritesService
 import com.kieran.winnipegbusbackend.interfaces.TransitService
-import com.rollbar.android.Rollbar
+//import com.rollbar.android.Rollbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -68,7 +68,7 @@ class FavouritesFragment: Fragment(), AdapterView.OnItemClickListener, AdapterVi
                     adapter.notifyDataSetChanged()
                 }
             } catch (ex: Exception) {
-                Rollbar.instance()?.error(ex)
+//                Rollbar.instance()?.error(ex)
                 activity.runOnUiThread {
                 }
             }

@@ -4,7 +4,7 @@ import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitRoute
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
 import com.kieran.winnipegbusbackend.interfaces.RouteIdentifier
 import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
-import com.rollbar.android.Rollbar
+//import com.rollbar.android.Rollbar
 
 object AgencySpecificClassFactory {
     fun createStopIdentifier(agencyId: Long, identifierString: String): StopIdentifier? {
@@ -14,7 +14,7 @@ object AgencySpecificClassFactory {
             else -> null
         }
         }catch (ex: Exception){
-            Rollbar.instance()?.error(ex, "Invalid Agency Id")
+//            Rollbar.instance()?.error(ex, "Invalid Agency Id")
             null
         }
     }
@@ -26,7 +26,7 @@ object AgencySpecificClassFactory {
                 else -> null
             }
         }catch (ex: Exception){
-            Rollbar.instance()?.error(ex, "Invalid Agency Id")
+//            Rollbar.instance()?.error(ex, "Invalid Agency Id")
             null
         }
     }
