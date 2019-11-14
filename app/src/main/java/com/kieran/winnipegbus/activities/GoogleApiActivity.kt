@@ -28,7 +28,7 @@ abstract class GoogleApiActivity : BaseActivity(), GoogleApiClient.ConnectionCal
     val nearbyStopsDistance: Int
         get() {
             val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-            return Integer.parseInt(prefs.getString(getString(R.string.pref_key_nearby_distance), "200"))
+            return prefs.getString(getString(R.string.pref_key_nearby_distance), "200")?.toInt()!!
         }
 
     val latestLocation: Location?

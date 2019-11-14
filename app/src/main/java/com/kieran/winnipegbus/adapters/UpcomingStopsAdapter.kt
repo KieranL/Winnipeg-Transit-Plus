@@ -14,7 +14,7 @@ import com.kieran.winnipegbusbackend.common.UpcomingStop
 class UpcomingStopsAdapter(internal var context: Context, private var layoutResourceId: Int, private var upComingStops: List<UpcomingStop>, private val use24hrTime: Boolean) : ArrayAdapter<UpcomingStop>(context, layoutResourceId, upComingStops) {
     private var inflater: LayoutInflater = (context as Activity).layoutInflater
 
-    override fun getView(position: Int, row: View?, parent: ViewGroup?): View {
+    override fun getView(position: Int, row: View?, parent: ViewGroup): View {
         val view: View?
         val holder: StopHolder?
 

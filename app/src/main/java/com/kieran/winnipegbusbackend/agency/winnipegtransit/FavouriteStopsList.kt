@@ -45,9 +45,9 @@ object FavouriteStopsList {
 
                 for (r in 0 until favouriteStops.length) {
                     val curr = favouriteStops.item(r)
-                    val stopNumber = Integer.parseInt(getValue(STOP_NUMBER_TAG, curr))
+                    val stopNumber = getValue(STOP_NUMBER_TAG, curr)?.toInt()!!
                     val stopName = getValue(STOP_NAME_TAG, favouriteStops.item(r))
-                    val timesUsed = Integer.parseInt(getValue(TIMES_USED_TAG, curr))
+                    val timesUsed = getValue(TIMES_USED_TAG, curr)?.toInt()!!
                     val alias = getValue(ALIAS_TAG, favouriteStops.item(r))
 
                     val favouriteStop = FavouriteStop(stopName!!, WinnipegTransitStopIdentifier(stopNumber), timesUsed)

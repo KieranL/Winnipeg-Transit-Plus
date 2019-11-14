@@ -3,11 +3,11 @@ package com.kieran.winnipegbus.activities
 import android.content.res.Configuration
 import android.os.Bundle
 import android.preference.PreferenceActivity
+import android.view.MenuInflater
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -57,8 +57,8 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
         delegate?.setSupportActionBar(toolbar)
     }
 
-    override fun getMenuInflater(): MenuInflater? {
-        return delegate?.menuInflater
+    override fun getMenuInflater(): MenuInflater {
+        return delegate?.menuInflater!!
     }
 
     override fun setContentView(@LayoutRes layoutResID: Int) {

@@ -58,7 +58,7 @@ class FavouritesFragment: Fragment(), AdapterView.OnItemClickListener, AdapterVi
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 val prefs = PreferenceManager.getDefaultSharedPreferences(getBaseActivity())
-                val numberToShow = prefs.getString("pref_favourites_on_home_count", "3").toInt()
+                val numberToShow = prefs.getString("pref_favourites_on_home_count", "3")?.toInt()!!
                 val stops = favouritesService.getAll(FavouritesListSortType.FREQUENCY_DESC).take(numberToShow)
 
                 activity.runOnUiThread {

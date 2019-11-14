@@ -17,7 +17,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
     val themeResId: Int
         get() {
             val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-            val themeId = Integer.parseInt(prefs.getString(getString(R.string.pref_key_theme), "0"))
+            val themeId = prefs.getString(getString(R.string.pref_key_theme), "0")?.toInt()
             return when (themeId) {
                 0 -> R.style.Dark
                 1 -> R.style.Light
@@ -99,7 +99,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         val themeId: Int
             get() {
                 val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-                return Integer.parseInt(prefs.getString(context!!.getString(R.string.pref_key_theme), "0"))
+                return prefs.getString(context!!.getString(R.string.pref_key_theme), "0")?.toInt()!!
             }
 
         private val sBindPreferenceSummaryToValueListener = Preference.OnPreferenceChangeListener { preference, value ->

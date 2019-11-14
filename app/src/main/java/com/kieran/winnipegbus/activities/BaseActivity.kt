@@ -44,7 +44,7 @@ abstract class BaseActivity : AppCompatActivity() {
     val themeResId: Int
         get() {
             val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-            val themeId = Integer.parseInt(prefs.getString(getString(R.string.pref_key_theme), "0"))
+            val themeId = prefs.getString(getString(R.string.pref_key_theme), "0")?.toInt()
             return when (themeId) {
                 0 -> R.style.Dark
                 1 -> R.style.Light
