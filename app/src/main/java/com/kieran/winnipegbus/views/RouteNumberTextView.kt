@@ -40,11 +40,12 @@ class RouteNumberTextView : TextView {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val width = spToPx(36)
-        val height = spToPx(24)
-        setMeasuredDimension(width, height)
+        if (textSize < spToPx(40)) {
+            val width = spToPx(36)
+            val height = spToPx(24)
+            setMeasuredDimension(width, height)
+        }
     }
-
 
     private fun spToPx(dp: Int): Int {
         val density = context.resources
