@@ -10,7 +10,7 @@
         android:id="@+id/bus_number_name">
 
         <com.kieran.winnipegbus.views.RouteNumberTextView
-            android:layout_width="72sp"
+            android:layout_width="96sp"
             android:layout_height="72sp"
             android:textSize="40sp"
             android:id="@+id/bus_number"

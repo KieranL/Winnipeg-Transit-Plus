@@ -4,7 +4,7 @@ import com.kieran.winnipegbusbackend.interfaces.TripIdentifier
 import java.io.Serializable
 
 class WinnipegTransitTripIdentifier : Serializable, TripIdentifier {
-    var routeNumber: Int = 0
+    var routeNumber: String = "0"
     private var routeDirection: Int = 0
     private var variant: Char = 0.toChar()
 
@@ -20,14 +20,14 @@ class WinnipegTransitTripIdentifier : Serializable, TripIdentifier {
 
     constructor(key: String) {
         val elements = key.split("-".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        routeNumber = Integer.parseInt(elements[0])
+        routeNumber = elements[0].trim()
         routeDirection = Integer.parseInt(elements[1])
 
         if (elements.size > 2)
             variant = elements[2][0]
     }
 
-    constructor(routeNumber: Int, routeDirection: Int, variant: Char) {
+    constructor(routeNumber: String, routeDirection: Int, variant: Char) {
         this.routeNumber = routeNumber
         this.routeDirection = routeDirection
         this.variant = variant

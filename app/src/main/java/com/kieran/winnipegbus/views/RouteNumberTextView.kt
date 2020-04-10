@@ -18,8 +18,13 @@ class RouteNumberTextView : TextView {
 
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {}
 
-    fun setColour(routeNumber: Int, coverageType: CoverageTypes) {
-        if (WinnipegTransitService.isDownTownSpirit(routeNumber)) {
+    fun setColour(routeNumberString: String, coverageType: CoverageTypes) {
+        val routeNumber = routeNumberString.toIntOrNull()
+
+        if (routeNumber == null) {
+            setTextColor(resources.getColor(R.color.white))
+            setBackgroundResource(R.drawable.route_number_background_rt)
+        } else if (WinnipegTransitService.isDownTownSpirit(routeNumber)) {
             setTextColor(resources.getColor(R.color.white))
             setBackgroundResource(R.drawable.route_number_background_dt_spirit)
         } else if (coverageType == CoverageTypes.REGULAR && !WinnipegTransitService.isRapidTransit(routeNumber) && !WinnipegTransitService.isExpress(routeNumber)) {

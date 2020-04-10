@@ -9,7 +9,7 @@ class URLParameter {
         this.value = value
     }
 
-    constructor(key: String, numbers: List<Int>) {
+    constructor(key: String, numbers: List<String>) {
         this.key = key
         value = numbers.joinToString(",")
     }

@@ -83,7 +83,7 @@ object TransitApiManager {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, path)
     }
 
-    fun generateStopNumberURL(stopNumber: Int, routeNumbers: List<Int>?, startTime: StopTime?, endTime: StopTime?): String {
+    fun generateStopNumberURL(stopNumber: Int, routeNumbers: List<String>?, startTime: StopTime?, endTime: StopTime?): String {
         val parameters = ArrayList<URLParameter>()
 
         if (routeNumbers != null)
@@ -102,8 +102,8 @@ object TransitApiManager {
         return createUrl(STOPS_PARAMETER + FORWARD_SLASH + stopNumber + FORWARD_SLASH + SCHEDULE_PARAMETER, parameters)
     }
 
-    fun generateStopNumberURL(stopNumber: Int, routeNumber: Int, startTime: StopTime, endTime: StopTime?): String {
-        val routeFilter = ArrayList<Int>()
+    fun generateStopNumberURL(stopNumber: Int, routeNumber: String, startTime: StopTime, endTime: StopTime?): String {
+        val routeFilter = ArrayList<String>()
         routeFilter.add(routeNumber)
 
         return generateStopNumberURL(stopNumber, routeFilter, startTime, endTime)

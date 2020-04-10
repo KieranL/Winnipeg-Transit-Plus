@@ -47,7 +47,7 @@ class StopListAdapter(context: Context, private var layoutResourceId: Int, priva
         if(favouriteStop.routes != null) {
             for (route in favouriteStop.routes!!) {
                 val view = inflater?.inflate(R.layout.route_number, null) as RouteNumberTextView
-                view.text = route.toString()
+                view.text = route.toShortString()
                 view.setColour(route, CoverageTypes.REGULAR)
 
                 holder.routeNumbers?.addView(view)

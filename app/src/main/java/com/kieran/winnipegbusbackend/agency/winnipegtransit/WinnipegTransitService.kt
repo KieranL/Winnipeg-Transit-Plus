@@ -18,7 +18,7 @@ import java.util.*
 object WinnipegTransitService : TransitService {
     override suspend fun getStopSchedule(stop: StopIdentifier, startTime: StopTime?, endTime: StopTime?, routes: List<RouteIdentifier>): StopSchedule {
         val stopNumber = (stop as WinnipegTransitStopIdentifier).stopNumber
-        val url = TransitApiManager.generateStopNumberURL(stopNumber, routes.map { (it as WinnipegTransitRouteIdentifier).routeNumber }, null, endTime)
+        val url = TransitApiManager.generateStopNumberURL(stopNumber, routes.map { (it as WinnipegTransitRouteIdentifier).routeNumber }, startTime, endTime)
         val result = TransitApiManager.getJson(url)
 
         if (result.result != null)
@@ -155,6 +155,9 @@ object WinnipegTransitService : TransitService {
     }
 
     override fun getSearchQueryType(searchText: String): SearchQueryType {
+//        if (searchText.trim().toUpperCase() == "BLUE")
+//            return SearchQueryType.ROUTE_NUMBER
+
         return try {
             val number = Integer.parseInt(searchText)
 
@@ -174,7 +177,7 @@ object WinnipegTransitService : TransitService {
     }
 
     override fun parseStringToRouteIdentifier(text: String): RouteIdentifier {
-        return WinnipegTransitRouteIdentifier(text.toInt())
+        return WinnipegTransitRouteIdentifier(text)
     }
 
     private fun getUpcomingStopNumbers(key: WinnipegTransitTripIdentifier, stopOnRoute: Int): List<Int> {
@@ -263,13 +266,14 @@ object WinnipegTransitService : TransitService {
                 val routeDetailsJson = routeJson.getJSONObject(ROUTE_TAG)
 
                 val coverageType = CoverageTypes.getEnum(routeDetailsJson.getString(ROUTE_COVERAGE_TAG))
-                val routeName = routeDetailsJson.getString(ROUTE_NAME_TAG)
-                val routeIdentifier = WinnipegTransitRouteIdentifier(routeDetailsJson.getInt(ROUTE_NUMBER_TAG))
+                val routeName = if (routeDetailsJson.has(ROUTE_NAME_TAG)) routeDetailsJson.getString(ROUTE_NAME_TAG) else routeDetailsJson.getString("key")
+                val routeIdentifier = WinnipegTransitRouteIdentifier(routeDetailsJson.getString(ROUTE_NUMBER_TAG))
                 val routeSchedule = RouteSchedule(routeIdentifier, routeName, coverageType, loadScheduledStops(routeJson, routeIdentifier, coverageType))
 
                 routeList.add(routeSchedule)
             }
         } catch (ex: JSONException) {
+            System.out.println(ex.toString())
 //            Rollbar.instance()?.error(ex)
         }
 
