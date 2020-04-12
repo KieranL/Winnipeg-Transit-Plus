@@ -219,8 +219,19 @@ object WinnipegTransitService : TransitService {
             stopIdentifier = stop ?: loadStopNumber(jsonObject.getJSONObject(STOP_TAG))!!
             return StopSchedule(name!!, stopIdentifier, routes, latLng!!)
         } catch (ex: JSONException) {
-//            Rollbar.instance()?.error(ex)
-            throw TransitDataNotFoundException()
+            try {
+                val stopIdentifier: WinnipegTransitStopIdentifier
+                val jsonObject = json.getJSONObject(STOP_SCHEDULE_TAG)
+                val stopJson = jsonObject.getJSONArray(STOP_TAG).getJSONObject(0)
+                val name = loadStopName(stopJson)
+                val routes = loadRoutes(jsonObject)
+                val latLng = loadLatLng(stopJson.getJSONObject(TransitApiManager.STOP_CENTRE_TAG).getJSONObject(TransitApiManager.GEOGRAPHIC_TAG))
+
+                stopIdentifier = stop ?: loadStopNumber(jsonObject.getJSONObject(STOP_TAG))!!
+            return StopSchedule(name!!, stopIdentifier, routes, latLng!!)
+            } catch (ex: JSONException) {
+                throw TransitDataNotFoundException()
+            }
         }
     }
 
@@ -268,19 +279,18 @@ object WinnipegTransitService : TransitService {
                 val coverageType = CoverageTypes.getEnum(routeDetailsJson.getString(ROUTE_COVERAGE_TAG))
                 val routeName = if (routeDetailsJson.has(ROUTE_NAME_TAG)) routeDetailsJson.getString(ROUTE_NAME_TAG) else routeDetailsJson.getString("key")
                 val routeIdentifier = WinnipegTransitRouteIdentifier(routeDetailsJson.getString(ROUTE_NUMBER_TAG))
-                val routeSchedule = RouteSchedule(routeIdentifier, routeName, coverageType, loadScheduledStops(routeJson, routeIdentifier, coverageType))
+                val routeSchedule = RouteSchedule(routeIdentifier, routeName, coverageType, loadScheduledStops(routeName, routeJson, routeIdentifier, coverageType))
 
                 routeList.add(routeSchedule)
             }
         } catch (ex: JSONException) {
-            System.out.println(ex.toString())
 //            Rollbar.instance()?.error(ex)
         }
 
         return routeList
     }
 
-    private fun loadScheduledStops(jsonObject: JSONObject, routeIdentifier: WinnipegTransitRouteIdentifier, coverageType: CoverageTypes): ArrayList<ScheduledStop> {
+    private fun loadScheduledStops(routeName: String, jsonObject: JSONObject, routeIdentifier: WinnipegTransitRouteIdentifier, coverageType: CoverageTypes): ArrayList<ScheduledStop> {
         val scheduledStops = ArrayList<ScheduledStop>()
         try {
             val jsonScheduledStops = jsonObject.getJSONArray(SCHEDULED_STOPS_TAG)
@@ -289,9 +299,10 @@ object WinnipegTransitService : TransitService {
                     .map { jsonScheduledStops.getJSONObject(it) }
                     .forEach {
                         try {
-                            val scheduledStop = createScheduleStop(it, routeIdentifier, coverageType)
+                            val scheduledStop = createScheduleStop(it, routeName, routeIdentifier, coverageType)
                             scheduledStops.add(scheduledStop)
                         } catch (ex: Exception) {
+                            System.out.println(ex.toString())
 //                            Rollbar.instance()?.error(ex)
                         }
                     }
@@ -303,7 +314,7 @@ object WinnipegTransitService : TransitService {
         return scheduledStops
     }
 
-    private fun createScheduleStop(stop: JSONObject?, routeIdentifier: WinnipegTransitRouteIdentifier, coverageType: CoverageTypes): ScheduledStop {
+    private fun createScheduleStop(stop: JSONObject?, routeName: String, routeIdentifier: WinnipegTransitRouteIdentifier, coverageType: CoverageTypes): ScheduledStop {
         if (stop != null) {
             try {
                 val times = stop.getJSONObject(STOP_TIMES_TAG)
@@ -332,7 +343,7 @@ object WinnipegTransitService : TransitService {
                 val key = WinnipegTransitScheduledStopKey(getJsonString(stop, STOP_KEY_TAG) ?: "")
                 val isCancelled = stop.getBoolean(CANCELLED_STATUS_TAG)
                 val variant = stop.getJSONObject(VARIANT_TAG)
-                val routeVariantName = getJsonString(variant, VARIANT_NAME_TAG) ?: ""
+                val routeVariantName = if (variant.has(VARIANT_NAME_TAG)) getJsonString(variant, VARIANT_NAME_TAG) else routeName
                 val routeKey = WinnipegTransitTripIdentifier(getJsonString(variant, VARIANT_KEY_TAG) ?: "")
 
                 if (times.has(ARRIVAL_TAG)) {
@@ -341,7 +352,7 @@ object WinnipegTransitService : TransitService {
                     estimatedArrivalTime = StopTime.convertStringToStopTime(arrival.getString(ESTIMATED_TAG), TransitApiManager.API_DATE_FORMAT)
                 }
 
-                return ScheduledStop(routeVariantName, estimatedArrivalTime, estimatedDepartureTime!!, scheduledArrivalTime, scheduledDepartureTime!!, isCancelled, hasBikeRack, hasWifi, busIdentifier, key, routeKey, routeIdentifier, coverageType, isTwoBus)
+                return ScheduledStop(routeVariantName!!, estimatedArrivalTime, estimatedDepartureTime!!, scheduledArrivalTime, scheduledDepartureTime!!, isCancelled, hasBikeRack, hasWifi, busIdentifier, key, routeKey, routeIdentifier, coverageType, isTwoBus)
             } catch (ex: JSONException) {
 //                Rollbar.instance()?.error(ex)
             }
@@ -355,7 +366,7 @@ object WinnipegTransitService : TransitService {
             json.getString(key)
         } catch (ex: JSONException) {
 //            Rollbar.instance()?.error(ex, "Error getting JSON field $key")
-            throw ex
+            ""
         }
     }
 

@@ -17,8 +17,8 @@ android {
         applicationId "com.kieran.winnipegbus"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 59
-        versionName "1.9.1"
+        versionCode 60
+        versionName "1.9.2"
         signingConfig signingConfigs.config
         resValue "string", "google_maps_key", (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
         buildConfigField "String", "winnipeg_transit_api_key", (project.findProperty("WINNIPEG_TRANSIT_API_KEY") ?: "")
