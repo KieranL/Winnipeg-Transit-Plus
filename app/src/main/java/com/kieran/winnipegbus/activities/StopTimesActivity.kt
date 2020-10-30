@@ -58,7 +58,7 @@ class StopTimesActivity : BaseActivity(), androidx.swiperefreshlayout.widget.Swi
         get() {
             val prefs = PreferenceManager.getDefaultSharedPreferences(this)
             val endTime = StopTime()
-            endTime.increaseHour(Integer.parseInt(prefs.getString(getString(R.string.pref_schedule_load_interval), "2")!!))
+            endTime.increaseHour(Integer.parseInt(prefs.getString(getString(R.string.pref_schedule_load_interval), "4")!!))
 
             return endTime
         }

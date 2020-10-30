@@ -20,7 +20,7 @@
     <ListPreference
         android:key="@string/pref_schedule_load_interval"
         android:title="@string/pref_title_schedule_load_interval"
-        android:defaultValue="2"
+        android:defaultValue="4"
         android:entries="@array/pref_bus_schedule_result_intervals"
         android:entryValues="@array/pref_bus_schedule_result_intervals_values"
         android:negativeButtonText="@null"
