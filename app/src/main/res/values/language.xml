@@ -48,7 +48,7 @@
     <string name="disable_ads_confirmation_title">Are you sure you want to disable adds?</string>
     <string name="disable_ads_confirmation">They help to pay for the costs of developing the app.</string>
     <string name="pref_title_refresh_on_resume">Automatically refresh</string>
-    <string name="privacy_url">http://kieranl.github.io/Winnipeg-Transit-Plus/</string>
+    <string name="privacy_url">https://kieranl.github.io/Winnipeg-Transit-Plus/</string>
     <string name="action_privacy_policy">Privacy Policy</string>
     <string name="does_bus_have_extended_capacity">This bus has a higher passenger capacity</string>
     <string name="data_not_found">Stop not found.</string>

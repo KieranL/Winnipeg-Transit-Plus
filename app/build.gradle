@@ -11,14 +11,14 @@ android {
 
         }
     }
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.kieran.winnipegbus"
         minSdkVersion 16
-        targetSdkVersion 29
-        versionCode 61
-        versionName "1.9.3"
+        targetSdkVersion 30
+        versionCode 62
+        versionName "1.9.4"
         signingConfig signingConfigs.config
         resValue "string", "google_maps_key", (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
         buildConfigField "String", "winnipeg_transit_api_key", (project.findProperty("WINNIPEG_TRANSIT_API_KEY") ?: "")
