@@ -35,7 +35,7 @@ class AgencySpecificClassFactoryTest {
     companion object {
         @JvmStatic
         fun stopIdentifierDataSet() = listOf(
-                Arguments.of(1L, "12345", "WinnipegTransitStopIdentifier", "12345")
+                Arguments.of(2L, "12345", "WinnipegTransitStopIdentifier", "12345")
         )
     }
 }

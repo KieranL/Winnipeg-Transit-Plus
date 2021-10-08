@@ -278,7 +278,7 @@ object WinnipegTransitService : TransitService {
 
                 val coverageType = CoverageTypes.getEnum(routeDetailsJson.getString(ROUTE_COVERAGE_TAG))
                 val routeName = if (routeDetailsJson.has(ROUTE_NAME_TAG)) routeDetailsJson.getString(ROUTE_NAME_TAG) else routeDetailsJson.getString("key")
-                val routeIdentifier = WinnipegTransitRouteIdentifier(routeDetailsJson.getString(ROUTE_NUMBER_TAG))
+                val routeIdentifier = WinnipegTransitRouteIdentifier(routeDetailsJson.get(ROUTE_NUMBER_TAG).toString())
                 val routeSchedule = RouteSchedule(routeIdentifier, routeName, coverageType, loadScheduledStops(routeName, routeJson, routeIdentifier, coverageType))
 
                 routeList.add(routeSchedule)

@@ -17,7 +17,7 @@ interface TransitServiceTest {
 
     @ParameterizedTest
     @MethodSource("getRouteStopsDataSet")
-    fun testGetRouteStopsWithValidRouteNumbers(routeNumber: Int, stopCount: Int)
+    fun testGetRouteStopsWithValidRouteNumbers(routeNumber: String, stopCount: Int)
 
     @ParameterizedTest
     @MethodSource("findStopsDataSet")
@@ -29,7 +29,7 @@ interface TransitServiceTest {
 
     @ParameterizedTest
     @MethodSource( "getUpcomingStopsDataSet")
-    fun testGetUpcomingStops(stopNumber: Int, routeNumber: Int)
+    fun testGetUpcomingStops(stopNumber: Int, routeNumber: String)
 
     @Test
     fun testGetLastQueryTime()

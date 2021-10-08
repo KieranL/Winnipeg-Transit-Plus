@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.*
 
-class StopTimesActivity : BaseActivity(), androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, ShakeDetector.OnShakeListener {
+class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, ShakeDetector.OnShakeListener {
     private var stopSchedule: StopSchedule? = null
     private var stopName: String? = null
     private var loading = false

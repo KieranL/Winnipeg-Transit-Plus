@@ -44,7 +44,7 @@ class WinnipegTransitServiceTest : TransitServiceTest {
 
     @ParameterizedTest
     @MethodSource("getRouteStopsDataSet")
-    override fun testGetRouteStopsWithValidRouteNumbers(routeNumber: Int, stopCount: Int) {
+    override fun testGetRouteStopsWithValidRouteNumbers(routeNumber: String, stopCount: Int) {
         val transitService = WinnipegTransitService
 
         runBlocking {
@@ -98,7 +98,7 @@ class WinnipegTransitServiceTest : TransitServiceTest {
 
     @ParameterizedTest
     @MethodSource("getUpcomingStopsDataSet")
-    override fun testGetUpcomingStops(stopNumber: Int, routeNumber: Int) {
+    override fun testGetUpcomingStops(stopNumber: Int, routeNumber: String) {
         val transitService = WinnipegTransitService
 
         runBlocking {
@@ -122,7 +122,7 @@ class WinnipegTransitServiceTest : TransitServiceTest {
     companion object {
         @JvmStatic
         fun findStopsDataSet() = listOf(
-                Arguments.of("Bell MTS Place", 3),
+                Arguments.of("Canada Life Centre", 3),
                 Arguments.of("Wpg Square", 2),
                 Arguments.of("Polo Park", 11),
                 Arguments.of("NB Southwest Transitway at Harkness", 1),
@@ -139,23 +139,23 @@ class WinnipegTransitServiceTest : TransitServiceTest {
 
         @JvmStatic
         fun getRouteStopsDataSet() = listOf(
-                Arguments.of(160, 78),
-                Arguments.of(16, 352),
-                Arguments.of(77, 285),
-                Arguments.of(66, 169)
+                Arguments.of("160", 0),
+                Arguments.of("16", 349),
+                Arguments.of("77", 282),
+                Arguments.of("66", 174)
         )
 
         @JvmStatic
         fun getStopDetailsDataSet() = listOf(
                 Arguments.of(10545, 3),
-                Arguments.of(60105, 2),
+                Arguments.of(60105, 3),
                 Arguments.of(40195, 3),
                 Arguments.of(20072, 0)
         )
 
         @JvmStatic
         fun getNearbyStopsDataSet() = listOf(
-                Arguments.of(49.8954, -97.1385, 1000, 151),
+                Arguments.of(49.8954, -97.1385, 1000, 132),
                 Arguments.of(49.8954, -97.1385, 100, 3),
                 Arguments.of(49.8854, -97.1285, 500, 23),
                 Arguments.of(49.9054, -97.1585, 250, 6),
@@ -164,10 +164,10 @@ class WinnipegTransitServiceTest : TransitServiceTest {
 
         @JvmStatic
         fun getUpcomingStopsDataSet() = listOf(
-                Arguments.of(20200, 78),
-                Arguments.of(60105, 60),
-                Arguments.of(10098, 29),
-                Arguments.of(10545, 11)
+                Arguments.of(20200, "66"),
+                Arguments.of(60105, "60"),
+                Arguments.of(10098, "29"),
+                Arguments.of(10545, "11")
         )
     }
 }
