@@ -20,6 +20,7 @@ import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.ShakeDetector
 import com.kieran.winnipegbus.adapters.StopTimeAdapter
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
+import com.kieran.winnipegbusbackend.EphemeralRecentStopsService
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.StopLocation
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.TripParameters
 import com.kieran.winnipegbusbackend.common.*
@@ -32,6 +33,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.*
+import kotlin.math.min
 
 class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, ShakeDetector.OnShakeListener {
     private var stopSchedule: StopSchedule? = null
@@ -89,6 +91,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         val stopExtra = intent.getSerializableExtra(STOP)
 
         val stop = stopExtra as FavouriteStop
+        EphemeralRecentStopsService.use(stop.identifier)
         favouriteStop = stop
 
         if (favouriteStop.id < 0) {
@@ -205,7 +208,6 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         }
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_stop_times, menu)
 
@@ -218,6 +220,16 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         favouriteButton = menu.findItem(R.id.add_to_favourites_button)
         favouriteButton?.icon = getFavouritesButtonDrawable()
         onOptionsItemSelected(menu.findItem(R.id.action_refresh)) //manually click the refresh button, this is the only way the swipe refresh loading spinner works correctly on initial load. Not happy with this but it was the only way I could get it to work
+
+        var recentStops = EphemeralRecentStopsService.getRecentStops()
+        recentStops = recentStops.subList(0, min(recentStops.size, RECENT_STOP_COUNT - 1))
+
+
+        for ((i, stop) in recentStops.withIndex()) {
+            if (stop !== favouriteStop.identifier)
+                menu.add(Menu.NONE, Menu.NONE, i + 100,String.format(Locale.CANADA, ACTIONBAR_TEXT, stop.toString()))
+        }
+
         return true
     }
 
@@ -419,5 +431,6 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         private const val UPDATED_STRING = "Updated %s"
         private const val ACTIONBAR_TEXT = "Stop %s"
         private const val DELETE_THIS_FAVOURITE = "Delete this Favourite?"
+        private const val RECENT_STOP_COUNT = 5
     }
 }

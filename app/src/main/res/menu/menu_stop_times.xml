@@ -2,6 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.kieran.winnipegbus.activities.StopTimesActivity">
+
     <item
         android:id="@+id/add_to_favourites_button"
         android:icon="?addToFavouritesIcon"
