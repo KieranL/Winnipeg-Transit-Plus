@@ -13,16 +13,14 @@ import android.widget.EditText
 import android.widget.ListView
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.adapters.StopListAdapter
-import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.TransitServiceProvider
 import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
 import com.kieran.winnipegbusbackend.favourites.FavouritesService
+import com.kieran.winnipegbusbackend.interfaces.Logger
 import com.kieran.winnipegbusbackend.interfaces.TransitService
-//import com.rollbar.android.Rollbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class FavouritesFragment: Fragment(), AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
@@ -68,7 +66,8 @@ class FavouritesFragment: Fragment(), AdapterView.OnItemClickListener, AdapterVi
                     adapter.notifyDataSetChanged()
                 }
             } catch (ex: Exception) {
-//                Rollbar.instance()?.error(ex)
+                Logger.getLogger().error(ex, "Error reloading favourite stops")
+
                 activity.runOnUiThread {
                 }
             }

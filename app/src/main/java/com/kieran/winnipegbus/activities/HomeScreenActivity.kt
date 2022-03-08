@@ -4,7 +4,6 @@ import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.preference.PreferenceManager
-import androidx.appcompat.app.AlertDialog
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
@@ -15,25 +14,21 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationServices
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbusbackend.AgencySpecificClassFactory
-import com.kieran.winnipegbusbackend.TransitServiceProvider
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouriteStopsList
 import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.common.SearchQuery
-import com.kieran.winnipegbusbackend.common.Stop
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
 import com.kieran.winnipegbusbackend.enums.SupportedFeature
-import com.kieran.winnipegbusbackend.interfaces.TransitService
-//import com.rollbar.android.Rollbar
-//import com.rollbar.notifier.config.ConfigBuilder
+import com.kieran.winnipegbusbackend.interfaces.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class HomeScreenActivity : GoogleApiActivity(), LocationListener {
@@ -75,9 +70,6 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).build()
         connectClient()
-
-//        Rollbar.init(this, null, null, false, true)
-
     }
 
     override fun onResume() {
@@ -98,7 +90,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
                     }
                 }
             }catch (ex: Exception){
-//                Rollbar.instance()?.error(ex)
+                Logger.getLogger().error(ex, "Error setting up frequent stops")
             }
         }
     }
@@ -144,7 +136,7 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
                 favouritesFragment = null
             }
         } catch (ex: Exception) {
-//            Rollbar.instance()?.error(ex)
+            Logger.getLogger().error(ex, "Error Initializing frequent stops")
         }
     }
 

@@ -1,6 +1,6 @@
 package com.kieran.winnipegbusbackend.common
 
-//import com.rollbar.android.Rollbar
+import com.kieran.winnipegbusbackend.interfaces.Logger
 import java.io.Serializable
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -175,7 +175,7 @@ class StopTime : Comparable<Any>, Serializable {
             return try {
                 StopTime(dateFormat.parse(s))
             } catch (ex: ParseException) {
-//                Rollbar.instance()?.error(ex)
+                Logger.getLogger().error(ex, "Error parsing date format")
                 null
             }
         }

@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -21,7 +20,7 @@ import com.kieran.winnipegbusbackend.common.GeoLocation
 import com.kieran.winnipegbusbackend.common.SearchQuery
 import com.kieran.winnipegbusbackend.common.Stop
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
-//import com.rollbar.android.Rollbar
+import com.kieran.winnipegbusbackend.interfaces.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -105,7 +104,7 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
 
                     onDataReceived(stops)
                     } catch (ex: Exception) {
-//                        Rollbar.instance()?.error(ex)
+                        Logger.getLogger().error(ex, "Error refreshing search results")
                         runOnUiThread {
                             handleException(ex)
                         }
@@ -205,7 +204,7 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
 
                     onDataReceived(stops)
                 } catch (ex: Exception){
-//                Rollbar.instance()?.error(ex)
+                Logger.getLogger().error(ex, "Error finding closest stops")
                     runOnUiThread{
                         handleException(ex)
                     }

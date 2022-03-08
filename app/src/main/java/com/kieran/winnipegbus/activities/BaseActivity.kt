@@ -29,8 +29,8 @@ import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
 import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
 import com.kieran.winnipegbusbackend.exceptions.TransitDataNotFoundException
 import com.kieran.winnipegbusbackend.favourites.FavouritesService
+import com.kieran.winnipegbusbackend.interfaces.Logger
 import com.kieran.winnipegbusbackend.interfaces.TransitService
-//import com.rollbar.android.Rollbar
 
 import java.io.IOException
 
@@ -74,7 +74,7 @@ abstract class BaseActivity : AppCompatActivity() {
                     locationMode = Settings.Secure.getInt(contentResolver, Settings.Secure.LOCATION_MODE)
 
                 } catch (ex: Settings.SettingNotFoundException) {
-//                    Rollbar.instance()?.error(ex)
+                    Logger.getLogger().error(ex, "Error getting location setting")
                 }
 
                 isLocationEnabled = locationMode != Settings.Secure.LOCATION_MODE_OFF
@@ -173,7 +173,7 @@ abstract class BaseActivity : AppCompatActivity() {
             val adRequest = AdRequest.Builder()
             adView!!.loadAd(adRequest.build())
         } catch (ex: Exception) {
-//            Rollbar.instance()?.error(ex, "Error Initializing adview")
+            Logger.getLogger().error(ex, "Error Initializing adview")
         }
     }
 

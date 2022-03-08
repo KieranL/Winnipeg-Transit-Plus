@@ -8,7 +8,6 @@ import com.kieran.winnipegbusbackend.enums.SupportedFeature
 import com.kieran.winnipegbusbackend.exceptions.RateLimitedException
 import com.kieran.winnipegbusbackend.exceptions.TransitDataNotFoundException
 import com.kieran.winnipegbusbackend.interfaces.*
-//import com.rollbar.android.Rollbar
 import kotlinx.coroutines.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -46,14 +45,14 @@ object WinnipegTransitService : TransitService {
                         val featureCount = featureNode.getInt("count")
                         StopFeature(featureCount, featureName)
                     } catch (ex: JSONException) {
-//                        Rollbar.instance()?.error(ex)
+                        Logger.getLogger().error(ex, "Error deserializing stop details")
                         null
                     }
                 }
 
                 stopFeatures.loadFeatures(stopFeatureList)
             } catch (ex: JSONException) {
-//                Rollbar.instance()?.error(ex)
+                Logger.getLogger().error(ex, "Error deserializing stop details")
             }
 
         }
@@ -140,7 +139,7 @@ object WinnipegTransitService : TransitService {
                         throw result.exception
                     }
                 } catch (ex: Exception) {
-//                    Rollbar.instance()?.error(ex)
+                    Logger.getLogger().error(ex, "Error getting upcoming stops")
                 }
 
             }
@@ -195,7 +194,7 @@ object WinnipegTransitService : TransitService {
 
                 return stopNumbers
             } catch (ex: JSONException) {
-//                Rollbar.instance()?.error(ex)
+                Logger.getLogger().error(ex, "Error deserializing upcoming stop numbers")
                 throw TransitDataNotFoundException()
             }
         } else {
@@ -240,7 +239,7 @@ object WinnipegTransitService : TransitService {
         return try {
             return GeoLocation(jsonObject.getDouble(LATITUDE_TAG), jsonObject.getDouble(LONGITUDE_TAG))
         } catch (ex: JSONException) {
-//            Rollbar.instance()?.error(ex)
+            Logger.getLogger().error(ex, "Error deserializing latitude or longitude")
             null
         }
 
@@ -250,7 +249,7 @@ object WinnipegTransitService : TransitService {
         return try {
             jsonObject.getString(TransitApiManager.STOP_NAME_TAG)
         } catch (ex: JSONException) {
-//            Rollbar.instance()?.error(ex)
+            Logger.getLogger().error(ex, "Error deserializing stop name")
             null
         }
 
@@ -260,7 +259,7 @@ object WinnipegTransitService : TransitService {
         return try {
             return WinnipegTransitStopIdentifier(jsonObject.getInt(TransitApiManager.STOP_NUMBER_TAG))
         } catch (ex: JSONException) {
-//            Rollbar.instance()?.error(ex)
+            Logger.getLogger().error(ex, "Error deserializing stop number")
             null
         }
 
@@ -284,7 +283,7 @@ object WinnipegTransitService : TransitService {
                 routeList.add(routeSchedule)
             }
         } catch (ex: JSONException) {
-//            Rollbar.instance()?.error(ex)
+            Logger.getLogger().error(ex, "Error deserializing routes")
         }
 
         return routeList
@@ -303,12 +302,12 @@ object WinnipegTransitService : TransitService {
                             scheduledStops.add(scheduledStop)
                         } catch (ex: Exception) {
                             System.out.println(ex.toString())
-//                            Rollbar.instance()?.error(ex)
+                            Logger.getLogger().error(ex, "Error creating scheduled stop")
                         }
                     }
 
         } catch (ex: JSONException) {
-//            Rollbar.instance()?.error(ex)
+            Logger.getLogger().error(ex, "Error deserializing stop schedule")
         }
 
         return scheduledStops
@@ -354,7 +353,7 @@ object WinnipegTransitService : TransitService {
 
                 return ScheduledStop(routeVariantName!!, estimatedArrivalTime, estimatedDepartureTime!!, scheduledArrivalTime, scheduledDepartureTime!!, isCancelled, hasBikeRack, hasWifi, busIdentifier, key, routeKey, routeIdentifier, coverageType, isTwoBus)
             } catch (ex: JSONException) {
-//                Rollbar.instance()?.error(ex)
+                Logger.getLogger().error(ex, "Error deserializing scheduled stop")
             }
         }
 
@@ -365,7 +364,7 @@ object WinnipegTransitService : TransitService {
         return try {
             json.getString(key)
         } catch (ex: JSONException) {
-//            Rollbar.instance()?.error(ex, "Error getting JSON field $key")
+            Logger.getLogger().error(ex, "Error deserializing JSON string $key")
             ""
         }
     }
