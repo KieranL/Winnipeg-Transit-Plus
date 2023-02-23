@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Winnipeg-Transit-Plus.iml" filepath="$PROJECT_DIR$/Winnipeg-Transit-Plus.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Winnipeg-Transit-Plus.iml" filepath="$PROJECT_DIR$/.idea/modules/Winnipeg-Transit-Plus.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Winnipeg-Transit-Plus.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Winnipeg-Transit-Plus.app.iml" />
     </modules>
   </component>
 </project>

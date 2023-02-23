@@ -2,32 +2,35 @@ package com.kieran.winnipegbusbackend
 
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitRouteIdentifier
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitStopIdentifier
+import com.kieran.winnipegbusbackend.exceptions.AgencyNotFoundException
+import com.kieran.winnipegbusbackend.exceptions.InvalidRouteIdentifierException
+import com.kieran.winnipegbusbackend.exceptions.InvalidStopIdentifierException
+import com.kieran.winnipegbusbackend.interfaces.Logger
 import com.kieran.winnipegbusbackend.interfaces.RouteIdentifier
 import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
-//import com.rollbar.android.Rollbar
 
 object AgencySpecificClassFactory {
-    fun createStopIdentifier(agencyId: Long, identifierString: String): StopIdentifier? {
+    fun createStopIdentifier(agencyId: Long, identifierString: String): StopIdentifier {
         return try {
-            when(agencyId){
-            2L -> WinnipegTransitStopIdentifier(identifierString.toInt())
-            else -> null
-        }
-        }catch (ex: Exception){
-//            Rollbar.instance()?.error(ex, "Invalid Agency Id")
-            null
+            when (agencyId) {
+                2L -> WinnipegTransitStopIdentifier(identifierString.toInt())
+                else -> throw AgencyNotFoundException()
+            }
+        } catch (ex: NumberFormatException) {
+            Logger.getLogger().error(ex, "Invalid stop identifier")
+            throw InvalidStopIdentifierException()
         }
     }
 
-    fun createRouteIdentifier(agencyId: Long, text: String): RouteIdentifier? {
+    fun createRouteIdentifier(agencyId: Long, text: String): RouteIdentifier {
         return try {
-            when(agencyId){
+            when (agencyId) {
                 2L -> WinnipegTransitRouteIdentifier(text)
-                else -> null
+                else -> throw AgencyNotFoundException()
             }
-        }catch (ex: Exception){
-//            Rollbar.instance()?.error(ex, "Invalid Agency Id")
-            null
+        } catch (ex: NumberFormatException) {
+            Logger.getLogger().error(ex, "Invalid route identifier")
+            throw InvalidRouteIdentifierException()
         }
     }
 }

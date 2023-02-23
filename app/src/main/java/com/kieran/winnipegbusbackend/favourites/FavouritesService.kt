@@ -39,6 +39,15 @@ class FavouritesService(private val favouritesRepository: FavouritesRepository, 
         return favouritesRepository.get(agencyId, identifier) != null
     }
 
+    fun get(identifier: StopIdentifier): FavouriteStop? {
+        val matchingFavourite = favouritesRepository.get(agencyId, identifier)?.first()
+
+        return if (matchingFavourite == null)
+            null
+        else
+            convertFromDataClass(matchingFavourite)
+    }
+
     fun add(favourite: FavouriteStop): FavouriteStop? {
         val existing = favouritesRepository.get(agencyId, favourite.identifier)
 

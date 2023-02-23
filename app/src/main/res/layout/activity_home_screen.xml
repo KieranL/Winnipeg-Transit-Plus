@@ -50,13 +50,15 @@
 
         <com.google.android.gms.ads.AdView
             xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:background="?attr/stopTimesHeaderBackground"
             android:visibility="gone"
             android:id="@+id/homeScreenAdView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
             ads:adSize="BANNER"
+            android:minHeight="50dp"
             ads:adUnitId="@string/banner_ad_home_unit_id">
         </com.google.android.gms.ads.AdView>
 

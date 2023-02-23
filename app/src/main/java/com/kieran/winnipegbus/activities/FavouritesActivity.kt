@@ -11,7 +11,6 @@ import android.widget.EditText
 import android.widget.ListView
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.adapters.StopListAdapter
-import com.kieran.winnipegbus.views.StyledSwipeRefresh
 import com.kieran.winnipegbusbackend.common.FavouriteStop
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

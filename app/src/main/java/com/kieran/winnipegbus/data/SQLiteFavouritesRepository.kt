@@ -4,8 +4,8 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import com.kieran.winnipegbusbackend.interfaces.FavouritesRepository
+import com.kieran.winnipegbusbackend.interfaces.Logger
 import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
-//import com.rollbar.android.Rollbar
 import org.jetbrains.anko.db.*
 
 class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesRepository, ManagedSQLiteOpenHelper(ctx, "transit_db", null, 2) {
@@ -22,7 +22,7 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
                     favourites = parseList(favouriteRowParser)
                 }
             } catch (ex: SQLiteException) {
-//                Rollbar.instance()?.error(ex)
+                Logger.getLogger().error(ex, "Error getting all favourite s")
             }
         }
 
@@ -47,7 +47,7 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
                         "routes" to favourite.routes)
                 get(favourite.agencyId, id)
             } catch (ex: SQLiteException) {
-//                Rollbar.instance()?.error(ex)
+                Logger.getLogger().error(ex, "Error creating favourite stop")
                 null
             }
         }
@@ -89,7 +89,7 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
                     }
                 }
             } catch (ex: SQLiteException) {
-//                Rollbar.instance()?.error(ex)
+                Logger.getLogger().error(ex, "Error getting favourite stops")
             }
         }
 
@@ -103,7 +103,7 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
 
                 rowsDeleted > 0
             } catch (ex: SQLiteException) {
-//                Rollbar.instance()?.error(ex)
+                Logger.getLogger().error(ex, "Error deleting favourite stop")
                 false
             }
         }
@@ -118,7 +118,7 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
                     favourite = parseOpt(favouriteRowParser)
                 }
             } catch (ex: SQLiteException) {
-//                Rollbar.instance()?.error(ex)
+                Logger.getLogger().error(ex, "Error getting favourite stop")
             }
         }
 
@@ -132,7 +132,7 @@ class SQLiteFavouritesRepository private constructor(ctx: Context) : FavouritesR
 
                 rowsDeleted > 0
             } catch (ex: SQLiteException) {
-//                Rollbar.instance()?.error(ex)
+                Logger.getLogger().error(ex, "Error deleting favourite stop")
                 false
             }
         }

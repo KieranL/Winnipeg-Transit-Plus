@@ -17,7 +17,7 @@
     <ListPreference
         android:key="pref_favourites_on_home_count"
         android:title="@string/pref_favourites_on_home_count"
-        android:defaultValue="2"
+        android:defaultValue="3"
         android:entries="@array/pref_favourites_on_home_count"
         android:entryValues="@array/favourites_on_home_count_values"
         android:negativeButtonText="@null"
