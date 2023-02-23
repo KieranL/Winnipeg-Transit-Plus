@@ -11,12 +11,12 @@ android {
 
         }
     }
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.kieran.winnipegbus"
         minSdkVersion 16
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 63
         versionName "1.9.5"
         signingConfig signingConfigs.config
