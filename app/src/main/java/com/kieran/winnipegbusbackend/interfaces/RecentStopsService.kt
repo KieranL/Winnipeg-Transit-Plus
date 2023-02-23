@@ -1,9 +1,11 @@
 package com.kieran.winnipegbusbackend.interfaces
 
-interface RecentStopsService {
-    fun use(stop: StopIdentifier)
+import com.kieran.winnipegbusbackend.common.RecentStop
 
-    fun getRecentStops(): List<StopIdentifier>
+interface RecentStopsService {
+    fun use(stop: RecentStop)
+
+    fun getRecentStops(): List<RecentStop>
 
     fun reset()
 }

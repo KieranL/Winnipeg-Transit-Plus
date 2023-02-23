@@ -7,30 +7,44 @@
     <com.kieran.winnipegbus.views.StyledSwipeRefresh
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/stopTimesAdView"
-        android:id="@+id/stop_times_swipe_refresh">
+        android:id="@+id/stop_times_swipe_refresh"
+        android:layout_above="@+id/stop_times_footer">
 
-    <ListView
-        android:padding="4dp"
-        android:id="@+id/stop_times_listview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:divider="@null"
-        android:layout_alignParentTop="true"/>
+        <ListView
+            android:padding="4dp"
+            android:id="@+id/stop_times_listview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@null"
+            android:layout_alignParentTop="true"/>
 
     </com.kieran.winnipegbus.views.StyledSwipeRefresh>
 
-    <com.google.android.gms.ads.AdView
-        android:paddingTop="2dp"
-        xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/stopTimesAdView"
+    <LinearLayout
+        android:id="@+id/stop_times_footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:visibility="gone"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_stop_times_unit_id">
-    </com.google.android.gms.ads.AdView>
+        android:orientation="vertical">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recent_stops_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:orientation="horizontal"
+            android:layout_margin="8dp"/>
+
+        <com.google.android.gms.ads.AdView
+            android:background="?attr/stopTimesHeaderBackground"
+            android:minHeight="50dp"
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/stopTimesAdView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            ads:adSize="BANNER"
+            ads:adUnitId="@string/banner_ad_stop_times_unit_id">
+        </com.google.android.gms.ads.AdView>
+    </LinearLayout>
 </RelativeLayout>

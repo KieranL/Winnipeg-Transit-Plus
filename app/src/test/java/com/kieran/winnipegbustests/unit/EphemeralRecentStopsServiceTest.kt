@@ -1,17 +1,18 @@
 package com.kieran.winnipegbustests.unit
 
 import com.kieran.winnipegbusbackend.AgencySpecificClassFactory
-import com.kieran.winnipegbusbackend.EphemeralRecentStopsService
+import com.kieran.winnipegbusbackend.ListRecentStopsService
+import com.kieran.winnipegbusbackend.common.RecentStop
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions
 
 class EphemeralRecentStopsServiceTest {
     @Test
     fun testUseWithEmptyList() {
-        val recentStopsService = EphemeralRecentStopsService
+        val recentStopsService = ListRecentStopsService
         recentStopsService.reset()
         val stopId = AgencySpecificClassFactory.createStopIdentifier(2, "12345")
-        recentStopsService.use(stopId)
+        recentStopsService.use(RecentStop("One", stopId))
 
         val recentStops = recentStopsService.getRecentStops()
 
@@ -21,12 +22,12 @@ class EphemeralRecentStopsServiceTest {
 
     @Test
     fun testUseWithSingleEntryPutsRecentAtFront() {
-        val recentStopsService = EphemeralRecentStopsService
+        val recentStopsService = ListRecentStopsService
         recentStopsService.reset()
         val stop1 = AgencySpecificClassFactory.createStopIdentifier(2, "1")
         val stop2 = AgencySpecificClassFactory.createStopIdentifier(2, "2")
-        recentStopsService.use(stop1)
-        recentStopsService.use(stop2)
+        recentStopsService.use(RecentStop("One", stop1))
+        recentStopsService.use(RecentStop("two", stop2))
 
         val recentStops = recentStopsService.getRecentStops()
 
@@ -36,13 +37,13 @@ class EphemeralRecentStopsServiceTest {
 
     @Test
     fun testUseWithStopAlreadyInListPutsAtFrontAndDoesNotDuplicate() {
-        val recentStopsService = EphemeralRecentStopsService
+        val recentStopsService = ListRecentStopsService
         recentStopsService.reset()
         val stop1 = AgencySpecificClassFactory.createStopIdentifier(2, "1")
         val stop2 = AgencySpecificClassFactory.createStopIdentifier(2, "2")
-        recentStopsService.use(stop1)
-        recentStopsService.use(stop2)
-        recentStopsService.use(stop1)
+        recentStopsService.use(RecentStop("One", stop1))
+        recentStopsService.use(RecentStop("two", stop2))
+        recentStopsService.use(RecentStop("One", stop1))
 
         val recentStops = recentStopsService.getRecentStops()
 

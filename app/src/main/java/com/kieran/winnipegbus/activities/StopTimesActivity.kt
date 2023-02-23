@@ -9,18 +9,22 @@ import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.preference.PreferenceManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.ShakeDetector
+import com.kieran.winnipegbus.adapters.RecentStopsAdapter
 import com.kieran.winnipegbus.adapters.StopTimeAdapter
 import com.kieran.winnipegbus.views.StyledSwipeRefresh
-import com.kieran.winnipegbusbackend.EphemeralRecentStopsService
+import com.kieran.winnipegbusbackend.ListRecentStopsService
+import com.kieran.winnipegbusbackend.NowhereLogger
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.StopLocation
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.TripPlanner.classes.TripParameters
 import com.kieran.winnipegbusbackend.common.*
@@ -33,9 +37,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.*
-import kotlin.math.min
 
-class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, ShakeDetector.OnShakeListener {
+
+class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, ShakeDetector.OnShakeListener, RecentStopsAdapter.ViewHolder.Listener {
     private var stopSchedule: StopSchedule? = null
     private var stopName: String? = null
     private var loading = false
@@ -91,7 +95,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         val stopExtra = intent.getSerializableExtra(STOP)
 
         val stop = stopExtra as FavouriteStop
-        EphemeralRecentStopsService.use(stop.identifier)
+        ListRecentStopsService.use(RecentStop(stop.name, stop.identifier))
         favouriteStop = stop
 
         if (favouriteStop.id < 0) {
@@ -221,15 +225,6 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         favouriteButton?.icon = getFavouritesButtonDrawable()
         onOptionsItemSelected(menu.findItem(R.id.action_refresh)) //manually click the refresh button, this is the only way the swipe refresh loading spinner works correctly on initial load. Not happy with this but it was the only way I could get it to work
 
-        var recentStops = EphemeralRecentStopsService.getRecentStops()
-        recentStops = recentStops.subList(0, min(recentStops.size, RECENT_STOP_COUNT - 1))
-
-
-        for ((i, stop) in recentStops.withIndex()) {
-            if (stop !== favouriteStop.identifier)
-                menu.add(Menu.NONE, Menu.NONE, i + 100,String.format(Locale.CANADA, ACTIONBAR_TEXT, stop.toString()))
-        }
-
         return true
     }
 
@@ -289,6 +284,7 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
             }
         }
         swipeRefreshLayout!!.isRefreshing = loading
+        showRecentStops()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -320,6 +316,28 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun showRecentStops() {
+        try {
+            var recentStops = ListRecentStopsService.getRecentStops()
+            recentStops = recentStops.filter { it.identifier != favouriteStop.identifier }
+            recentStops = recentStops.take(RECENT_STOP_COUNT)
+
+            if (recentStops.count() < MINIMUM_RECENT_STOP_COUNT) {
+                return
+            }
+
+            val recentStopsListView = findViewById<RecyclerView>(R.id.recent_stops_list)
+            val layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+            recentStopsListView.layoutManager = layoutManager
+
+            val recentStopsAdapter = RecentStopsAdapter(recentStops, this)
+            recentStopsListView.adapter = recentStopsAdapter
+            recentStopsListView.visibility = View.VISIBLE
+        } catch (ex: Exception) {
+            Logger.getLogger().error(ex, "Unable to show recent stops")
+        }
     }
 
     private fun handleFavouritesClick(item: MenuItem) {
@@ -425,12 +443,30 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         }
     }
 
+    override fun onRecentStopSelected(stop: RecentStop) {
+        var newStop = favouritesService.get(stop.identifier)
+
+        if(newStop != null) {
+            newStop.use()
+            favouritesService.update(newStop)
+        } else {
+            newStop = FavouriteStop("", stop.identifier)
+        }
+
+        favouriteStop = newStop
+
+        setTitle(String.format(Locale.CANADA, ACTIONBAR_TEXT, stop.identifier.toString()))
+        ListRecentStopsService.use(stop)
+        refresh()
+    }
+
     companion object {
         private const val FILTER_POSITIVE = "Done"
         const val STOP = "stop"
         private const val UPDATED_STRING = "Updated %s"
         private const val ACTIONBAR_TEXT = "Stop %s"
         private const val DELETE_THIS_FAVOURITE = "Delete this Favourite?"
-        private const val RECENT_STOP_COUNT = 5
+        private const val RECENT_STOP_COUNT = 3
+        private const val MINIMUM_RECENT_STOP_COUNT = 1
     }
 }

@@ -3,8 +3,28 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/layout/activity_stop_times.xml" value="0.35989583333333336" />
-        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/menu/menu_stop_times.xml" value="0.35989583333333336" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/drawable-anydpi/ic_select_recent_stop_dark.xml" value="0.188" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/drawable-anydpi/ic_select_recent_stop_light.xml" value="0.332" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/drawable/divider_background.xml" value="0.234" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/layout-land/activity_stop_info.xml" value="0.1" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/layout/activity_favourite_stops.xml" value="0.18675213675213675" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/layout/activity_home_screen.xml" value="0.16623931623931623" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/layout/activity_route_map.xml" value="0.17393162393162392" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/layout/activity_search_results.xml" value="0.14487179487179488" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/layout/activity_stop_info.xml" value="0.1" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/layout/activity_stop_times.xml" value="0.2952991452991453" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/layout/activity_trip_planner.xml" value="0.19743589743589743" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/layout/checkbox.xml" value="0.19743589743589743" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/layout/expandablelistview_service_advisory_header.xml" value="0.19743589743589743" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/layout/fragment_favourites.xml" value="0.19743589743589743" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/layout/listview_recent_stops_row.xml" value="0.2452991452991453" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/layout/listview_stop_times_header.xml" value="0.2512820512820513" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/layout/listview_stop_times_row.xml" value="0.2452991452991453" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/layout/listview_stops.xml" value="0.2952991452991453" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/layout/listview_stops_row.xml" value="0.19743589743589743" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/layout/upcoming_stops_row.xml" value="0.2952991452991453" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/menu/menu_service_advisory.xml" value="0.20427350427350427" />
+        <entry key="..\:/Users/kiera/StudioProjects/Winnipeg-Transit-Plus/app/src/main/res/menu/menu_stop_times.xml" value="0.33" />
       </map>
     </option>
   </component>

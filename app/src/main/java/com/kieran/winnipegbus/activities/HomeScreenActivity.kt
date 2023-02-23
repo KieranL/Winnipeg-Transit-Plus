@@ -20,8 +20,10 @@ import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationServices
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbusbackend.AgencySpecificClassFactory
+import com.kieran.winnipegbusbackend.ListRecentStopsService
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouriteStopsList
 import com.kieran.winnipegbusbackend.common.FavouriteStop
+import com.kieran.winnipegbusbackend.common.RecentStop
 import com.kieran.winnipegbusbackend.common.SearchQuery
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
 import com.kieran.winnipegbusbackend.enums.SearchQueryType
@@ -88,6 +90,10 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
                     runOnUiThread {
                         initializeFrequentFavourites(overrideCheck)
                     }
+                }
+
+                for (stop in stops.reversed()) {
+                    ListRecentStopsService.use(RecentStop(stop.name, stop.identifier))
                 }
             }catch (ex: Exception){
                 Logger.getLogger().error(ex, "Error setting up frequent stops")
