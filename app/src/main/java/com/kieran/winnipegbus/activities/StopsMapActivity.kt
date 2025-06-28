@@ -30,17 +30,24 @@ class StopsMapActivity : MapActivity() {
     override fun onConnected(dataBundle: Bundle?) {
         if (SearchResultsActivity.stops != null) {
             for (favouriteStop in SearchResultsActivity.stops) {
-                val markerOptions = MarkerOptions()
+                if (favouriteStop.latLng != null) {
+                    val markerOptions = MarkerOptions()
 
-                markerOptions.position(if (favouriteStop.latLng != null)  LatLng(favouriteStop.latLng!!.latitude, favouriteStop.latLng!!.longitude) else null)
-                markerOptions.title(favouriteStop.identifier.toString())
-                markerOptions.snippet(favouriteStop.name)
-                map!!.addMarker(markerOptions)
+                    markerOptions.position(
+                        LatLng(
+                            favouriteStop.latLng!!.latitude,
+                            favouriteStop.latLng!!.longitude
+                        )
+                    )
+                    markerOptions.title(favouriteStop.identifier.toString())
+                    markerOptions.snippet(favouriteStop.name)
+                    map!!.addMarker(markerOptions)
+                }
             }
         }
 
         map!!.isTrafficEnabled = true
-        map!!.setOnInfoWindowClickListener { marker -> openStopTimes(FavouriteStop(marker.snippet, transitService.parseStringToStopIdentifier(marker.title))) }
+        map!!.setOnInfoWindowClickListener { marker -> openStopTimes(FavouriteStop(marker.snippet!!, transitService.parseStringToStopIdentifier(marker.title!!))) }
         onConnected()
 
         moveMap()

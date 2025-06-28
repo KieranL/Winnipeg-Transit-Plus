@@ -180,7 +180,9 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
         alertDialog.setMessage("Add to Favourites?")
         alertDialog.setPositiveButton("Yes") { dialogInterface, which ->
             val stop = stops[position]
-            favouritesService.add(FavouriteStop(stop.name, stop.identifier, 0, stop.latLng))
+            GlobalScope.launch(Dispatchers.IO) {
+                favouritesService.add(FavouriteStop(stop.name, stop.identifier, 0, stop.latLng))
+            }
         }
 
         alertDialog.setNegativeButton("No", null)

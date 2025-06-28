@@ -32,7 +32,7 @@ abstract class GoogleApiActivity : BaseActivity(), GoogleApiClient.ConnectionCal
         }
 
     val latestLocation: Location?
-        get() = LocationServices.FusedLocationApi.getLastLocation(googleApiClient)
+        get() = LocationServices.FusedLocationApi.getLastLocation(googleApiClient!!)
 
     protected fun connectClient() {
         if (isGooglePlayServicesAvailable && googleApiClient != null) {
@@ -77,6 +77,7 @@ abstract class GoogleApiActivity : BaseActivity(), GoogleApiClient.ConnectionCal
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             validatedLocationRequest()
         } else {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), FINE_LOCATION)
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), FINE_LOCATION)
         }
     }
@@ -93,7 +94,7 @@ abstract class GoogleApiActivity : BaseActivity(), GoogleApiClient.ConnectionCal
             val locationRequest = LocationRequest.create().setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
             locationRequest.interval = LOCATION_REFRESH_INTERVAL.toLong()
             locationRequest.fastestInterval = LOCATION_REFRESH_INTERVAL.toLong()
-            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this as LocationListener)
+            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient!!, locationRequest, this as LocationListener)
             locationRequest
         } catch (ex: Exception) {
             Logger.getLogger().error(ex, "Error getting location request")

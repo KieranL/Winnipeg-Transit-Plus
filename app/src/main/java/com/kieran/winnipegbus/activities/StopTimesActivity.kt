@@ -34,6 +34,7 @@ import com.kieran.winnipegbusbackend.interfaces.RouteIdentifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.*
@@ -99,14 +100,14 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         favouriteStop = stop
 
         if (favouriteStop.id < 0) {
-            val existingFavourites = favouritesService.getAll()
+//            val existingFavourites = favouritesService.getAll()
 
-            val existingFavourite = existingFavourites.find {
-                it.identifier == favouriteStop.identifier && it.routes == null
-            }
+//            val existingFavourite = existingFavourites.find {
+//                it.identifier == favouriteStop.identifier && it.routes == null
+//            }
 
-            if (existingFavourite != null)
-                favouriteStop = existingFavourite
+//            if (existingFavourite != null)
+//                favouriteStop = existingFavourite
         }
 
         if (stop.routes != null) {
@@ -344,13 +345,21 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         if (favouriteStop.id > 0 && ((favouriteStop.routes == null && !routeNumberFilter.any()) || doesFilterMatchRoutes())) {
             openDeleteFavouriteDialog(item)
         } else if (stopName != null && stopName != "") {
-            val newFavouriteStop = favouritesService.add(FavouriteStop(stopName!!, favouriteStop.identifier, routes = routeNumberFilter))
+            GlobalScope.launch(Dispatchers.IO) {
+                val newFavouriteStop = favouritesService.add(
+                    FavouriteStop(
+                        stopName!!,
+                        favouriteStop.identifier,
+                        routes = routeNumberFilter
+                    )
+                )
 
-            if (newFavouriteStop != null) {
-                favouriteStop = newFavouriteStop
-                item.icon = getFavouritesButtonDrawable()
-            } else {
-                showShortToaster(R.string.unknown_error)
+                if (newFavouriteStop != null) {
+                    favouriteStop = newFavouriteStop
+                    item.icon = getFavouritesButtonDrawable()
+                } else {
+                    showShortToaster(R.string.unknown_error)
+                }
             }
         } else {
             showLongToaster(R.string.wait_for_load)
@@ -362,9 +371,11 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         alertDialog.setMessage(DELETE_THIS_FAVOURITE)
 
         alertDialog.setPositiveButton(R.string.yes) { _, _ ->
-            favouritesService.delete(favouriteStop.id)
-            favouriteStop = FavouriteStop(favouriteStop.name, favouriteStop.identifier)
-            item.icon = getFavouritesButtonDrawable()
+            GlobalScope.launch(Dispatchers.IO) {
+                favouritesService.delete(favouriteStop.id)
+                favouriteStop = FavouriteStop(favouriteStop.name, favouriteStop.identifier)
+                item.icon = getFavouritesButtonDrawable()
+            }
         }
 
         alertDialog.setNegativeButton(R.string.no, null)
@@ -447,8 +458,10 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
         var newStop = favouritesService.get(stop.identifier)
 
         if(newStop != null) {
-            newStop.use()
-            favouritesService.update(newStop)
+            GlobalScope.launch(Dispatchers.IO) {
+                newStop!!.use()
+                favouritesService.update(newStop!!)
+            }
         } else {
             newStop = FavouriteStop("", stop.identifier)
         }

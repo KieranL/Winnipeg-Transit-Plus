@@ -2,7 +2,6 @@ package com.kieran.winnipegbusbackend.favourites
 
 import com.kieran.winnipegbus.data.DataFavourite
 import com.kieran.winnipegbusbackend.AgencySpecificClassFactory
-import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouritesImporter
 import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.common.GeoLocation
 import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
@@ -20,19 +19,9 @@ class FavouritesService(private val favouritesRepository: FavouritesRepository, 
     }
 
     fun getAll(sortPreference: FavouritesListSortType = FavouritesListSortType.getEnum("0")): List<FavouriteStop> {
-        if (!favouritesRepository.hasBeenImported()) {
-            runImport()
-        }
-
         val dataFavourites = favouritesRepository.getAll(agencyId) ?: throw Exception()
 
         return sort(convertFromDataClass(dataFavourites), sortPreference)
-    }
-
-    private fun runImport() {
-        FavouritesImporter.convertXMLtoSQLite(this)
-
-        favouritesRepository.markImported()
     }
 
     fun contains(identifier: StopIdentifier): Boolean {
@@ -48,7 +37,7 @@ class FavouritesService(private val favouritesRepository: FavouritesRepository, 
             convertFromDataClass(matchingFavourite)
     }
 
-    fun add(favourite: FavouriteStop): FavouriteStop? {
+    suspend fun add(favourite: FavouriteStop): FavouriteStop? {
         val existing = favouritesRepository.get(agencyId, favourite.identifier)
 
         if (existing != null) {
@@ -68,16 +57,16 @@ class FavouritesService(private val favouritesRepository: FavouritesRepository, 
         return convertFromDataClass(new)
     }
 
-    fun update(favourite: FavouriteStop): Boolean {
+    suspend fun update(favourite: FavouriteStop): Boolean {
         return favouritesRepository.update(convertToDataClass(favourite, agencyId))
     }
 
-    fun delete(id: Long): Boolean {
+    suspend fun delete(id: Long): Boolean {
         return favouritesRepository.delete(agencyId, id)
     }
 
     fun convertFromDataClass(favourite: DataFavourite): FavouriteStop? {
-        val identifier = AgencySpecificClassFactory.createStopIdentifier(favourite.agencyId, favourite.agencyIdentifier)
+        val identifier = AgencySpecificClassFactory.createStopIdentifier(favourite.agencyId!!, favourite.agencyIdentifier!!)
         val latlng = if (favourite.latitude != null && favourite.longitude != null) GeoLocation(favourite.latitude, favourite.longitude) else null
         var routes: ArrayList<RouteIdentifier>? = null
 
@@ -89,7 +78,7 @@ class FavouritesService(private val favouritesRepository: FavouritesRepository, 
             }
         }
 
-        return if (identifier != null) FavouriteStop(favourite.name, identifier, favourite.timesUsed, latlng, favourite.id, favourite.alias, routes) else null
+        return if (identifier != null) FavouriteStop(favourite.name!!, identifier, favourite.timesUsed!!, latlng, favourite.id!!, favourite.alias, routes) else null
     }
 
     fun convertFromDataClass(favourites: List<DataFavourite>): List<FavouriteStop> {
