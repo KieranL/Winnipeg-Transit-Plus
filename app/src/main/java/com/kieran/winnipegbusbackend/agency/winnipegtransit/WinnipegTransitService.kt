@@ -1,5 +1,6 @@
 package com.kieran.winnipegbusbackend.agency.winnipegtransit
 
+import com.kieran.winnipegbus.data.RouteDataCacheService
 import com.kieran.winnipegbusbackend.common.*
 import com.kieran.winnipegbusbackend.enums.CoverageTypes
 import com.kieran.winnipegbusbackend.enums.ScheduleType
@@ -137,9 +138,6 @@ object WinnipegTransitService : TransitService {
     }
 
     override fun getSearchQueryType(searchText: String): SearchQueryType {
-//        if (searchText.trim().toUpperCase() == "BLUE")
-//            return SearchQueryType.ROUTE_NUMBER
-
         return try {
             val number = Integer.parseInt(searchText)
 
@@ -164,30 +162,7 @@ object WinnipegTransitService : TransitService {
     }
 
     override fun parseStringToRouteIdentifier(text: String): RouteIdentifier {
-        return WinnipegTransitRouteIdentifier(text)
-    }
-
-    private fun getUpcomingStopNumbers(key: WinnipegTransitTripIdentifier, stopOnRoute: Int): List<Int> {
-        val queryUrl = TransitApiManager.generateSearchQuery(key)
-        val result = TransitApiManager.getJson(queryUrl)
-
-        if (result.result != null) {
-            try {
-                val stops = result.result.getJSONArray("stops")
-                val stopNumbers = ArrayList<Int>()
-
-                for (i in 0 until stops.length()) {
-                    stopNumbers.add(stops.getJSONObject(i).getInt("number"))
-                }
-
-                return stopNumbers
-            } catch (ex: JSONException) {
-                Logger.getLogger().error(ex, "Error deserializing upcoming stop numbers")
-                throw TransitDataNotFoundException()
-            }
-        } else {
-            throw result.exception!!
-        }
+        return WinnipegTransitRouteIdentifier(text, null)
     }
 
     fun isDownTownSpirit(routeNumber: Int): Boolean {
@@ -265,7 +240,9 @@ object WinnipegTransitService : TransitService {
 
                 val coverageType = CoverageTypes.getEnum(routeDetailsJson.getString(ROUTE_COVERAGE_TAG))
                 val routeName = if (routeDetailsJson.has(ROUTE_NAME_TAG)) routeDetailsJson.getString(ROUTE_NAME_TAG) else routeDetailsJson.getString("key")
-                val routeIdentifier = WinnipegTransitRouteIdentifier(routeDetailsJson.get(ROUTE_NUMBER_TAG).toString())
+                val routeBadgeStyle = routeDetailsJson.getJSONObject("badge-style")
+                val routeBadge = WinnipegTransitRouteBadge(routeBadgeStyle.getString("color"), routeBadgeStyle.getString("border-color"), routeBadgeStyle.getString("background-color"))
+                val routeIdentifier = WinnipegTransitRouteIdentifier(routeDetailsJson.get(ROUTE_NUMBER_TAG).toString(), routeBadge)
                 val routeSchedule = RouteSchedule(routeIdentifier, routeName, coverageType, loadScheduledStops(routeName, routeJson, routeIdentifier, coverageType))
 
                 routeList.add(routeSchedule)
@@ -339,7 +316,7 @@ object WinnipegTransitService : TransitService {
                     estimatedArrivalTime = StopTime.convertStringToStopTime(arrival.getString(ESTIMATED_TAG), TransitApiManager.API_DATE_FORMAT)
                 }
 
-                return ScheduledStop(routeVariantName!!, estimatedArrivalTime, estimatedDepartureTime!!, scheduledArrivalTime, scheduledDepartureTime!!, isCancelled, hasBikeRack, hasWifi, busIdentifier, key, routeKey, routeIdentifier, coverageType, isTwoBus)
+                return ScheduledStop(routeVariantName!!, estimatedArrivalTime, estimatedDepartureTime!!, scheduledArrivalTime, scheduledDepartureTime!!, isCancelled, hasBikeRack, hasWifi, busIdentifier, key, routeKey, routeIdentifier, coverageType, isTwoBus, routeIdentifier.getRouteBadge())
             } catch (ex: JSONException) {
                 Logger.getLogger().error(ex, "Error deserializing scheduled stop")
             }

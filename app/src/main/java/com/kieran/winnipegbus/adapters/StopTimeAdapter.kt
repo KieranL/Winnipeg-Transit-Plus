@@ -11,20 +11,26 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.kieran.winnipegbus.R
 import com.kieran.winnipegbus.activities.BaseActivity
+import com.kieran.winnipegbus.data.RouteDataCacheService
 import com.kieran.winnipegbus.views.RouteNumberTextView
 import com.kieran.winnipegbusbackend.TransitServiceProvider
 import com.kieran.winnipegbusbackend.common.ScheduledStop
 import com.kieran.winnipegbusbackend.interfaces.TransitService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class StopTimeAdapter(context: Context, private val layoutResourceId: Int, private val scheduledStops: List<ScheduledStop>) : ArrayAdapter<ScheduledStop>(context, layoutResourceId, scheduledStops) {
     private var use24hrTime: Boolean = false
     private val inflater: LayoutInflater = (context as Activity).layoutInflater
     private var transitService: TransitService
+    private var routeDataCacheService: RouteDataCacheService
 
     init {
         loadTimeSetting()
         transitService = TransitServiceProvider.getTransitService()
+        routeDataCacheService = RouteDataCacheService.getInstance(context)
     }
 
     override fun getView(position: Int, row: View?, parent: ViewGroup): View {
@@ -50,7 +56,21 @@ class StopTimeAdapter(context: Context, private val layoutResourceId: Int, priva
 
         val scheduledStop = scheduledStops[position]
         holder.routeNumber?.text = String.format("%s", scheduledStop.routeIdentifier.toShortString())
-        holder.routeNumber?.setColour(scheduledStop.routeIdentifier, scheduledStop.coverageType)
+        var badge = scheduledStop.routeBadge
+
+        if (badge == null) {
+            routeDataCacheService.hydrateFromCache(scheduledStop.routeIdentifier, transitService.getAgencyId())
+            badge = scheduledStop.routeIdentifier.getRouteBadge()
+        } else {
+            GlobalScope.launch(Dispatchers.IO) {
+                routeDataCacheService.upsert(
+                    scheduledStop.routeIdentifier,
+                    transitService.getAgencyId()
+                )
+            }
+        }
+
+        holder.routeNumber?.setColour(badge)
         holder.routeVariantName?.text = scheduledStop.routeVariantName
         holder.hasBikeRackIcon?.visibility = if (scheduledStop.hasBikeRack) View.VISIBLE else View.GONE
         holder.hasWifiIcon?.visibility = if (scheduledStop.hasWifi) View.VISIBLE else View.GONE

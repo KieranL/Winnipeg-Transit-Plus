@@ -8,6 +8,7 @@ import com.kieran.winnipegbusbackend.enums.FavouritesListSortType
 import com.kieran.winnipegbusbackend.interfaces.FavouritesRepository
 import com.kieran.winnipegbusbackend.interfaces.RouteIdentifier
 import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
+import org.json.JSONObject
 
 class FavouritesService(private val favouritesRepository: FavouritesRepository, private val agencyId: Long) {
     companion object {

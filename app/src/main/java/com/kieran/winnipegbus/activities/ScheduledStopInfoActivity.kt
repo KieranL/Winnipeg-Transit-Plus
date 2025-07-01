@@ -74,7 +74,7 @@ class ScheduledStopInfoActivity : BaseActivity(), androidx.swiperefreshlayout.wi
         if (scheduledStop != null) {
             val routeNumber = getTextView(R.id.bus_number) as RouteNumberTextView
             routeNumber.text = scheduledStop.routeIdentifier.toString()
-            routeNumber.setColour(scheduledStop.routeIdentifier, scheduledStop.coverageType)
+            routeNumber.setColour(scheduledStop.routeBadge)
 
             setTextViewText(R.id.bus_name, scheduledStop.routeVariantName)
 
