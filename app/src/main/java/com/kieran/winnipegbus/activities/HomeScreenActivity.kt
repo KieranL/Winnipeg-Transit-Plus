@@ -257,19 +257,23 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
     }
 
     override fun onConnected(bundle: Bundle?) {
-        requestLocation()
+        requestLocationPermission()
     }
 
     private fun startNearbyStopsActivity() {
         if (isLocationEnabled && isGooglePlayServicesAvailable) {
             val intent = Intent(this, SearchResultsActivity::class.java)
-            val location = latestLocation
-
-            if (location != null) {
-                intent.putExtra(SearchResultsActivity.SEARCH_QUERY, SearchQuery("Nearby Stops", SearchQueryType.NEARBY))
-                startActivity(intent)
-            } else {
-                showShortToaster(GoogleApiActivity.ACQUIRING_LOCATION)
+            requestLatestLocation { location: Location? ->
+                if (location != null) {
+                    latestLocation = location
+                    intent.putExtra(
+                        SearchResultsActivity.SEARCH_QUERY,
+                        SearchQuery("Nearby Stops", SearchQueryType.NEARBY)
+                    )
+                    startActivity(intent)
+                } else {
+                    showShortToaster(GoogleApiActivity.ACQUIRING_LOCATION)
+                }
             }
         } else {
             showLongToaster(GoogleApiActivity.LOCATION_SERVICES_NOT_AVAILABLE)

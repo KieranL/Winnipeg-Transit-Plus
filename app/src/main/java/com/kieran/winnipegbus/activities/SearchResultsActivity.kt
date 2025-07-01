@@ -131,10 +131,10 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
         if (searchQuery!!.searchQueryType != SearchQueryType.NEARBY)
             menu.findItem(R.id.loadingIcon).isVisible = false
 
-        if (searchQuery!!.searchQueryType != SearchQueryType.NEARBY) {
+
             loading = false
             refresh()
-        }
+
 
         return true
     }
@@ -196,13 +196,14 @@ class SearchResultsActivity : GoogleApiActivity(), AdapterView.OnItemLongClickLi
     }
 
     override fun onConnected(bundle: Bundle?) {
-        requestLocation()
+
     }
 
     override fun onLocationChanged(location: Location) {
         if (isOnline) {
-            task = GlobalScope.launch(Dispatchers.IO) {try {
-            val stops = transitService.findClosestStops(GeoLocation(location.latitude, location.longitude), (nearbyStopsDistance + location.accuracy).toInt())
+            task = GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    val stops = transitService.findClosestStops(GeoLocation(location.latitude, location.longitude), (nearbyStopsDistance + location.accuracy).toInt())
 
                     onDataReceived(stops)
                 } catch (ex: Exception){

@@ -66,23 +66,17 @@ abstract class BaseActivity : AppCompatActivity() {
     val isLocationEnabled: Boolean
         get() {
             var locationMode = 0
-            val locationProviders: String
             val isLocationEnabled: Boolean
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                try {
-                    locationMode = Settings.Secure.getInt(contentResolver, Settings.Secure.LOCATION_MODE)
+            try {
+                locationMode = Settings.Secure.getInt(contentResolver, Settings.Secure.LOCATION_MODE)
 
-                } catch (ex: Settings.SettingNotFoundException) {
-                    Logger.getLogger().error(ex, "Error getting location setting")
-                }
-
-                isLocationEnabled = locationMode != Settings.Secure.LOCATION_MODE_OFF
-
-            } else {
-                locationProviders = Settings.Secure.getString(contentResolver, Settings.Secure.LOCATION_PROVIDERS_ALLOWED)
-                isLocationEnabled = !TextUtils.isEmpty(locationProviders)
+            } catch (ex: Settings.SettingNotFoundException) {
+                Logger.getLogger().error(ex, "Error getting location setting")
             }
+
+            isLocationEnabled = locationMode != Settings.Secure.LOCATION_MODE_OFF
+
             return isLocationEnabled && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
         }
 

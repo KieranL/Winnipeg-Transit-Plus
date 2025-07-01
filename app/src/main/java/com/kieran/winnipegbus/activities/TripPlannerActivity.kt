@@ -166,12 +166,13 @@ class TripPlannerActivity : GoogleApiActivity(), TransitApiManager.OnJsonLoadRes
     }
 
     override fun onConnected(bundle: Bundle?) {
-        requestLocation()
-        val deviceLocation = latestLocation
+        requestLatestLocation { location: android.location.Location? ->
+            latestLocation = location
 
-        if (deviceLocation != null && tripParameters.origin == null) {
-            tripParameters.origin = Location( GeoLocation(deviceLocation.latitude, deviceLocation.longitude), context.getString(R.string.current_location))
-            initializeFields()
+            if (latestLocation != null && tripParameters.origin == null) {
+                tripParameters.origin = Location( GeoLocation(latestLocation!!.latitude, latestLocation!!.longitude), context.getString(R.string.current_location))
+                initializeFields()
+            }
         }
     }
 
