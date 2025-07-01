@@ -35,11 +35,17 @@ class RoomFavouritesRepository private constructor(ctx: Context) : FavouritesRep
         return db.favouritesDao().getAll(agencyId)
     }
 
-    suspend override fun create(favourite: DataFavourite): DataFavourite? {
-        return null
+    override suspend fun create(favourite: DataFavourite): DataFavourite? {
+        val id = db.favouritesDao().create(favourite)
+
+        val newFavourite = get(favourite.agencyId!!, id)
+
+        return newFavourite
     }
 
-    suspend override fun update(favourite: DataFavourite): Boolean {
+    override suspend fun update(favourite: DataFavourite): Boolean {
+        db.favouritesDao().update(favourite)
+
         return true
     }
 

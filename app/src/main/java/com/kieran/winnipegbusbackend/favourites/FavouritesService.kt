@@ -104,7 +104,9 @@ class FavouritesService(private val favouritesRepository: FavouritesRepository, 
             }
         }
 
-        return DataFavourite(favourite.id, agencyId, null, null, favourite.name, favourite.alias, favourite.identifier.toString(), favourite.timesUsed, favourite.latLng?.latitude, favourite.latLng?.longitude, null, routes)
+        val id = if (favourite.id > 0) favourite.id else null
+
+        return DataFavourite(id, agencyId, null, null, favourite.name, favourite.alias, favourite.identifier.toString(), favourite.timesUsed, favourite.latLng?.latitude, favourite.latLng?.longitude, null, routes)
     }
 
     fun sort(favouritesList: List<FavouriteStop>, sortType: FavouritesListSortType): List<FavouriteStop> {

@@ -356,7 +356,9 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
 
                 if (newFavouriteStop != null) {
                     favouriteStop = newFavouriteStop
-                    item.icon = getFavouritesButtonDrawable()
+                    runOnUiThread {
+                        item.icon = getFavouritesButtonDrawable()
+                    }
                 } else {
                     showShortToaster(R.string.unknown_error)
                 }
@@ -374,7 +376,9 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
             GlobalScope.launch(Dispatchers.IO) {
                 favouritesService.delete(favouriteStop.id)
                 favouriteStop = FavouriteStop(favouriteStop.name, favouriteStop.identifier)
-                item.icon = getFavouritesButtonDrawable()
+                runOnUiThread {
+                    item.icon = getFavouritesButtonDrawable()
+                }
             }
         }
 

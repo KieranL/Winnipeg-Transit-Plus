@@ -110,7 +110,12 @@ class WinnipegTransitServiceTest : TransitServiceTest {
 
             val scheduledStop = stopSchedule.scheduledStopsSorted.first()
 
-            val upcomingStops = transitService.getUpcomingStops(scheduledStop.routeKey, scheduledStop.key, scheduledStop.estimatedDepartureTime)
+            val upcomingStops = transitService.getUpcomingStops(
+                routeIdentifier,
+                scheduledStop.routeKey,
+                scheduledStop.key,
+                scheduledStop.estimatedDepartureTime
+            )
 
             Assertions.assertNotNull(upcomingStops)
             Assertions.assertTrue(upcomingStops.isNotEmpty())

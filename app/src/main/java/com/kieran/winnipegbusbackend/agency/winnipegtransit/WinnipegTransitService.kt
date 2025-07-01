@@ -61,7 +61,7 @@ object WinnipegTransitService : TransitService {
     }
 
     override suspend fun getRouteStops(route: RouteIdentifier): List<Stop> {
-        val url = TransitApiManager.generateSearchQuery((route as WinnipegTransitRouteIdentifier).routeNumber)
+        val url = TransitApiManager.generateRouteSearchQuery((route as WinnipegTransitRouteIdentifier))
         val result = TransitApiManager.getJson(url)
 
         if (result.result != null) {
@@ -104,48 +104,31 @@ object WinnipegTransitService : TransitService {
         return ScheduleType.LIVE
     }
 
-    override suspend fun getUpcomingStops(key: TripIdentifier, scheduledStopKey: ScheduledStopKey, after: StopTime): List<UpcomingStop> {
+    override suspend fun getUpcomingStops(
+        key: TripIdentifier,
+        scheduledStopKey: ScheduledStopKey,
+        after: StopTime
+    ): List<UpcomingStop> {
         val upcomingStops = ArrayList<UpcomingStop>()
-        val variant = key as WinnipegTransitTripIdentifier
         val wpgTransitScheduledStopKey = scheduledStopKey as WinnipegTransitScheduledStopKey
-        val stopNumbers = getUpcomingStopNumbers(variant, wpgTransitScheduledStopKey.stopNumber)
-        val tasks = ArrayList<Job>()
 
-        stopNumbers.map {
-            GlobalScope.launch(Dispatchers.IO) {
-                val latest = if (after.milliseconds > getLastQueryTime().milliseconds) after else TransitApiManager.lastQueryTime
+        val json = TransitApiManager.getJson(TransitApiManager.generateTripScheduleUrl(wpgTransitScheduledStopKey))
+        val result = json.result
 
-                try {
-                    val result = TransitApiManager.getJson(TransitApiManager.generateStopNumberURL(it, variant.routeNumber, latest, null))
+        val trip = result?.getJSONObject("trip")!!
+        val stops = trip.getJSONArray(SCHEDULED_STOPS_TAG)
 
-                    if (result.result != null) {
-                        val stopSchedule = createStopSchedule(result.result)
+        for(i in 0 until stops.length()) {
+            val stopJson = stops.getJSONObject(i)
+            val scheduledStopJson = stopJson.getJSONObject("stop")
+            val key = WinnipegTransitScheduledStopKey(stopJson.getString("key"))
+            val time = StopTime.convertStringToStopTime(stopJson.getJSONObject("times").getJSONObject("departure").getString(ESTIMATED_TAG), TransitApiManager.TRIP_TIME_FORMAT)!!
+            val stop = Stop(scheduledStopJson.getString("name"), WinnipegTransitStopIdentifier(scheduledStopJson.getInt("number")))
 
-                        val scheduledStop1 = stopSchedule.getScheduledStopByKey(wpgTransitScheduledStopKey)
+            val upcomingStop = UpcomingStop(stop, time, key)
+            upcomingStops.add(upcomingStop)
+        }
 
-                        if (scheduledStop1 != null) {
-                            val upcomingStop = UpcomingStop(stopSchedule, scheduledStop1.estimatedDepartureTime, scheduledStop1.key)
-                            upcomingStops.add(upcomingStop)
-                        }
-
-                    } else if (result.exception != null) {
-                        if (result.exception is FileNotFoundException || result.exception is RateLimitedException) {
-                            tasks.forEach { task ->
-                                task.cancel()
-                            }
-
-                        }
-
-                        throw result.exception
-                    }
-                } catch (ex: Exception) {
-                    Logger.getLogger().error(ex, "Error getting upcoming stops")
-                }
-
-            }
-        }.toCollection(tasks)
-
-        tasks.joinAll()
         return upcomingStops
     }
 
@@ -166,7 +149,12 @@ object WinnipegTransitService : TransitService {
                 SearchQueryType.ROUTE_NUMBER
             }
         } catch (e: Exception) {
-            SearchQueryType.GENERAL
+            if(searchText.equals("blue", true))
+                SearchQueryType.ROUTE_NUMBER
+            else if (searchText.matches(Regex("fx\\d{1,2}|f\\d{1,2}|d\\d{1,2}\$")))
+                SearchQueryType.ROUTE_NUMBER
+            else
+                SearchQueryType.GENERAL
         }
     }
 

@@ -1,12 +1,18 @@
 package com.kieran.winnipegbus.data
 
 import androidx.room.Dao
-import androidx.room.Delete
+import androidx.room.Insert
 import androidx.room.Query
-import com.kieran.winnipegbusbackend.interfaces.StopIdentifier
+import androidx.room.Update
 
 @Dao
 interface FavouriteDAO {
+    @Insert
+    suspend fun create(favourite: DataFavourite): Long
+
+    @Update
+    suspend fun update(favourite: DataFavourite)
+
     @Query("SELECT * FROM favourites WHERE agencyId = :agencyId AND id = :id limit 1")
     fun get(agencyId: Long, id: Long): DataFavourite
 

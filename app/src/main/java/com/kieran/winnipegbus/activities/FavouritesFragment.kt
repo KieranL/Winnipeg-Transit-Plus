@@ -99,7 +99,9 @@ class FavouritesFragment: Fragment(), AdapterView.OnItemClickListener, AdapterVi
         alertDialog.setPositiveButton(R.string.delete) { _, _ ->
             GlobalScope.launch(Dispatchers.IO) {
                 favouritesService.delete(adapter.getItem(position)!!.id)
-                reloadList()
+                context.runOnUiThread {
+                    reloadList()
+                }
             }
         }
 
