@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Winnipeg Transit+</string>
+    <string name="app_name">Easy Transit Winnipeg</string>
     <string name="search_hint">Search</string>
     <string name="button_send">Go</string>
     <string name="action_settings">Settings</string>

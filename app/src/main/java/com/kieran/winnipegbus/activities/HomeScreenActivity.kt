@@ -19,9 +19,11 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationServices
 import com.kieran.winnipegbus.R
+import com.kieran.winnipegbus.data.RouteDataCacheService
 import com.kieran.winnipegbusbackend.AgencySpecificClassFactory
 import com.kieran.winnipegbusbackend.ListRecentStopsService
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.FavouriteStopsList
+import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitService
 import com.kieran.winnipegbusbackend.common.FavouriteStop
 import com.kieran.winnipegbusbackend.common.RecentStop
 import com.kieran.winnipegbusbackend.common.SearchQuery
@@ -72,6 +74,10 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).build()
         connectClient()
+
+        GlobalScope.launch(Dispatchers.IO) {
+            RouteDataCacheService.getInstance(context).load(WinnipegTransitService.getAgencyId())
+        }
     }
 
     override fun onResume() {
@@ -257,19 +263,23 @@ class HomeScreenActivity : GoogleApiActivity(), LocationListener {
     }
 
     override fun onConnected(bundle: Bundle?) {
-        requestLocation()
+        requestLocationPermission()
     }
 
     private fun startNearbyStopsActivity() {
         if (isLocationEnabled && isGooglePlayServicesAvailable) {
             val intent = Intent(this, SearchResultsActivity::class.java)
-            val location = latestLocation
-
-            if (location != null) {
-                intent.putExtra(SearchResultsActivity.SEARCH_QUERY, SearchQuery("Nearby Stops", SearchQueryType.NEARBY))
-                startActivity(intent)
-            } else {
-                showShortToaster(GoogleApiActivity.ACQUIRING_LOCATION)
+            requestLatestLocation { location: Location? ->
+                if (location != null) {
+                    latestLocation = location
+                    intent.putExtra(
+                        SearchResultsActivity.SEARCH_QUERY,
+                        SearchQuery("Nearby Stops", SearchQueryType.NEARBY)
+                    )
+                    startActivity(intent)
+                } else {
+                    showShortToaster(GoogleApiActivity.ACQUIRING_LOCATION)
+                }
             }
         } else {
             showLongToaster(GoogleApiActivity.LOCATION_SERVICES_NOT_AVAILABLE)

@@ -69,12 +69,11 @@ class TripPlannerAdapter(context: Context, private val trips: List<Trip>) : Base
         holder.routes?.removeAllViews()
         trip.routes.forEach {
             val view = inflater.inflate(R.layout.trip_planner_route_number, null) as RouteNumberTextView
-            view.setColour(it.routeIdentifier, it.coverageType)
+            view.setColour(it.routeIdentifier.getRouteBadge())
             view.text = it.routeIdentifier.toString()
 
             holder.routes?.addView(view)
         }
-
 
         return row
     }

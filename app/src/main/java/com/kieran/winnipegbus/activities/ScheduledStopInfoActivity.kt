@@ -2,7 +2,6 @@ package com.kieran.winnipegbus.activities
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -75,7 +74,7 @@ class ScheduledStopInfoActivity : BaseActivity(), androidx.swiperefreshlayout.wi
         if (scheduledStop != null) {
             val routeNumber = getTextView(R.id.bus_number) as RouteNumberTextView
             routeNumber.text = scheduledStop.routeIdentifier.toString()
-            routeNumber.setColour(scheduledStop.routeIdentifier, scheduledStop.coverageType)
+            routeNumber.setColour(scheduledStop.routeBadge)
 
             setTextViewText(R.id.bus_name, scheduledStop.routeVariantName)
 

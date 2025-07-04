@@ -3,6 +3,10 @@ package com.kieran.winnipegbusbackend.interfaces
 import java.io.Serializable
 
 interface RouteIdentifier : Serializable, Comparable<Any> {
+    fun getRouteBadge(): RouteBadge?
+
+    fun setBadge(routeBadge: RouteBadge)
+
     override fun toString(): String
 
     fun toShortString(): String

@@ -76,9 +76,11 @@ class FavouritesFragment: Fragment(), AdapterView.OnItemClickListener, AdapterVi
 
     private fun openStopTimesAndUse(favouriteStop: FavouriteStop) {
         favouriteStop.use()
-        favouritesService.update(favouriteStop)
+        GlobalScope.launch(Dispatchers.IO) {
+            favouritesService.update(favouriteStop)
 
-        getBaseActivity().openStopTimes(favouriteStop)
+            getBaseActivity().openStopTimes(favouriteStop)
+        }
     }
 
     fun getBaseActivity(): BaseActivity {
@@ -95,8 +97,12 @@ class FavouritesFragment: Fragment(), AdapterView.OnItemClickListener, AdapterVi
 
         alertDialog.setMessage(R.string.edit_favourite_dialog_title)
         alertDialog.setPositiveButton(R.string.delete) { _, _ ->
-            favouritesService.delete(adapter.getItem(position)!!.id)
-            reloadList()
+            GlobalScope.launch(Dispatchers.IO) {
+                favouritesService.delete(adapter.getItem(position)!!.id)
+                context.runOnUiThread {
+                    reloadList()
+                }
+            }
         }
 
         alertDialog.setNeutralButton(R.string.rename) { _, _ ->
@@ -110,8 +116,10 @@ class FavouritesFragment: Fragment(), AdapterView.OnItemClickListener, AdapterVi
 
             renameDialog.setPositiveButton(R.string.ok) { _, _ ->
                 favouriteStop.alias = editText.text.toString()
-                favouritesService.update(favouriteStop)
-                reloadList()
+                GlobalScope.launch(Dispatchers.IO) {
+                    favouritesService.update(favouriteStop)
+                    reloadList()
+                }
             }
             renameDialog.setNegativeButton(R.string.cancel, null)
 

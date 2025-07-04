@@ -15,6 +15,7 @@ import javax.net.ssl.HttpsURLConnection
 
 object TransitApiManager {
     internal const val API_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
+    internal const val TRIP_TIME_FORMAT = "HH:mm:ss"
     private val START_TIME_DECREASE = 10000
     private val QUERY_TIME = "query-time"
     private val ROUTE_PARAMETER = "route"
@@ -31,7 +32,8 @@ object TransitApiManager {
     private val LONGITUDE_PARAMETER = "lon"
     private val SERVICE_ADVISORIES_PARAMETER = "service-advisories"
     private val LOCATIONS_PARAMETER = "locations"
-    private val URL_FORMAT = "https://api.winnipegtransit.com/v3/%s.json?usage=short&api-key=" + BuildConfig.winnipeg_transit_api_key + "%s"
+    private val TRIPS_PARAMETER = "trips"
+    private val URL_FORMAT = "https://api.winnipegtransit.com/v4/%s.json?usage=short&api-key=" + BuildConfig.winnipeg_transit_api_key + "%s"
 
     //Stop model json tags
     val STOP_NAME_TAG = "name"
@@ -110,16 +112,13 @@ object TransitApiManager {
     }
 
     fun generateSearchQuery(search: String): String {
-        return try {
-            val routeNumber = Integer.parseInt(search)
-            generateSearchQuery(routeNumber)
-        } catch (e: Exception) {
-            createUrl(STOPS_PARAMETER + COLON + createURLFriendlyString(search), null)
-        }
+        return createUrl(STOPS_PARAMETER + COLON + createURLFriendlyString(search), null)
     }
 
-    fun generateSearchQuery(routeNumber: Int): String {
-        val parameters = arrayOf(URLParameter(ROUTE_PARAMETER, Integer.toString(routeNumber))).toList()
+    fun generateRouteSearchQuery(routeIdentifier: WinnipegTransitRouteIdentifier): String {
+        val parameters = arrayOf(URLParameter(ROUTE_PARAMETER,
+            routeIdentifier.toString().uppercase(Locale.getDefault())
+        )).toList()
         return createUrl(STOPS_PARAMETER, parameters)
     }
 
@@ -159,6 +158,10 @@ object TransitApiManager {
         parameters?.forEach { parameterString += "&" + it.toString() }
 
         return String.format(URL_FORMAT, path, parameterString)
+    }
+
+    fun generateTripScheduleUrl(key: WinnipegTransitScheduledStopKey): String {
+        return createUrl(TRIPS_PARAMETER + FORWARD_SLASH + key.busKey, null)
     }
 
     interface OnJsonLoadResultReceiveListener {

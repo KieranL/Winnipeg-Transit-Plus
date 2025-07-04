@@ -16,7 +16,11 @@ interface TransitService {
 
     suspend fun findClosestStops(location: Location, distance: Int = 1000, stopCount: Int = 1): List<Stop>
 
-    suspend fun getUpcomingStops(key: TripIdentifier, scheduledStopKey: ScheduledStopKey, after: StopTime): List<UpcomingStop>
+    suspend fun getUpcomingStops(
+        key: TripIdentifier,
+        scheduledStopKey: ScheduledStopKey,
+        after: StopTime
+    ): List<UpcomingStop>
 
     fun getLastQueryTime(): StopTime
 

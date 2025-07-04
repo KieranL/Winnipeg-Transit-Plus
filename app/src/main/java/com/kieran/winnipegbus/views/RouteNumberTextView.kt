@@ -1,6 +1,7 @@
 package com.kieran.winnipegbus.views
 
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
 import android.widget.TextView
 
@@ -8,6 +9,7 @@ import com.kieran.winnipegbus.R
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitRouteIdentifier
 import com.kieran.winnipegbusbackend.agency.winnipegtransit.WinnipegTransitService
 import com.kieran.winnipegbusbackend.enums.CoverageTypes
+import com.kieran.winnipegbusbackend.interfaces.RouteBadge
 import com.kieran.winnipegbusbackend.interfaces.RouteIdentifier
 import kotlin.math.round
 
@@ -18,29 +20,12 @@ class RouteNumberTextView : TextView {
 
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {}
 
-    fun setColour(routeNumberString: String, coverageType: CoverageTypes) {
-        val routeNumber = routeNumberString.toIntOrNull()
+    fun setColour(routeBadge: RouteBadge?) {
+        if (routeBadge == null)
+            return
 
-        if (routeNumber == null) {
-            setTextColor(resources.getColor(R.color.white))
-            setBackgroundResource(R.drawable.route_number_background_rt)
-        } else if (WinnipegTransitService.isDownTownSpirit(routeNumber)) {
-            setTextColor(resources.getColor(R.color.white))
-            setBackgroundResource(R.drawable.route_number_background_dt_spirit)
-        } else if (coverageType == CoverageTypes.REGULAR && !WinnipegTransitService.isRapidTransit(routeNumber) && !WinnipegTransitService.isExpress(routeNumber)) {
-            setTextColor(resources.getColor(R.color.black))
-            setBackgroundResource(R.drawable.route_number_background_regular)
-        } else if (coverageType == CoverageTypes.EXPRESS || coverageType == CoverageTypes.SUPER_EXPRESS || WinnipegTransitService.isExpress(routeNumber)) {
-            setTextColor(resources.getColor(R.color.black))
-            setBackgroundResource(R.drawable.route_number_background_express)
-        } else if (coverageType == CoverageTypes.RAPID_TRANSIT || WinnipegTransitService.isRapidTransit(routeNumber)) {
-            setTextColor(resources.getColor(R.color.white))
-            setBackgroundResource(R.drawable.route_number_background_rt)
-        }
-    }
-
-    fun setColour(routeNumber: RouteIdentifier, coverageType: CoverageTypes) {
-        setColour((routeNumber as WinnipegTransitRouteIdentifier).routeNumber, coverageType)
+        setTextColor(Color.parseColor(routeBadge.getTextColour()))
+        setBackgroundColor(Color.parseColor(routeBadge.getBackgroundColour()))
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

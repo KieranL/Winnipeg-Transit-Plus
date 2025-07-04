@@ -25,7 +25,8 @@ object AgencySpecificClassFactory {
     fun createRouteIdentifier(agencyId: Long, text: String): RouteIdentifier {
         return try {
             when (agencyId) {
-                2L -> WinnipegTransitRouteIdentifier(text)
+                2L -> {
+                    WinnipegTransitRouteIdentifier(text, null)}
                 else -> throw AgencyNotFoundException()
             }
         } catch (ex: NumberFormatException) {

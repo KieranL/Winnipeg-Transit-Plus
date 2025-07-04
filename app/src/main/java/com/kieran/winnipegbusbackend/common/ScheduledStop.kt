@@ -1,6 +1,7 @@
 package com.kieran.winnipegbusbackend.common
 
 import com.kieran.winnipegbusbackend.enums.CoverageTypes
+import com.kieran.winnipegbusbackend.interfaces.RouteBadge
 import com.kieran.winnipegbusbackend.interfaces.RouteIdentifier
 import com.kieran.winnipegbusbackend.interfaces.ScheduledStopKey
 import com.kieran.winnipegbusbackend.interfaces.TripIdentifier
@@ -22,7 +23,8 @@ class ScheduledStop(
         val routeKey: TripIdentifier,
         val routeIdentifier: RouteIdentifier,
         val coverageType: CoverageTypes,
-        var isTwoBus: Boolean
+        var isTwoBus: Boolean,
+        var routeBadge: RouteBadge?,
 ) : Serializable, Comparable<ScheduledStop> {
 
     val timeStatus: String

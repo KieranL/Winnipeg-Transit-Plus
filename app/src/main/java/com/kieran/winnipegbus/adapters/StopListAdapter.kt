@@ -9,16 +9,26 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.google.android.flexbox.FlexboxLayout
 import com.kieran.winnipegbus.R
+import com.kieran.winnipegbus.data.RouteDataCacheService
 import com.kieran.winnipegbus.views.RouteNumberTextView
+import com.kieran.winnipegbusbackend.TransitServiceProvider
 import com.kieran.winnipegbusbackend.common.Stop
 import com.kieran.winnipegbusbackend.enums.CoverageTypes
+import com.kieran.winnipegbusbackend.interfaces.TransitService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlin.math.round
 
 class StopListAdapter(context: Context, private var layoutResourceId: Int, private var stops: List<Stop>) : ArrayAdapter<Stop>(context, layoutResourceId, stops) {
     private var inflater: LayoutInflater? = null
+    private var routeDataCacheService: RouteDataCacheService
+    private var transitService: TransitService
 
     init {
         inflater = (context as Activity).layoutInflater
+        transitService = TransitServiceProvider.getTransitService()
+        routeDataCacheService = RouteDataCacheService.getInstance(context)
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -48,7 +58,15 @@ class StopListAdapter(context: Context, private var layoutResourceId: Int, priva
             for (route in favouriteStop.routes!!) {
                 val view = inflater?.inflate(R.layout.route_number, null) as RouteNumberTextView
                 view.text = route.toShortString()
-                view.setColour(route, CoverageTypes.REGULAR)
+
+                var badge = route.getRouteBadge()
+
+                if (badge == null) {
+                    routeDataCacheService.hydrateFromCache(route, transitService.getAgencyId())
+                    badge = route.getRouteBadge()
+                }
+
+                view.setColour(badge)
 
                 holder.routeNumbers?.addView(view)
             }
