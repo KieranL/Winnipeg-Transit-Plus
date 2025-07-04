@@ -459,22 +459,26 @@ class StopTimesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener, 
     }
 
     override fun onRecentStopSelected(stop: RecentStop) {
-        var newStop = favouritesService.get(stop.identifier)
+        GlobalScope.launch(Dispatchers.IO) {
+            var newStop = favouritesService.get(stop.identifier)
 
-        if(newStop != null) {
-            GlobalScope.launch(Dispatchers.IO) {
+            if (newStop != null) {
+
                 newStop!!.use()
                 favouritesService.update(newStop!!)
+
+            } else {
+                newStop = FavouriteStop("", stop.identifier)
             }
-        } else {
-            newStop = FavouriteStop("", stop.identifier)
+
+            favouriteStop = newStop
+        }.invokeOnCompletion {
+            runOnUiThread {
+                setTitle(String.format(Locale.CANADA, ACTIONBAR_TEXT, stop.identifier.toString()))
+                ListRecentStopsService.use(stop)
+                refresh()
+            }
         }
-
-        favouriteStop = newStop
-
-        setTitle(String.format(Locale.CANADA, ACTIONBAR_TEXT, stop.identifier.toString()))
-        ListRecentStopsService.use(stop)
-        refresh()
     }
 
     companion object {

@@ -123,6 +123,10 @@ object WinnipegTransitService : TransitService {
             val stopJson = stops.getJSONObject(i)
             val scheduledStopJson = stopJson.getJSONObject("stop")
             val key = WinnipegTransitScheduledStopKey(stopJson.getString("key"))
+
+            if (key.stopNumber <= wpgTransitScheduledStopKey.stopNumber)
+                continue
+
             val time = StopTime.convertStringToStopTime(stopJson.getJSONObject("times").getJSONObject("departure").getString(ESTIMATED_TAG), TransitApiManager.TRIP_TIME_FORMAT)!!
             val stop = Stop(scheduledStopJson.getString("name"), WinnipegTransitStopIdentifier(scheduledStopJson.getInt("number")))
 
